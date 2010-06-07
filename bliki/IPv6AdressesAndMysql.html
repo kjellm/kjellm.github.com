@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <title>Kjell-Magne Øierud :: bliki :: IPv6 addresses and MySQL</title>
+    <meta name="author" content="" />
+
+    <link href="http://oierud.name/~kjellm/bliki/feed.atom" title="Feed" rel="alternate" type="application/atom+xml" />
+
+
+
+    <!-- CodeRay syntax highlighting CSS -->
+    <link href="http://oierud.name/~kjellm/css/coderay.css" rel="stylesheet" type="text/css" />
+ 
+    <!-- Homepage CSS -->
+    <link href="http://oierud.name/~kjellm/css/site.css" rel="stylesheet" media="screen, projection" type="text/css" />
+
+    <script src="http://oierud.name/~kjellm/main.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Kjell-Magne Øierud :: Bliki</h1>
+
+      <p id="subtitle">Thoughts on software development
+  
+      </p><div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
+      
+
+
+      <div class="date">2009-02-19 11:49 CET</div>
+
+<h2>IPv6 addresses and MySQL</h2>
+
+
+<p>I usually prefer storing IP addresses as integers (unless the DBMS
+  have a special data type for it). Using integers gives compact
+  storage and makes it easy to answer questions like what is the next
+  IP address? In which subnets does it belong? Etc. IPv6 addresses is
+  128 bits long, so to store that as an integer in MySQL you need to
+  use the <code>DECIMAL</code> data type.
+
+</p><p>In MySQL there is two functions that help you translate between the
+  familiar canonical version and the numeric version of IP addresses:
+  INET_ATON() and INET_NTOA(). However these functions do not work
+  with IPv6 addresses.
+
+</p><p>One possible solution to this is to implement INET_ATON6() and
+INET_NTOA6() yourself as stored functions:
+
+</p><h3>INET_ATON6</h3>
+
+<div class="CodeRay">
+<pre>DELIMITER //
+<span class="r">CREATE</span> FUNCTION INET_ATON6(n <span class="pt">CHAR</span>(<span class="i">39</span>))
+RETURNS <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span>
+DETERMINISTIC
+<span class="r">BEGIN</span>
+    RETURN <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span>  <span class="i">1</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       * <span class="i">5192296858534827628530496329220096</span> <span class="c">-- 65536 ^ 7</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span>  <span class="i">6</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       *      <span class="i">79228162514264337593543950336</span> <span class="c">-- 65536 ^ 6</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">11</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       *          <span class="i">1208925819614629174706176</span> <span class="c">-- 65536 ^ 5</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">16</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>)) 
+                       *               <span class="i">18446744073709551616</span> <span class="c">-- 65536 ^ 4</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">21</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       *                    <span class="i">281474976710656</span> <span class="c">-- 65536 ^ 3</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">26</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       *                         <span class="i">4294967296</span> <span class="c">-- 65536 ^ 2</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">31</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+                       *                              <span class="i">65536</span> <span class="c">-- 65536 ^ 1</span>
+         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">36</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))
+         ;
+<span class="r">END</span>;
+//
+DELIMITER ;
+</pre>
+</div>
+
+<h3>INET_NTOA6</h3>
+<div class="CodeRay">
+<pre>DELIMITER //
+<span class="r">CREATE</span> FUNCTION INET_NTOA6(n <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span>)
+RETURNS <span class="pt">CHAR</span>(<span class="i">39</span>)
+DETERMINISTIC
+<span class="r">BEGIN</span>
+  DECLARE a <span class="pt">CHAR</span>(<span class="i">39</span>)             <span class="di">DEFAULT</span> <span class="s"><span class="dl">'</span><span class="dl">'</span></span>;
+  DECLARE i <span class="pt">INT</span>                  <span class="di">DEFAULT</span> <span class="i">7</span>;
+  DECLARE q <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span> <span class="di">DEFAULT</span> <span class="i">0</span>;
+  DECLARE r <span class="pt">INT</span>                  <span class="di">DEFAULT</span> <span class="i">0</span>;
+  WHILE i DO
+    <span class="c">-- DIV doesn't work with nubers &gt; bigint</span>
+    <span class="r">SET</span> q <span class="er">:</span>= FLOOR(n / <span class="i">65536</span>);
+    <span class="r">SET</span> r <span class="er">:</span>= n MOD <span class="i">65536</span>;
+    <span class="r">SET</span> n <span class="er">:</span>= q;
+    <span class="r">SET</span> a <span class="er">:</span>= CONCAT_WS(<span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span>, LPAD(CONV(r, <span class="i">10</span>, <span class="i">16</span>), <span class="i">4</span>, <span class="s"><span class="dl">'</span><span class="k">0</span><span class="dl">'</span></span>), a);
+
+    <span class="r">SET</span> i <span class="er">:</span>= i - <span class="i">1</span>;
+  <span class="r">END</span> WHILE;
+
+  <span class="r">SET</span> a <span class="er">:</span>= TRIM(TRAILING <span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span> <span class="r">FROM</span> CONCAT_WS(<span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span>,
+                                            LPAD(CONV(n, <span class="i">10</span>, <span class="i">16</span>), <span class="i">4</span>, <span class="s"><span class="dl">'</span><span class="k">0</span><span class="dl">'</span></span>),
+                                            a));
+
+  RETURN a;
+
+<span class="r">END</span>;
+//
+DELIMITER ;
+</pre>
+</div>
+<p>The code is to be regarded as a proof of concept as it needs sanity
+  checks and handling of simplified address notations before
+  production use. However the following small test verifies that it is
+  not completely broken:
+
+</p><div class="CodeRay">
+<pre>
+mysql> <strong>SELECT INET_NTOA6(INET_ATON6(</strong>
+    ->   <strong>'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));</strong>
++-------------------------------------------------------------------+
+| INET_NTOA6(INET_ATON6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')) |
++-------------------------------------------------------------------+
+| 2001:0DB8:85A3:0000:0000:8A2E:0370:7334                           |
++-------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> <strong>SELECT INET_NTOA6(INET_ATON6(</strong>
+    ->   <strong>'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'));</strong>
++-------------------------------------------------------------------+
+| INET_NTOA6(INET_ATON6('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff')) |
++-------------------------------------------------------------------+
+| FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF                           |
++-------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> <strong>select INET_NTOA6(INET_ATON6(</strong>
+    ->   <strong>'0000:0000:0000:0000:0000:0000:0000:0000'));</strong>
++-------------------------------------------------------------------+
+| INET_NTOA6(INET_ATON6('0000:0000:0000:0000:0000:0000:0000:0000')) |
++-------------------------------------------------------------------+
+| 0000:0000:0000:0000:0000:0000:0000:0000                           |
++-------------------------------------------------------------------+
+1 row in set (0.01 sec)
+</pre>
+</div>
+
+
+      <hr />
+<div class="sponsor">
+  <a href="http://redpill-linpro.com" target="_blank"><img src="../rplp.gif" alt="Redpill Linpro" /></a>
+</div>
+
+
+      <div id="disqus_thread"></div><script src="http://disqus.com/forums/km-oierud/embed.js" type="text/javascript"></script><noscript><a href="http://disqus.com/forums/km-oierud/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+  </body>
+</html>

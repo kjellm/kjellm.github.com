@@ -1,0 +1,292 @@
+/***********************************************************************
+ *                    N O R M A L I Z A T I O N
+ */
+
+/* Normalizes margin, padding */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td { 
+    margin : 0; 
+    padding : 0; 
+}
+
+/* Normalizes font-size for headers */
+h1, h2, h3, h4, h5, h6 { 
+    font-size : 100%; 
+}
+
+/* Removes list-style from lists */
+ol, ul { 
+    list-style : none; 
+}
+
+/* Normalizes font-style and font-weight to normal */
+address, caption, cite, code, dfn, em, strong, th, var { 
+    font-style : normal;
+    font-weight : normal; 
+}
+
+/* Removes list-style from lists */
+table { 
+    border-collapse : collapse; 
+    border-spacing : 0; 
+}
+
+/* Removes border from fieldset and img */
+fieldset,img { 
+    border : 0; 
+}
+
+/* Left-aligns text in caption and th */
+caption, th { 
+    text-align : left; 
+}
+
+/* Removes quotation marks from q */
+q:before, q:after { 
+    content: ''; 
+}
+
+pre {
+    font-size: 100%;
+}
+
+/***********************************************************************
+ *                          L A Y O U T
+ */
+
+html { 
+    width: 100%;
+    min-height: 100%;
+}
+
+body {  
+    width: 55em;
+    min-height: 100%;
+    height: auto;
+    text-align: left;
+    margin: 0 auto;
+}
+
+#container {
+    padding: 2em;
+    min-height: 100%;
+}
+
+#portrait { 
+}
+
+#interests { 
+    margin-top: 3em;
+    padding-right: 2em;
+}
+
+#subtitle { 
+    margin-top: -1em;
+    text-align: center;
+}
+
+h1 {
+    whitespace: nowrap;
+}
+
+/***********************************************************************
+ *                          C O L O U R
+ */
+
+html { 
+    background-color: #fff;
+    color: #000;
+}
+
+body {  
+    background-image: url(../background-left.png);
+    background-repeat: repeat-y;
+}
+
+#container {
+    background: url(../background-right.png) top right repeat-y;
+}
+
+hr:before { 
+    /* HACK Should not be in :before ... doesn't work in firefox,
+    works in Konqeror */
+    content: '~';
+}
+
+/***********************************************************************
+ *                      T Y P O G R A P H Y
+ */
+
+html { 
+    font-family: Verdana, sans-serif;
+
+    /* Different default size on monospace (12pt) and other fonts (16
+     * pt) in firefox and ie (not konqueror). Because of this I need to
+     * set a fixed font size as default (I usually prefer font-size:
+     * 100%). */
+    font-size: 12pt; 
+}
+
+h2, h3, h4, h5 { 
+    margin-bottom: 1em;
+}
+
+h1 {
+    text-align: center;
+    font-family: monospace;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 1.5em;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+ul, ol { 
+    margin: 1em 0 1em 2em;
+}
+
+ol { 
+    list-style-type: decimal;
+}
+
+ul { 
+    list-style-type: disc;
+}
+
+li { 
+    margin-bottom: 0.25em;
+}
+
+dl { 
+    margin-bottom: 1em;
+}
+
+dd { 
+    font-weight: bold;
+}
+
+dt { 
+    padding-left: 2em;
+}
+
+hr { 
+    width: 0;
+    font-family: monospace;
+    text-align: center;
+    border: 0;
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+p { 
+    margin-bottom: 1em;
+}
+
+em { 
+    font-style: italic;
+}
+
+a { 
+    text-decoration: none;
+}
+
+p a, ul a, ol a { 
+    text-decoration: underline;
+}
+
+strong { 
+    font-weight: bold; 
+}
+
+.sponsor { 
+    margin-top: 4em;
+    font-size: small;
+    text-align: center;
+}
+
+.notice { 
+    font-size: small;
+    font-style: italic;
+}
+
+.bibliography { 
+    margin: 0;
+    list-style-type: none;
+}
+
+.bibliography li { 
+    margin-bottom: 1em;
+}
+
+#menu { 
+    float: left;
+    width: 96%;
+    border-top: 0.08em solid black;
+    border-bottom: 0.08em solid black;
+    margin-bottom: 1em;
+    margin-right: 4em;
+    padding: 0.3em 1em;
+}
+
+#interests ul {  
+    list-style-type: none;
+}
+
+#subtitle { 
+    font-style: italic;
+}
+
+div { 
+    margin-bottom: 1em;
+}
+
+.illustration { 
+    text-align: center;
+}
+
+span.credit { 
+    font-size: 0.5em;
+}
+
+/***********************************************************************
+ *                   C O D E   E X A M P L E S
+ */
+
+pre.code-example { 
+    margin: 0 2em 1em 1em;
+    padding: 1em;
+    background-color: #104e8b;
+    color: #87ceeb;
+    font-size: 1em; 
+}
+
+.code-example .constant { 
+    color: #98fb98;
+}
+
+.code-example .string,
+.code-example .regex { 
+    color: #ffa07a;
+}
+
+.code-example .keyword { 
+    color: #00ffff;
+}
+
+.code-example .string .expr, 
+.code-example .global { 
+    color: #eedd82;
+}
+
+.code-example .symbol { 
+    color: #7fffd4;
+}
+
+.code-example .comment { 
+    color: #ffa500;
+}
+
+body {
+  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+}
