@@ -5,12 +5,36 @@
   <subtitle>Thoughts on software development</subtitle>
   <link href="http://oierud.name/~kjellm/bliki/" rel="self" />
   <link href="http://oierud.name/~kjellm/" />
-  <updated>2010-02-18T21:41:28+01:00</updated>
+  <updated>2010-06-07T22:11:50+02:00</updated>
   <author>
     <name>Kjell-Magne Øierud</name>
     <email>NA</email>
   </author>
   <id>http://oierud.name/~kjellm/</id>
+  
+    <entry>
+      <title>How To Structure A Ruby Project</title>
+      <link href="/bliki/HowToStructureARubyProject.html" />
+      <id>tag:oierud.name/~kjellm,2010-02-18:1266524571</id>
+      <updated>2010-02-18T21:22:51+01:00</updated>
+      <content type="html">
+
+
+
+
+Two independent mechanisms:
+
+  - Statements &lt; methods &lt; classes and modules
+
+  - Files &lt; directories
+
+Inter-file dependencies
+
+Should something be a module or a class? Static or instance? Mixin or not?
+
+Uses of the singleton class
+</content>
+    </entry>
   
     <entry>
       <title>Achoo --- The Achievo CLI</title>

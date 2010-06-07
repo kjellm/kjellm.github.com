@@ -1,17 +1,18 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Kjell-Magne Øierud :: Bliki</title>
     <meta name="author" content="" />
 
     <!-- CodeRay syntax highlighting CSS -->
-    <link href="http://oierud.name/~kjellm/css/coderay.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/css/coderay.css" type="text/css" />
  
     <!-- Homepage CSS -->
-    <link href="http://oierud.name/~kjellm/css/site.css" rel="stylesheet" media="screen, projection" type="text/css" />
+    <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen, projection" />
 
-    <script src="http://oierud.name/~kjellm/main.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/main.js"></script>
   </head>
   <body>
     <div id="container">
@@ -20,26 +21,49 @@
 
 <p id="subtitle">Thoughts on software development
 
-</p><div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
+<div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
       
 
  
   <div class="date">2010-02-18 21:22 CET</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/AchooTheAchievoCLI.html">Achoo --- The Achievo CLI</a></h2>
+<h2><a href="/bliki/HowToStructureARubyProject.html">How To Structure A Ruby Project</a></h2>
+
+
+Two independent mechanisms:
+
+  - Statements < methods < classes and modules
+
+  - Files < directories
+
+Inter-file dependencies
+
+Should something be a module or a class? Static or instance? Mixin or not?
+
+Uses of the singleton class
+
+
+  <hr>
+
+
+ 
+  <div class="date">2010-02-18 21:22 CET</div>
+
+<h2><a href="/bliki/AchooTheAchievoCLI.html">Achoo --- The Achievo CLI</a></h2>
 
 
 <p>To ease the pain of hour registration, I have created a command
 line shell for the hour registration system we use at Redpill Linpro
 -- <a href="http://achievo.org">Achievo</a>.
 
-</p><p>The code is hosted on Github, and you can find the code together
-with install instructions <a href="http://github.com/kjellm/achoo">here</a>.
+<p>The code is hosted on Github, and you can find the code together
+with install instructions <a
+href="http://github.com/kjellm/achoo">here</a>.
 
-</p><p>To illustrate it's capabilities, I'll walk you through an example
+<p>To illustrate it's capabilities, I'll walk you through an example
 session.
 
-</p><h3>Register hours</h3>
+<h3>Register hours</h3>
 
 <div class="CodeRay"><pre style="font-size:medium;">
 $ <em>rlwrap achoo</em>         # rlwrap adds some line editing goodness, but you can start it with just 'achoo' as well
@@ -78,11 +102,11 @@ Recently used projects
 used projects, select <em>0</em> to get the complete list of your
 projects.
 
-</p><p>When there is only one phase assosiated with the selected project,
+<p>When there is only one phase assosiated with the selected project,
 achoo will automatically select it and move on. For projects with more
 than one phase, you get a menu:
 
-</p><div class="CodeRay"><pre style="font-size:medium;">
+<div class="CodeRay"><pre style="font-size:medium;">
 Phases
  1. Cool phase
  2. Boring phase
@@ -115,7 +139,7 @@ Powered on: (0+09:44) Today 06:01 - 15:45
 hours. Achoo fetches the log for your commits for the given day and
 shows you when your laptop has been awake (not suspended).
 
-</p><h3>Flexi time balance</h3>
+<h3>Flexi time balance</h3>
 
 <div class="CodeRay"><pre style="font-size:medium;">
  :  ...
@@ -175,7 +199,7 @@ Balance: <u>26,00</u>
 
 <p>Achoo selects the previous month as the default
 
-</p><div class="CodeRay"><pre style="font-size:medium;">
+<div class="CodeRay"><pre style="font-size:medium;">
  :  ...
  6. Lock month
  :  ...
@@ -188,13 +212,13 @@ Cancelled
 
 
 
-  <hr />
+  <hr>
 
 
  
   <div class="date">2009-02-19 11:49 CET</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/IPv6AdressesAndMysql.html">IPv6 addresses and MySQL</a></h2>
+<h2><a href="/bliki/IPv6AdressesAndMysql.html">IPv6 addresses and MySQL</a></h2>
 
 
 <p>I usually prefer storing IP addresses as integers (unless the DBMS
@@ -204,15 +228,15 @@ Cancelled
   128 bits long, so to store that as an integer in MySQL you need to
   use the <code>DECIMAL</code> data type.
 
-</p><p>In MySQL there is two functions that help you translate between the
+<p>In MySQL there is two functions that help you translate between the
   familiar canonical version and the numeric version of IP addresses:
   INET_ATON() and INET_NTOA(). However these functions do not work
   with IPv6 addresses.
 
-</p><p>One possible solution to this is to implement INET_ATON6() and
+<p>One possible solution to this is to implement INET_ATON6() and
 INET_NTOA6() yourself as stored functions:
 
-</p><h3>INET_ATON6</h3>
+<h3>INET_ATON6</h3>
 
 <div class="CodeRay">
 <pre>DELIMITER //
@@ -279,7 +303,7 @@ DELIMITER ;
   production use. However the following small test verifies that it is
   not completely broken:
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>
 mysql> <strong>SELECT INET_NTOA6(INET_ATON6(</strong>
     ->   <strong>'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));</strong>
@@ -311,66 +335,69 @@ mysql> <strong>select INET_NTOA6(INET_ATON6(</strong>
 </div>
 
 
-  <hr />
+  <hr>
 
 
  
   <div class="date">2009-02-13 16:14 CET</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/ImprovedMuninGraphsForMySQL.html">Improved Munin Graphs for MySQL</a></h2>
+<h2><a href="/bliki/ImprovedMuninGraphsForMySQL.html">Improved Munin Graphs for MySQL</a></h2>
 
 
-<p>Inspired by <a href="http://xaprb.com/">Xaprb's</a> <a href="http://code.google.com/p/mysql-cacti-templates/">improved graphs
-for Cacti</a>, I wrote a plugin that creates similar graphs for <a href="http://munin.projects.linpro.no/">Munin</a>. 
+<p>Inspired by <a href="http://xaprb.com/">Xaprb's</a> <a
+href="http://code.google.com/p/mysql-cacti-templates/">improved graphs
+for Cacti</a>, I wrote a plugin that creates similar graphs for <a
+href="http://munin.projects.linpro.no/">Munin</a>. 
 
-</p><p>Hopefully the plugin will be included by the Munin project.  But
+<p>Hopefully the plugin will be included by the Munin project.  But
 until then, or if you want the latest version, you can find download
 instructions on my <a href="../code">projects page</a>.
 
-</p><p>Some features:
+<p>Some features:
 
-</p><ul>
+<ul>
   <li>Data collected from MySQL is stored in shared memory, thus
     avoiding unnecessary server requests.
-  </li><li>Easy to create new graphs by adding a graph definition to the
+  <li>Easy to create new graphs by adding a graph definition to the
     plugin.
-</li></ul>
+</ul>
 
-<hr />
+<hr>
 
 <div style="text-align:center">
-  <img src="munin-mysql.png" /><br />
+  <img src="munin-mysql.png"><br>
 
   <p><span class="credit">(Thanks to Bart van Bragt for the graphs)</span>
-</p></div>
+</div>
 
 
-  <hr />
+  <hr>
 
 
  
   <div class="date">2008-10-20 20:47 CEST</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/DrawingGraphsWithRubyGTKCairoAndGraphviz.html">Drawing graphs with Ruby, GTK, Cairo, and Graphviz</a></h2>
+<h2><a href="/bliki/DrawingGraphsWithRubyGTKCairoAndGraphviz.html">Drawing graphs with Ruby, GTK, Cairo, and Graphviz</a></h2>
 
 
 <p>Recently I wrote a prototype where I needed a quick solution for
   automatically laying out and drawing undirected graphs. The
   prototype was written in Ruby using GTK for the GUI.
 
-</p><p>I post here a small program wich illustrates the basics on how this
+<p>I post here a small program wich illustrates the basics on how this
   can be done, with a hope that it might be useful to others. To save
-  some cut n' paste, you can download the source file from <a href="../code/">this page</a>.
+  some cut n' paste, you can download the source file from <a
+  href="../code/">this page</a>.
 
-</p><p>Here is a sneak peek on the result.
+<p>Here is a sneak peek on the result.
 
-</p><div class="illustration"><img src="drawing_graphs.png" alt="The result" /></div>
+<div class="illustration"><img src="drawing_graphs.png" alt="The result"></div>
 
 <p>First we need a simple example graph to work with. Let us define a
   graph as an array of edges. Each edge is an array with two vertices,
   represented by symbols.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre><span class="dt">#!/usr/bin/env ruby -w</span>
 
 edges = [[<span class="sy">:a</span>, <span class="sy">:b</span>], 
@@ -385,12 +412,13 @@ edges = [[<span class="sy">:a</span>, <span class="sy">:b</span>],
 </pre>
 </div>
 <p>The next thing is to calculate a layout of the vertices. To do this
-  I use the neato command from <a href="http://graphviz.org">Graphviz</a>. Neato is a program for
+  I use the neato command from <a
+  href="http://graphviz.org">Graphviz</a>. Neato is a program for
   drawing undirected graphs. Graphviz expects its input to be in the
   <a href="http://en.wikipedia.org/wiki/DOT_language">dot
   language</a>.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>dot = <span class="s"><span class="dl">&quot;</span><span class="k">graph Test {</span><span class="ch">\n</span><span class="dl">&quot;</span></span>
 edges.each <span class="r">do</span> |edge|
   dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">    </span><span class="il"><span class="idl">#{</span>edge[<span class="i">0</span>].to_s<span class="idl">}</span></span><span class="k"> -- </span><span class="il"><span class="idl">#{</span>edge[<span class="i">1</span>].to_s<span class="idl">}</span></span><span class="k">;</span><span class="ch">\n</span><span class="dl">&quot;</span></span>
@@ -400,9 +428,10 @@ dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">}</sp
 </div>
 <p>Interaction with neato is done using a pipe, and giving it the
   argument <code>-Tplain</code> produces a graph to stdout with layout
-  information. The output format is described <a href="http://www.graphviz.org/cvs/doc/info/output.html#d:plain">here</a>.
+  information. The output format is described <a
+  href="http://www.graphviz.org/cvs/doc/info/output.html#d:plain">here</a>.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>layout = <span class="co">IO</span>.popen(<span class="s"><span class="dl">'</span><span class="k">neato -Tplain</span><span class="dl">'</span></span>, <span class="s"><span class="dl">'</span><span class="k">r+</span><span class="dl">'</span></span>) <span class="r">do</span> |pipe|
   pipe.write(dot)
   pipe.close_write
@@ -413,7 +442,7 @@ dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">}</sp
 <p>Before we proceed, we need to define some variables. Their use
   should be fairly obvious later on.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>vertex_coordinates = {}
 padding            = <span class="i">20</span>
 scale              = <span class="i">100</span>
@@ -421,7 +450,7 @@ scale              = <span class="i">100</span>
 </div>
 <p>Now we can parse the layout information.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>layout.each <span class="r">do</span> |line|
   <span class="r">if</span> line =~ <span class="rx"><span class="dl">/</span><span class="k">^node (</span><span class="ch">\w</span><span class="k">+)  ([</span><span class="ch">\d</span><span class="k">.]+) ([</span><span class="ch">\d</span><span class="k">.]+)</span><span class="dl">/</span></span>
     vertex_coordinates[<span class="gv">$1</span>.to_sym] = [<span class="gv">$2</span>.to_f * scale + padding, 
@@ -430,9 +459,10 @@ scale              = <span class="i">100</span>
 <span class="r">end</span>
 </pre>
 </div>
-<p>Then we create a window to put the drawing inside, using the <a href="http://ruby-gnome2.sourceforge.jp/">gtk2</a> library.
+<p>Then we create a window to put the drawing inside, using the <a
+  href="http://ruby-gnome2.sourceforge.jp/">gtk2</a> library.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>require <span class="s"><span class="dl">'</span><span class="k">gtk2</span><span class="dl">'</span></span>
 
 window = <span class="co">Gtk</span>::<span class="co">Window</span>.new(<span class="s"><span class="dl">'</span><span class="k">Graph</span><span class="dl">'</span></span>)
@@ -443,10 +473,11 @@ window.signal_connect(<span class="s"><span class="dl">'</span><span class="k">d
 <span class="r">end</span>
 </pre>
 </div>
-<p>And here is the code which draws the graph. The code uses the <a href="http://www.cairographics.org/">Cairo</a> vector drawing
+<p>And here is the code which draws the graph. The code uses the <a
+  href="http://www.cairographics.org/">Cairo</a> vector drawing
   library in a GTK::DrawingArea.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>area = <span class="co">Gtk</span>::<span class="co">DrawingArea</span>.new
 area.signal_connect(<span class="s"><span class="dl">'</span><span class="k">expose_event</span><span class="dl">'</span></span>) <span class="r">do</span>
   context = area.window.create_cairo_context
@@ -480,7 +511,7 @@ area.signal_connect(<span class="s"><span class="dl">'</span><span class="k">exp
 </div>
 <p>Finally we add the drawing to the window and start the application.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>window.add(area)
 window.show_all
 
@@ -490,79 +521,81 @@ window.show_all
 <p>THE END
 
 
-  </p><hr />
+  <hr>
 
 
  
   <div class="date">2008-09-18 20:22 CEST</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/MissingValuesInSQL.html">Missing values in SQL</a></h2>
+<h2><a href="/bliki/MissingValuesInSQL.html">Missing values in SQL</a></h2>
 
 
 <div class="notice">
   <p>This article is part of a series
   on <a href="SelectedTopicsOnDatabaseManagementSystems.html">selected
   topics on database management systems</a>
-</p></div>
+</div>
 
 
 <p>In SQL we use NULL as a placeholder for missing values. It has at least 
 three different uses.
 
-</p><ol>
+<ol>
   <li>To mark a value in a column as 'missing'.
 
-  </li><li>As placeholders in the result of
+  <li>As placeholders in the result of
     an <a href="http://en.wikipedia.org/wiki/Join_(SQL)#Outer_joins">outer
     join</a> where 'no match' are found between rows.
 
-  </li><li>As the result of arithmetic operations with one or more operands
+  <li>As the result of arithmetic operations with one or more operands
     that are NULL. Here a NULL means 'unknown', unknown because
     information that is needed for evaluating the expression is
     missing.
-</li></ol>
+</ol>
 
 <p>If a value in a column is NULL, all you know is that it is
   missing. If you need to know why, you can store that information in
   a separate column. Another approach is to disallow NULLs and use an
   encoding that has distinct values for missing data. An example is
-  the standard encoding for gender: <a href="http://en.wikipedia.org/wiki/ISO_5218">ISO 5218</a>.
+  the standard encoding for gender: <a
+  href="http://en.wikipedia.org/wiki/ISO_5218">ISO 5218</a>.
 
-</p><p>The usage of NULL is one of the big controversies in SQL and
+<p>The usage of NULL is one of the big controversies in SQL and
   relational systems. Some feels that it introduces unnecessary
   complexity, and the general advice seems to be to use NULLs only
   when there is no better option.
 
-</p><h3>Reasons to avoid NULL</h3>
+<h3>Reasons to avoid NULL</h3>
 
 <ul>
 
   <li>NULL behaves differently from similar non-value markers in most
     programming languages.
 
-  </li><li>Some confuses NULL with the empty string, zero, or false.
+  <li>Some confuses NULL with the empty string, zero, or false.
 
-  </li><li>NULLs introduces 3-valued logic. That is, in addition to TRUE
+  <li>NULLs introduces 3-valued logic. That is, in addition to TRUE
     and FALSE you also have UNKNOWN, a source of many
     misunderstandings and errors in SQL statements.
 
-  </li><li>Many functions treat NULL in a special manner. To remember how
+  <li>Many functions treat NULL in a special manner. To remember how
     NULL is handled by different functions is painful. Some examples:
     GROUP BY puts all rows with NULLs in the same group, thous
     treating them equal when in fact the equality is unknown. The SUM
     aggregate function ignores NULLs when summarizing the values of a
     column.
 
-  </li><li>Having columns that might be NULL in a table, typically
+  <li>Having columns that might be NULL in a table, typically
     introduces a penalty on performance.
 
-  </li><li>Mistakes are Easily made when dealing with ALL, ANY, IN, and
+  <li>Mistakes are Easily made when dealing with ALL, ANY, IN, and
     EXISTS queries.
 
-  </li><li>Having many nullable columns in a table might indicate that the
-    table is not properly <a href="http://en.wikipedia.org/wiki/Database_normalization">normalized</a>.
+  <li>Having many nullable columns in a table might indicate that the
+    table is not properly <a
+    href="http://en.wikipedia.org/wiki/Database_normalization">normalized</a>.
 
-</li></ul>
+</ul>
 
 <h3>Reasons to use NULL</h3>
 
@@ -573,45 +606,45 @@ three different uses.
   reasonable encoding for the column. Just be aware that you don't
   fall in any of the traps mentioned above.
 
-</li></ul>
+</ul>
 
 <h3>Read more</h3>
 
 <ul class="bibliography">
 
-  <li>Celcko, J. (2005), <em>SQL For Smarties</em>, San Francisco: Morgan Kaufman<br />
+  <li>Celcko, J. (2005), <em>SQL For Smarties</em>, San Francisco: Morgan Kaufman<br>
   Chapter 6
   
 
-  </li><li>Celcko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufman<br />
+  <li>Celcko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufman<br>
   Chapter 5.3.3
 
-  </li><li>Garcia-Molina, H., Ullman, J., &amp; Widom, J. (2002), <em>Database
-  systems: The complete book</em>, New Jersey: Prentice Hall<br />
+  <li>Garcia-Molina, H., Ullman, J., &amp; Widom, J. (2002), <em>Database
+  systems: The complete book</em>, New Jersey: Prentice Hall<br>
   Chapter 6.1.5
 
-  </li><li><em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29">Null (SQL)</a></em>, Wikipedia
+  <li><em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29">Null (SQL)</a></em>, Wikipedia
 
-  </li><li><em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy">Null (SQL) :: Controversy</a></em>, Wikipedia
+  <li><em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy">Null (SQL) :: Controversy</a></em>, Wikipedia
 
-  </li><li>de Haan, L., Gennick, J. (2005), <em><a href="http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html">Nulls: Nothing to Worry About</a></em>, Oracle Magazinea
-</li></ul>
+  <li>de Haan, L., Gennick, J. (2005), <em><a href="http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html">Nulls: Nothing to Worry About</a></em>, Oracle Magazinea
+</ul>
 
 
-  <hr />
+  <hr>
 
 
  
   <div class="date">2008-09-10 20:22 CEST</div>
 
-<h2><a href="http://oierud.name/~kjellm/bliki/NaturalVsSurrogatePrimaryKeys.html">Natural vs surrogate primary keys</a></h2>
+<h2><a href="/bliki/NaturalVsSurrogatePrimaryKeys.html">Natural vs surrogate primary keys</a></h2>
 
 
 <div class="notice">
   <p>This article is part of a series
   on <a href="SelectedTopicsOnDatabaseManagementSystems.html">selected
   topics on database management systems</a>
-</p></div>
+</div>
 
 
 <p>To identify the different records in a relational table, we use a
@@ -624,45 +657,47 @@ key</em></a> is added to the record and uses artificial data. When
 choosing your strategy, it is important to be aware of the advantages
 and disadvantages.
 
-</p><p>The main advantage of a natural key is that it can be verified by
+<p>The main advantage of a natural key is that it can be verified by
 comparing it with real world data. This is how users of the system
 typically will identify data.
 
-</p><p>A surrogate key on the other hand has the advantage of being more
+<p>A surrogate key on the other hand has the advantage of being more
 robust to changes in how we identify the records in the real
 world. When the natural key changes (e.g. because of changes in
 business requirements), you don't have to change all your internal
 references to the record.
 
-</p><p>It is also more efficient for the database system to use surrogate
+<p>It is also more efficient for the database system to use surrogate
 keys. This is true especially when joining on the primary keys, or if
 the system uses clustered primary key indexes.
 
-</p><p>Since a surrogate key normally is internal to a system, it can't
+<p>Since a surrogate key normally is internal to a system, it can't
 be used to reference entities in external systems.
 
-</p><p>There should always be maintained a natural key in a table even if
+<p>There should always be maintained a natural key in a table even if
 a surrogate key is chosen as the primary. If not, the records will
 loose their connection to the real world. But be aware that the two
 keys might get out of sync without you noticing it.
 
 
-</p><h3>Read more</h3>
+<h3>Read more</h3>
 
 <ul class="bibliography">
-  <li>Celko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufmann<br />
+  <li>Celko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufmann<br>
     Chapter 3.13
 
-  </li><li>Ambler S. W., <em><a href="http://www.agiledata.org/essays/keys.html">Choosing a Primary
+  <li>Ambler S. W., <em><a
+  href="http://www.agiledata.org/essays/keys.html">Choosing a Primary
   Key: Natural or Surrogate?</a></em>, Agile Data
 
-  </li><li>Richardson L. (2007), <em><a href="http://rapidapplicationdevelopment.blogspot.com/2007/08/in-case-youre-new-to-series-ive.html">Surrogate
+  <li>Richardson L. (2007), <em><a
+  href="http://rapidapplicationdevelopment.blogspot.com/2007/08/in-case-youre-new-to-series-ive.html">Surrogate
   vs Natural Primary Keys – Data Modeling Mistake 2 of 10</a></em>,
   Rapid Application Development Blog
-</li></ul>
+</ul>
 
 
-  <hr />
+  <hr>
 
 
 

@@ -1,21 +1,22 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Kjell-Magne Øierud :: bliki :: Drawing graphs with Ruby, GTK, Cairo, and Graphviz</title>
     <meta name="author" content="" />
 
-    <link href="http://oierud.name/~kjellm/bliki/feed.atom" title="Feed" rel="alternate" type="application/atom+xml" />
+    <link rel="alternate" type="application/atom+xml" title="Feed" href="/bliki/feed.atom">
 
 
 
     <!-- CodeRay syntax highlighting CSS -->
-    <link href="http://oierud.name/~kjellm/css/coderay.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/css/coderay.css" type="text/css" />
  
     <!-- Homepage CSS -->
-    <link href="http://oierud.name/~kjellm/css/site.css" rel="stylesheet" media="screen, projection" type="text/css" />
+    <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen, projection" />
 
-    <script src="http://oierud.name/~kjellm/main.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/main.js"></script>
   </head>
   <body>
     <div id="container">
@@ -23,7 +24,7 @@
 
       <p id="subtitle">Thoughts on software development
   
-      </p><div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
+      <div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
       
 
 
@@ -36,19 +37,20 @@
   automatically laying out and drawing undirected graphs. The
   prototype was written in Ruby using GTK for the GUI.
 
-</p><p>I post here a small program wich illustrates the basics on how this
+<p>I post here a small program wich illustrates the basics on how this
   can be done, with a hope that it might be useful to others. To save
-  some cut n' paste, you can download the source file from <a href="../code/">this page</a>.
+  some cut n' paste, you can download the source file from <a
+  href="../code/">this page</a>.
 
-</p><p>Here is a sneak peek on the result.
+<p>Here is a sneak peek on the result.
 
-</p><div class="illustration"><img src="drawing_graphs.png" alt="The result" /></div>
+<div class="illustration"><img src="drawing_graphs.png" alt="The result"></div>
 
 <p>First we need a simple example graph to work with. Let us define a
   graph as an array of edges. Each edge is an array with two vertices,
   represented by symbols.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre><span class="dt">#!/usr/bin/env ruby -w</span>
 
 edges = [[<span class="sy">:a</span>, <span class="sy">:b</span>], 
@@ -63,12 +65,13 @@ edges = [[<span class="sy">:a</span>, <span class="sy">:b</span>],
 </pre>
 </div>
 <p>The next thing is to calculate a layout of the vertices. To do this
-  I use the neato command from <a href="http://graphviz.org">Graphviz</a>. Neato is a program for
+  I use the neato command from <a
+  href="http://graphviz.org">Graphviz</a>. Neato is a program for
   drawing undirected graphs. Graphviz expects its input to be in the
   <a href="http://en.wikipedia.org/wiki/DOT_language">dot
   language</a>.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>dot = <span class="s"><span class="dl">&quot;</span><span class="k">graph Test {</span><span class="ch">\n</span><span class="dl">&quot;</span></span>
 edges.each <span class="r">do</span> |edge|
   dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">    </span><span class="il"><span class="idl">#{</span>edge[<span class="i">0</span>].to_s<span class="idl">}</span></span><span class="k"> -- </span><span class="il"><span class="idl">#{</span>edge[<span class="i">1</span>].to_s<span class="idl">}</span></span><span class="k">;</span><span class="ch">\n</span><span class="dl">&quot;</span></span>
@@ -78,9 +81,10 @@ dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">}</sp
 </div>
 <p>Interaction with neato is done using a pipe, and giving it the
   argument <code>-Tplain</code> produces a graph to stdout with layout
-  information. The output format is described <a href="http://www.graphviz.org/cvs/doc/info/output.html#d:plain">here</a>.
+  information. The output format is described <a
+  href="http://www.graphviz.org/cvs/doc/info/output.html#d:plain">here</a>.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>layout = <span class="co">IO</span>.popen(<span class="s"><span class="dl">'</span><span class="k">neato -Tplain</span><span class="dl">'</span></span>, <span class="s"><span class="dl">'</span><span class="k">r+</span><span class="dl">'</span></span>) <span class="r">do</span> |pipe|
   pipe.write(dot)
   pipe.close_write
@@ -91,7 +95,7 @@ dot &lt;&lt; <span class="s"><span class="dl">&quot;</span><span class="k">}</sp
 <p>Before we proceed, we need to define some variables. Their use
   should be fairly obvious later on.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>vertex_coordinates = {}
 padding            = <span class="i">20</span>
 scale              = <span class="i">100</span>
@@ -99,7 +103,7 @@ scale              = <span class="i">100</span>
 </div>
 <p>Now we can parse the layout information.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>layout.each <span class="r">do</span> |line|
   <span class="r">if</span> line =~ <span class="rx"><span class="dl">/</span><span class="k">^node (</span><span class="ch">\w</span><span class="k">+)  ([</span><span class="ch">\d</span><span class="k">.]+) ([</span><span class="ch">\d</span><span class="k">.]+)</span><span class="dl">/</span></span>
     vertex_coordinates[<span class="gv">$1</span>.to_sym] = [<span class="gv">$2</span>.to_f * scale + padding, 
@@ -108,9 +112,10 @@ scale              = <span class="i">100</span>
 <span class="r">end</span>
 </pre>
 </div>
-<p>Then we create a window to put the drawing inside, using the <a href="http://ruby-gnome2.sourceforge.jp/">gtk2</a> library.
+<p>Then we create a window to put the drawing inside, using the <a
+  href="http://ruby-gnome2.sourceforge.jp/">gtk2</a> library.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>require <span class="s"><span class="dl">'</span><span class="k">gtk2</span><span class="dl">'</span></span>
 
 window = <span class="co">Gtk</span>::<span class="co">Window</span>.new(<span class="s"><span class="dl">'</span><span class="k">Graph</span><span class="dl">'</span></span>)
@@ -121,10 +126,11 @@ window.signal_connect(<span class="s"><span class="dl">'</span><span class="k">d
 <span class="r">end</span>
 </pre>
 </div>
-<p>And here is the code which draws the graph. The code uses the <a href="http://www.cairographics.org/">Cairo</a> vector drawing
+<p>And here is the code which draws the graph. The code uses the <a
+  href="http://www.cairographics.org/">Cairo</a> vector drawing
   library in a GTK::DrawingArea.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>area = <span class="co">Gtk</span>::<span class="co">DrawingArea</span>.new
 area.signal_connect(<span class="s"><span class="dl">'</span><span class="k">expose_event</span><span class="dl">'</span></span>) <span class="r">do</span>
   context = area.window.create_cairo_context
@@ -158,7 +164,7 @@ area.signal_connect(<span class="s"><span class="dl">'</span><span class="k">exp
 </div>
 <p>Finally we add the drawing to the window and start the application.
 
-</p><div class="CodeRay">
+<div class="CodeRay">
 <pre>window.add(area)
 window.show_all
 
@@ -168,13 +174,13 @@ window.show_all
 <p>THE END
 
 
-      </p><hr />
+      <hr>
 <div class="sponsor">
-  <a href="http://redpill-linpro.com" target="_blank"><img src="../rplp.gif" alt="Redpill Linpro" /></a>
+  <a href="http://redpill-linpro.com" target="_blank"><img src="../rplp.gif" alt="Redpill Linpro"></a>
 </div>
 
 
-      <div id="disqus_thread"></div><script src="http://disqus.com/forums/km-oierud/embed.js" type="text/javascript"></script><noscript><a href="http://disqus.com/forums/km-oierud/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+      <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/km-oierud/embed.js"></script><noscript><a href="http://disqus.com/forums/km-oierud/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
     </div>
   </body>
 </html>
