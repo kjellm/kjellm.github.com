@@ -5,20 +5,19 @@
   <subtitle>Thoughts on software development</subtitle>
   <link href="http://oierud.name/~kjellm/bliki/" rel="self" />
   <link href="http://oierud.name/~kjellm/" />
-  <updated>2010-06-08T06:55:58+02:00</updated>
+  <updated>2011-11-19T20:22:23+01:00</updated>
   <author>
     <name>Kjell-Magne Øierud</name>
     <email>NA</email>
   </author>
   <id>http://oierud.name/~kjellm/</id>
   
-    <entry>
-      <title>Achoo --- The Achievo CLI</title>
-      <link href="/bliki/AchooTheAchievoCLI.html" />
-      <id>tag:oierud.name/~kjellm,2010-02-18:1266524571</id>
-      <updated>2010-02-18T21:22:51+01:00</updated>
-      <content type="html">
-
+  <entry>
+    <title>Achoo --- The Achievo CLI</title>
+    <link href="/bliki/AchooTheAchievoCLI.html" />
+    <id>tag:oierud.name/~kjellm,2010-02-18:1266524571</id>
+    <updated>2010-02-18T21:22:51+01:00</updated>
+    <content type="html">
 
 
 
@@ -178,18 +177,15 @@ Balance: &lt;u&gt;26,00&lt;/u&gt;
 period: 201001
 &lt;strong&gt;Submit? [Y/n]&amp;gt;&lt;/strong&gt; &lt;em&gt;n&lt;/em&gt;
 Cancelled
-&lt;/pre&gt;&lt;/div&gt;
-
-</content>
-    </entry>
+&lt;/pre&gt;&lt;/div&gt;</content>
+  </entry>
   
-    <entry>
-      <title>IPv6 addresses and MySQL</title>
-      <link href="/bliki/IPv6AdressesAndMysql.html" />
-      <id>tag:oierud.name/~kjellm,2009-02-19:1235040590</id>
-      <updated>2009-02-19T11:49:50+01:00</updated>
-      <content type="html">
-
+  <entry>
+    <title>IPv6 addresses and MySQL</title>
+    <link href="/bliki/IPv6AdressesAndMysql.html" />
+    <id>tag:oierud.name/~kjellm,2009-02-19:1235040590</id>
+    <updated>2009-02-19T11:49:50+01:00</updated>
+    <content type="html">
 
 
 
@@ -200,18 +196,17 @@ Cancelled
   128 bits long, so to store that as an integer in MySQL you need to
   use the &lt;code&gt;DECIMAL&lt;/code&gt; data type.
 
-&lt;p&gt;In MySQL there is two functions that help you translate between the
+&lt;/p&gt;&lt;p&gt;In MySQL there is two functions that help you translate between the
   familiar canonical version and the numeric version of IP addresses:
   INET_ATON() and INET_NTOA(). However these functions do not work
   with IPv6 addresses.
 
-&lt;p&gt;One possible solution to this is to implement INET_ATON6() and
+&lt;/p&gt;&lt;p&gt;One possible solution to this is to implement INET_ATON6() and
 INET_NTOA6() yourself as stored functions:
 
-&lt;h3&gt;INET_ATON6&lt;/h3&gt;
+&lt;/p&gt;&lt;h3&gt;INET_ATON6&lt;/h3&gt;
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;DELIMITER //
+&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-sql&quot;&gt;DELIMITER //
 &lt;span class=&quot;r&quot;&gt;CREATE&lt;/span&gt; FUNCTION INET_ATON6(n &lt;span class=&quot;pt&quot;&gt;CHAR&lt;/span&gt;(&lt;span class=&quot;i&quot;&gt;39&lt;/span&gt;))
 RETURNS &lt;span class=&quot;pt&quot;&gt;DECIMAL&lt;/span&gt;(&lt;span class=&quot;i&quot;&gt;39&lt;/span&gt;) &lt;span class=&quot;pt&quot;&gt;UNSIGNED&lt;/span&gt;
 DETERMINISTIC
@@ -234,13 +229,11 @@ DETERMINISTIC
          ;
 &lt;span class=&quot;r&quot;&gt;END&lt;/span&gt;;
 //
-DELIMITER ;
-&lt;/pre&gt;
-&lt;/div&gt;
+DELIMITER ;&lt;/code&gt;&lt;/pre&gt;
+
 
 &lt;h3&gt;INET_NTOA6&lt;/h3&gt;
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;DELIMITER //
+&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-sql&quot;&gt;DELIMITER //
 &lt;span class=&quot;r&quot;&gt;CREATE&lt;/span&gt; FUNCTION INET_NTOA6(n &lt;span class=&quot;pt&quot;&gt;DECIMAL&lt;/span&gt;(&lt;span class=&quot;i&quot;&gt;39&lt;/span&gt;) &lt;span class=&quot;pt&quot;&gt;UNSIGNED&lt;/span&gt;)
 RETURNS &lt;span class=&quot;pt&quot;&gt;CHAR&lt;/span&gt;(&lt;span class=&quot;i&quot;&gt;39&lt;/span&gt;)
 DETERMINISTIC
@@ -267,18 +260,17 @@ DETERMINISTIC
 
 &lt;span class=&quot;r&quot;&gt;END&lt;/span&gt;;
 //
-DELIMITER ;
-&lt;/pre&gt;
-&lt;/div&gt;
+DELIMITER ;&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;The code is to be regarded as a proof of concept as it needs sanity
   checks and handling of simplified address notations before
   production use. However the following small test verifies that it is
   not completely broken:
 
-&lt;div class=&quot;CodeRay&quot;&gt;
+&lt;/p&gt;&lt;div class=&quot;CodeRay&quot;&gt;
 &lt;pre&gt;
-mysql&gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
-    -&gt;   &lt;strong&gt;'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));&lt;/strong&gt;
+mysql&amp;gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
+    -&amp;gt;   &lt;strong&gt;'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));&lt;/strong&gt;
 +-------------------------------------------------------------------+
 | INET_NTOA6(INET_ATON6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')) |
 +-------------------------------------------------------------------+
@@ -286,8 +278,8 @@ mysql&gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
 +-------------------------------------------------------------------+
 1 row in set (0.00 sec)
 
-mysql&gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
-    -&gt;   &lt;strong&gt;'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'));&lt;/strong&gt;
+mysql&amp;gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
+    -&amp;gt;   &lt;strong&gt;'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'));&lt;/strong&gt;
 +-------------------------------------------------------------------+
 | INET_NTOA6(INET_ATON6('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff')) |
 +-------------------------------------------------------------------+
@@ -295,8 +287,8 @@ mysql&gt; &lt;strong&gt;SELECT INET_NTOA6(INET_ATON6(&lt;/strong&gt;
 +-------------------------------------------------------------------+
 1 row in set (0.00 sec)
 
-mysql&gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
-    -&gt;   &lt;strong&gt;'0000:0000:0000:0000:0000:0000:0000:0000'));&lt;/strong&gt;
+mysql&amp;gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
+    -&amp;gt;   &lt;strong&gt;'0000:0000:0000:0000:0000:0000:0000:0000'));&lt;/strong&gt;
 +-------------------------------------------------------------------+
 | INET_NTOA6(INET_ATON6('0000:0000:0000:0000:0000:0000:0000:0000')) |
 +-------------------------------------------------------------------+
@@ -304,55 +296,52 @@ mysql&gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
 +-------------------------------------------------------------------+
 1 row in set (0.01 sec)
 &lt;/pre&gt;
-&lt;/div&gt;
-</content>
-    </entry>
+&lt;/div&gt;</content>
+  </entry>
   
-    <entry>
-      <title>Improved Munin Graphs for MySQL</title>
-      <link href="/bliki/ImprovedMuninGraphsForMySQL.html" />
-      <id>tag:oierud.name/~kjellm,2009-02-13:1234538085</id>
-      <updated>2009-02-13T16:14:45+01:00</updated>
-      <content type="html">
+  <entry>
+    <title>Improved Munin Graphs for MySQL</title>
+    <link href="/bliki/ImprovedMuninGraphsForMySQL.html" />
+    <id>tag:oierud.name/~kjellm,2009-02-13:1234538085</id>
+    <updated>2009-02-13T16:14:45+01:00</updated>
+    <content type="html">
 
-
-
-
-&lt;p&gt;Inspired by &lt;a href=&quot;http://xaprb.com/&quot;&gt;Xaprb's&lt;/a&gt; &lt;a
-href=&quot;http://code.google.com/p/mysql-cacti-templates/&quot;&gt;improved graphs
-for Cacti&lt;/a&gt;, I wrote a plugin that creates similar graphs for &lt;a
-href=&quot;http://munin.projects.linpro.no/&quot;&gt;Munin&lt;/a&gt;. 
-
-&lt;p&gt;Hopefully the plugin will be included by the Munin project.  But
-until then, or if you want the latest version, you can find download
-instructions on my &lt;a href=&quot;../code&quot;&gt;projects page&lt;/a&gt;.
-
-&lt;p&gt;Some features:
-
+&lt;p&gt;
+  Inspired by &lt;a href=&quot;http://xaprb.com/&quot;&gt;Xaprb's&lt;/a&gt; &lt;a
+  href=&quot;http://code.google.com/p/mysql-cacti-templates/&quot;&gt;improved graphs for
+  Cacti&lt;/a&gt;, I wrote a plugin that creates similar graphs for &lt;a
+  href=&quot;http://munin.projects.linpro.no/&quot;&gt;Munin&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+  Hopefully the plugin will be included by the Munin project. But until then,
+  or if you want the latest version, you can find download instructions on my
+  &lt;a href=&quot;../code&quot;&gt;projects page&lt;/a&gt;.
+&lt;/p&gt;
+&lt;p&gt;Some features:&lt;/p&gt;
 &lt;ul&gt;
-  &lt;li&gt;Data collected from MySQL is stored in shared memory, thus
-    avoiding unnecessary server requests.
-  &lt;li&gt;Easy to create new graphs by adding a graph definition to the
-    plugin.
+  &lt;li&gt;
+    Data collected from MySQL is stored in shared memory, thus avoiding
+    unnecessary server requests.
+  &lt;/li&gt;
+  &lt;li&gt;
+    Easy to create new graphs by adding a graph definition to the plugin.
+  &lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr&gt;
-
-&lt;div style=&quot;text-align:center&quot;&gt;
-  &lt;img src=&quot;munin-mysql.png&quot;&gt;&lt;br&gt;
-
-  &lt;p&gt;&lt;span class=&quot;credit&quot;&gt;(Thanks to Bart van Bragt for the graphs)&lt;/span&gt;
+&lt;hr /&gt;
+&lt;div style='text-align:center'&gt;
+  &lt;img src='../munin-mysql.png' /&gt;
+  &lt;br /&gt;
+  &lt;p&gt;&lt;span class='credit'&gt;(Thanks to Bart van Bragt for the graph images)&lt;/span&gt;&lt;/p&gt;
 &lt;/div&gt;
 </content>
-    </entry>
+  </entry>
   
-    <entry>
-      <title>Drawing graphs with Ruby, GTK, Cairo, and Graphviz</title>
-      <link href="/bliki/DrawingGraphsWithRubyGTKCairoAndGraphviz.html" />
-      <id>tag:oierud.name/~kjellm,2008-10-20:1224528461</id>
-      <updated>2008-10-20T20:47:41+02:00</updated>
-      <content type="html">
-
+  <entry>
+    <title>Drawing graphs with Ruby, GTK, Cairo, and Graphviz</title>
+    <link href="/bliki/DrawingGraphsWithRubyGTKCairoAndGraphviz.html" />
+    <id>tag:oierud.name/~kjellm,2008-10-20:1224528461</id>
+    <updated>2008-10-20T20:47:41+02:00</updated>
+    <content type="html">
 
 
 
@@ -360,21 +349,19 @@ instructions on my &lt;a href=&quot;../code&quot;&gt;projects page&lt;/a&gt;.
   automatically laying out and drawing undirected graphs. The
   prototype was written in Ruby using GTK for the GUI.
 
-&lt;p&gt;I post here a small program wich illustrates the basics on how this
+&lt;/p&gt;&lt;p&gt;I post here a small program which illustrates the basics on how this
   can be done, with a hope that it might be useful to others. To save
-  some cut n' paste, you can download the source file from &lt;a
-  href=&quot;../code/&quot;&gt;this page&lt;/a&gt;.
+  some cut n' paste, you can download the source file from &lt;a href=&quot;https://gist.github.com/1315902&quot;&gt;this gist&lt;/a&gt;.
 
-&lt;p&gt;Here is a sneak peek on the result.
+&lt;/p&gt;&lt;p&gt;Here is a sneak peek on the result.
 
-&lt;div class=&quot;illustration&quot;&gt;&lt;img src=&quot;drawing_graphs.png&quot; alt=&quot;The result&quot;&gt;&lt;/div&gt;
+&lt;/p&gt;&lt;div class=&quot;illustration&quot;&gt;&lt;img src=&quot;/drawing_graphs.png&quot; alt=&quot;The result&quot;&gt;&lt;/div&gt;
 
 &lt;p&gt;First we need a simple example graph to work with. Let us define a
   graph as an array of edges. Each edge is an array with two vertices,
   represented by symbols.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;&lt;span class=&quot;dt&quot;&gt;#!/usr/bin/env ruby -w&lt;/span&gt;
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;&lt;span class=&quot;dt&quot;&gt;#!/usr/bin/env ruby -w&lt;/span&gt;
 
 edges = [[&lt;span class=&quot;sy&quot;&gt;:a&lt;/span&gt;, &lt;span class=&quot;sy&quot;&gt;:b&lt;/span&gt;], 
          [&lt;span class=&quot;sy&quot;&gt;:a&lt;/span&gt;, &lt;span class=&quot;sy&quot;&gt;:c&lt;/span&gt;], 
@@ -383,78 +370,62 @@ edges = [[&lt;span class=&quot;sy&quot;&gt;:a&lt;/span&gt;, &lt;span class=&quot
          [&lt;span class=&quot;sy&quot;&gt;:d&lt;/span&gt;, &lt;span class=&quot;sy&quot;&gt;:e&lt;/span&gt;],
          [&lt;span class=&quot;sy&quot;&gt;:d&lt;/span&gt;, &lt;span class=&quot;sy&quot;&gt;:f&lt;/span&gt;],
          [&lt;span class=&quot;sy&quot;&gt;:e&lt;/span&gt;, &lt;span class=&quot;sy&quot;&gt;:f&lt;/span&gt;],
-        ]
+        ]&lt;/code&gt;&lt;/pre&gt;
 
-&lt;/pre&gt;
-&lt;/div&gt;
 &lt;p&gt;The next thing is to calculate a layout of the vertices. To do this
-  I use the neato command from &lt;a
-  href=&quot;http://graphviz.org&quot;&gt;Graphviz&lt;/a&gt;. Neato is a program for
+  I use the neato command from &lt;a href=&quot;http://graphviz.org&quot;&gt;Graphviz&lt;/a&gt;. Neato is a program for
   drawing undirected graphs. Graphviz expects its input to be in the
   &lt;a href=&quot;http://en.wikipedia.org/wiki/DOT_language&quot;&gt;dot
   language&lt;/a&gt;.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;dot = &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;graph Test {&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;dot = &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;graph Test {&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;
 edges.each &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |edge|
-  dot &amp;lt;&amp;lt; &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;il&quot;&gt;&lt;span class=&quot;idl&quot;&gt;#{&lt;/span&gt;edge[&lt;span class=&quot;i&quot;&gt;0&lt;/span&gt;].to_s&lt;span class=&quot;idl&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt; -- &lt;/span&gt;&lt;span class=&quot;il&quot;&gt;&lt;span class=&quot;idl&quot;&gt;#{&lt;/span&gt;edge[&lt;span class=&quot;i&quot;&gt;1&lt;/span&gt;].to_s&lt;span class=&quot;idl&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
+  dot &amp;lt;&amp;lt; &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;il&quot;&gt;&lt;span class=&quot;idl&quot;&gt;#{&lt;/span&gt;edge[&lt;span class=&quot;i&quot;&gt;0&lt;/span&gt;].to_s&lt;span class=&quot;idl&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt; -- &lt;/span&gt;&lt;span class=&quot;il&quot;&gt;&lt;span class=&quot;idl&quot;&gt;#{&lt;/span&gt;edge[&lt;span class=&quot;i&quot;&gt;1&lt;/span&gt;].to_s&lt;span class=&quot;idl&quot;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;
 &lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-dot &amp;lt;&amp;lt; &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
+dot &amp;lt;&amp;lt; &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;co&quot;&gt;EOT&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Interaction with neato is done using a pipe, and giving it the
   argument &lt;code&gt;-Tplain&lt;/code&gt; produces a graph to stdout with layout
-  information. The output format is described &lt;a
-  href=&quot;http://www.graphviz.org/cvs/doc/info/output.html#d:plain&quot;&gt;here&lt;/a&gt;.
+  information. The output format is described &lt;a href=&quot;http://www.graphviz.org/cvs/doc/info/output.html#d:plain&quot;&gt;here&lt;/a&gt;.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;layout = &lt;span class=&quot;co&quot;&gt;IO&lt;/span&gt;.popen(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;neato -Tplain&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;, &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;r+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;) &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |pipe|
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;layout = &lt;span class=&quot;co&quot;&gt;IO&lt;/span&gt;.popen(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;neato -Tplain&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;, &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;r+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;) &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |pipe|
   pipe.write(dot)
   pipe.close_write
   pipe.read
-&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
+&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Before we proceed, we need to define some variables. Their use
   should be fairly obvious later on.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;vertex_coordinates = {}
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;vertex_coordinates = {}
 padding            = &lt;span class=&quot;i&quot;&gt;20&lt;/span&gt;
-scale              = &lt;span class=&quot;i&quot;&gt;100&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
+scale              = &lt;span class=&quot;i&quot;&gt;100&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Now we can parse the layout information.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;layout.each &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |line|
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;layout.each &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |line|
   &lt;span class=&quot;r&quot;&gt;if&lt;/span&gt; line =~ &lt;span class=&quot;rx&quot;&gt;&lt;span class=&quot;dl&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;^node (&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\w&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;+)  ([&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\d&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;.]+) ([&lt;/span&gt;&lt;span class=&quot;ch&quot;&gt;\d&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;.]+)&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;/&lt;/span&gt;&lt;/span&gt;
     vertex_coordinates[&lt;span class=&quot;gv&quot;&gt;$1&lt;/span&gt;.to_sym] = [&lt;span class=&quot;gv&quot;&gt;$2&lt;/span&gt;.to_f * scale + padding, 
                                      &lt;span class=&quot;gv&quot;&gt;$3&lt;/span&gt;.to_f * scale + padding]
   &lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Then we create a window to put the drawing inside, using the &lt;a
-  href=&quot;http://ruby-gnome2.sourceforge.jp/&quot;&gt;gtk2&lt;/a&gt; library.
+&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;require &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;gtk2&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;
+&lt;p&gt;Then we create a window to put the drawing inside, using the &lt;a href=&quot;http://ruby-gnome2.sourceforge.jp/&quot;&gt;gtk2&lt;/a&gt; library.
+
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;require &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;gtk2&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;
 
 window = &lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;::&lt;span class=&quot;co&quot;&gt;Window&lt;/span&gt;.new(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;Graph&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;)
 window.set_default_size(&lt;span class=&quot;i&quot;&gt;400&lt;/span&gt;, &lt;span class=&quot;i&quot;&gt;400&lt;/span&gt;)
 
 window.signal_connect(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;destroy&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;) &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt;
   &lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;.main_quit
-&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;And here is the code which draws the graph. The code uses the &lt;a
-  href=&quot;http://www.cairographics.org/&quot;&gt;Cairo&lt;/a&gt; vector drawing
+&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And here is the code which draws the graph. The code uses the &lt;a href=&quot;http://www.cairographics.org/&quot;&gt;Cairo&lt;/a&gt; vector drawing
   library in a GTK::DrawingArea.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;area = &lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;::&lt;span class=&quot;co&quot;&gt;DrawingArea&lt;/span&gt;.new
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;area = &lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;::&lt;span class=&quot;co&quot;&gt;DrawingArea&lt;/span&gt;.new
 area.signal_connect(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;expose_event&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;) &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt;
   context = area.window.create_cairo_context
 
@@ -482,200 +453,199 @@ area.signal_connect(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot
     context.show_text(v.to_s.upcase)
     context.stroke
   &lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;
-&lt;/pre&gt;
-&lt;/div&gt;
+&lt;span class=&quot;r&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;Finally we add the drawing to the window and start the application.
 
-&lt;div class=&quot;CodeRay&quot;&gt;
-&lt;pre&gt;window.add(area)
+&lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;window.add(area)
 window.show_all
 
-&lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;.main
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;THE END
-</content>
-    </entry>
+&lt;span class=&quot;co&quot;&gt;Gtk&lt;/span&gt;.main&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;THE END&lt;/p&gt;</content>
+  </entry>
   
-    <entry>
-      <title>Missing values in SQL</title>
-      <link href="/bliki/MissingValuesInSQL.html" />
-      <id>tag:oierud.name/~kjellm,2008-09-18:1221762144</id>
-      <updated>2008-09-18T20:22:24+02:00</updated>
-      <content type="html">
+  <entry>
+    <title>Missing values in SQL</title>
+    <link href="/bliki/MissingValuesInSQL.html" />
+    <id>tag:oierud.name/~kjellm,2008-09-18:1221762144</id>
+    <updated>2008-09-18T20:22:24+02:00</updated>
+    <content type="html">
 
-
-
-
-&lt;div class=&quot;notice&quot;&gt;
-  &lt;p&gt;This article is part of a series
-  on &lt;a href=&quot;SelectedTopicsOnDatabaseManagementSystems.html&quot;&gt;selected
-  topics on database management systems&lt;/a&gt;
+&lt;div class='notice'&gt;
+  &lt;p&gt;
+    This article is part of a series on &lt;a
+    href=&quot;SelectedTopicsOnDatabaseManagementSystems.html&quot;&gt;selected topics on
+    database management systems&lt;/a&gt;
+  &lt;/p&gt;
 &lt;/div&gt;
-
-
-&lt;p&gt;In SQL we use NULL as a placeholder for missing values. It has at least 
-three different uses.
-
+&lt;p&gt;
+  In SQL we use NULL as a placeholder for missing values. It has at least
+  three different uses.
+&lt;/p&gt;
 &lt;ol&gt;
-  &lt;li&gt;To mark a value in a column as 'missing'.
-
-  &lt;li&gt;As placeholders in the result of
-    an &lt;a href=&quot;http://en.wikipedia.org/wiki/Join_(SQL)#Outer_joins&quot;&gt;outer
-    join&lt;/a&gt; where 'no match' are found between rows.
-
-  &lt;li&gt;As the result of arithmetic operations with one or more operands
-    that are NULL. Here a NULL means 'unknown', unknown because
-    information that is needed for evaluating the expression is
-    missing.
+  &lt;li&gt;
+    To mark a value in a column as 'missing'.
+  &lt;/li&gt;
+  &lt;li&gt;
+    As placeholders in the result of an &lt;a
+    href=&quot;http://en.wikipedia.org/wiki/Join_(SQL)#Outer_joins&quot;&gt;outer join&lt;/a&gt;
+    where 'no match' are found between rows.
+  &lt;/li&gt;
+  &lt;li&gt;
+    As the result of arithmetic operations with one or more operands that are
+    NULL. Here a NULL means 'unknown', unknown because information that is
+    needed for evaluating the expression is missing.
+  &lt;/li&gt;
 &lt;/ol&gt;
-
-&lt;p&gt;If a value in a column is NULL, all you know is that it is
-  missing. If you need to know why, you can store that information in
-  a separate column. Another approach is to disallow NULLs and use an
-  encoding that has distinct values for missing data. An example is
-  the standard encoding for gender: &lt;a
+&lt;p&gt;
+  If a value in a column is NULL, all you know is that it is missing. If you
+  need to know why, you can store that information in a separate column.
+  Another approach is to disallow NULLs and use an encoding that has distinct
+  values for missing data. An example is the standard encoding for gender: &lt;a
   href=&quot;http://en.wikipedia.org/wiki/ISO_5218&quot;&gt;ISO 5218&lt;/a&gt;.
-
-&lt;p&gt;The usage of NULL is one of the big controversies in SQL and
-  relational systems. Some feels that it introduces unnecessary
-  complexity, and the general advice seems to be to use NULLs only
-  when there is no better option.
-
+&lt;/p&gt;
+&lt;p&gt;
+  The usage of NULL is one of the big controversies in SQL and relational
+  systems. Some feels that it introduces unnecessary complexity, and the
+  general advice seems to be to use NULLs only when there is no better option.
+&lt;/p&gt;
 &lt;h3&gt;Reasons to avoid NULL&lt;/h3&gt;
-
 &lt;ul&gt;
-
-  &lt;li&gt;NULL behaves differently from similar non-value markers in most
+  &lt;li&gt;
+    NULL behaves differently from similar non-value markers in most
     programming languages.
-
-  &lt;li&gt;Some confuses NULL with the empty string, zero, or false.
-
-  &lt;li&gt;NULLs introduces 3-valued logic. That is, in addition to TRUE
-    and FALSE you also have UNKNOWN, a source of many
-    misunderstandings and errors in SQL statements.
-
-  &lt;li&gt;Many functions treat NULL in a special manner. To remember how
-    NULL is handled by different functions is painful. Some examples:
-    GROUP BY puts all rows with NULLs in the same group, thous
-    treating them equal when in fact the equality is unknown. The SUM
-    aggregate function ignores NULLs when summarizing the values of a
-    column.
-
-  &lt;li&gt;Having columns that might be NULL in a table, typically
-    introduces a penalty on performance.
-
-  &lt;li&gt;Mistakes are Easily made when dealing with ALL, ANY, IN, and
-    EXISTS queries.
-
-  &lt;li&gt;Having many nullable columns in a table might indicate that the
-    table is not properly &lt;a
+  &lt;/li&gt;
+  &lt;li&gt;
+    Some confuses NULL with the empty string, zero, or false.
+  &lt;/li&gt;
+  &lt;li&gt;
+    NULLs introduces 3-valued logic. That is, in addition to TRUE and FALSE
+    you also have UNKNOWN, a source of many misunderstandings and errors in
+    SQL statements.
+  &lt;/li&gt;
+  &lt;li&gt;
+    Many functions treat NULL in a special manner. To remember how NULL is
+    handled by different functions is painful. Some examples: GROUP BY puts
+    all rows with NULLs in the same group, thous treating them equal when in
+    fact the equality is unknown. The SUM aggregate function ignores NULLs
+    when summarizing the values of a column.
+  &lt;/li&gt;
+  &lt;li&gt;
+    Having columns that might be NULL in a table, typically introduces a
+    penalty on performance.
+  &lt;/li&gt;
+  &lt;li&gt;
+    Mistakes are Easily made when dealing with ALL, ANY, IN, and EXISTS
+    queries.
+  &lt;/li&gt;
+  &lt;li&gt;
+    Having many nullable columns in a table might indicate that the table is
+    not properly &lt;a
     href=&quot;http://en.wikipedia.org/wiki/Database_normalization&quot;&gt;normalized&lt;/a&gt;.
-
+  &lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h3&gt;Reasons to use NULL&lt;/h3&gt;
-
 &lt;ul&gt;
-
-  &lt;li&gt;It is a good idea to allow NULL when you need to mark a value as
-  missing and there is no easy way handle missing values in any
-  reasonable encoding for the column. Just be aware that you don't
-  fall in any of the traps mentioned above.
-
+  &lt;li&gt;
+    It is a good idea to allow NULL when you need to mark a value as missing
+    and there is no easy way handle missing values in any reasonable encoding
+    for the column. Just be aware that you don't fall in any of the traps
+    mentioned above.
+  &lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h3&gt;Read more&lt;/h3&gt;
-
-&lt;ul class=&quot;bibliography&quot;&gt;
-
-  &lt;li&gt;Celcko, J. (2005), &lt;em&gt;SQL For Smarties&lt;/em&gt;, San Francisco: Morgan Kaufman&lt;br&gt;
-  Chapter 6
-  
-
-  &lt;li&gt;Celcko, J. (2005), &lt;em&gt;SQL Programming Style&lt;/em&gt;, San Francisco: Morgan Kaufman&lt;br&gt;
-  Chapter 5.3.3
-
-  &lt;li&gt;Garcia-Molina, H., Ullman, J., &amp;amp; Widom, J. (2002), &lt;em&gt;Database
-  systems: The complete book&lt;/em&gt;, New Jersey: Prentice Hall&lt;br&gt;
-  Chapter 6.1.5
-
-  &lt;li&gt;&lt;em&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Null_%28SQL%29&quot;&gt;Null (SQL)&lt;/a&gt;&lt;/em&gt;, Wikipedia
-
-  &lt;li&gt;&lt;em&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy&quot;&gt;Null (SQL) :: Controversy&lt;/a&gt;&lt;/em&gt;, Wikipedia
-
-  &lt;li&gt;de Haan, L., Gennick, J. (2005), &lt;em&gt;&lt;a href=&quot;http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html&quot;&gt;Nulls: Nothing to Worry About&lt;/a&gt;&lt;/em&gt;, Oracle Magazinea
+&lt;ul class='bibliography'&gt;
+  &lt;li&gt;
+    Celcko, J. (2005), &lt;em&gt;SQL For Smarties&lt;/em&gt;, San Francisco: Morgan Kaufman&lt;br&gt;Chapter 6
+  &lt;/li&gt;
+  &lt;li&gt;
+    Celcko, J. (2005), &lt;em&gt;SQL Programming Style&lt;/em&gt;, San Francisco: Morgan Kaufman&lt;br&gt;Chapter 5.3.3
+  &lt;/li&gt;
+  &lt;li&gt;
+    Garcia-Molina, H., Ullman, J., &amp;amp; Widom, J. (2002), &lt;em&gt;Database systems: The complete book&lt;/em&gt;, New Jersey: Prentice Hall&lt;br&gt;Chapter 6.1.5
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;em&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Null_%28SQL%29&quot;&gt;Null (SQL)&lt;/a&gt;&lt;/em&gt;, Wikipedia
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;em&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy&quot;&gt;Null (SQL) :: Controversy&lt;/a&gt;&lt;/em&gt;, Wikipedia
+  &lt;/li&gt;
+  &lt;li&gt;
+    de Haan, L., Gennick, J. (2005), &lt;em&gt;&lt;a href=&quot;http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html&quot;&gt;Nulls: Nothing to Worry About&lt;/a&gt;&lt;/em&gt;, Oracle Magazinea
+  &lt;/li&gt;
 &lt;/ul&gt;
 </content>
-    </entry>
+  </entry>
   
-    <entry>
-      <title>Natural vs surrogate primary keys</title>
-      <link href="/bliki/NaturalVsSurrogatePrimaryKeys.html" />
-      <id>tag:oierud.name/~kjellm,2008-09-10:1221070962</id>
-      <updated>2008-09-10T20:22:42+02:00</updated>
-      <content type="html">
+  <entry>
+    <title>Natural vs surrogate primary keys</title>
+    <link href="/bliki/NaturalVsSurrogatePrimaryKeys.html" />
+    <id>tag:oierud.name/~kjellm,2008-09-10:1221070962</id>
+    <updated>2008-09-10T20:22:42+02:00</updated>
+    <content type="html">
 
-
-
-
-&lt;div class=&quot;notice&quot;&gt;
-  &lt;p&gt;This article is part of a series
-  on &lt;a href=&quot;SelectedTopicsOnDatabaseManagementSystems.html&quot;&gt;selected
-  topics on database management systems&lt;/a&gt;
+&lt;div class='notice'&gt;
+  &lt;p&gt;
+    This article is part of a series on &lt;a
+    href=&quot;SelectedTopicsOnDatabaseManagementSystems.html&quot;&gt;selected topics on
+    database management systems&lt;/a&gt;
+  &lt;/p&gt;
 &lt;/div&gt;
-
-
-&lt;p&gt;To identify the different records in a relational table, we use a
-primary key. There are two kinds of primary keys with very different
-characteristics. A &lt;a href=&quot;http://en.wikipedia.org/wiki/Natural_key&quot;&gt;&lt;em&gt;natural
-key&lt;/em&gt;&lt;/a&gt; uses a column or columns that are a natural part of a
-record, while
-a &lt;a href=&quot;http://en.wikipedia.org/wiki/Surrogate_key&quot;&gt;&lt;em&gt;surrogate
-key&lt;/em&gt;&lt;/a&gt; is added to the record and uses artificial data. When
-choosing your strategy, it is important to be aware of the advantages
-and disadvantages.
-
-&lt;p&gt;The main advantage of a natural key is that it can be verified by
-comparing it with real world data. This is how users of the system
-typically will identify data.
-
-&lt;p&gt;A surrogate key on the other hand has the advantage of being more
-robust to changes in how we identify the records in the real
-world. When the natural key changes (e.g. because of changes in
-business requirements), you don't have to change all your internal
-references to the record.
-
-&lt;p&gt;It is also more efficient for the database system to use surrogate
-keys. This is true especially when joining on the primary keys, or if
-the system uses clustered primary key indexes.
-
-&lt;p&gt;Since a surrogate key normally is internal to a system, it can't
-be used to reference entities in external systems.
-
-&lt;p&gt;There should always be maintained a natural key in a table even if
-a surrogate key is chosen as the primary. If not, the records will
-loose their connection to the real world. But be aware that the two
-keys might get out of sync without you noticing it.
-
-
+&lt;p&gt;
+  To identify the different records in a relational table, we use a primary
+  key. There are two kinds of primary keys with very different
+  characteristics. A &lt;a
+  href=&quot;http://en.wikipedia.org/wiki/Natural_key&quot;&gt;&lt;em&gt;natural key&lt;/em&gt;&lt;/a&gt;
+  uses a column or columns that are a natural part of a record, while a &lt;a
+  href=&quot;http://en.wikipedia.org/wiki/Surrogate_key&quot;&gt;&lt;em&gt;surrogate key&lt;/em&gt;&lt;/a&gt;
+  is added to the record and uses artificial data. When choosing your
+  strategy, it is important to be aware of the advantages and disadvantages.
+&lt;/p&gt;
+&lt;p&gt;
+  The main advantage of a natural key is that it can be verified by comparing
+  it with real world data. This is how users of the system typically will
+  identify data.
+&lt;/p&gt;
+&lt;p&gt;
+  A surrogate key on the other hand has the advantage of being more robust to
+  changes in how we identify the records in the real world. When the natural
+  key changes (e.g. because of changes in business requirements), you don't
+  have to change all your internal references to the record.
+&lt;/p&gt;
+&lt;p&gt;
+  It is also more efficient for the database system to use surrogate keys.
+  This is true especially when joining on the primary keys, or if the system
+  uses clustered primary key indexes.
+&lt;/p&gt;
+&lt;p&gt;
+  Since a surrogate key normally is internal to a system, it can't be used to
+  reference entities in external systems.
+&lt;/p&gt;
+&lt;p&gt;
+  There should always be maintained a natural key in a table even if a
+  surrogate key is chosen as the primary. If not, the records will loose their
+  connection to the real world. But be aware that the two keys might get out
+  of sync without you noticing it.
+&lt;/p&gt;
 &lt;h3&gt;Read more&lt;/h3&gt;
-
-&lt;ul class=&quot;bibliography&quot;&gt;
-  &lt;li&gt;Celko, J. (2005), &lt;em&gt;SQL Programming Style&lt;/em&gt;, San Francisco: Morgan Kaufmann&lt;br&gt;
-    Chapter 3.13
-
-  &lt;li&gt;Ambler S. W., &lt;em&gt;&lt;a
-  href=&quot;http://www.agiledata.org/essays/keys.html&quot;&gt;Choosing a Primary
-  Key: Natural or Surrogate?&lt;/a&gt;&lt;/em&gt;, Agile Data
-
-  &lt;li&gt;Richardson L. (2007), &lt;em&gt;&lt;a
-  href=&quot;http://rapidapplicationdevelopment.blogspot.com/2007/08/in-case-youre-new-to-series-ive.html&quot;&gt;Surrogate
-  vs Natural Primary Keys – Data Modeling Mistake 2 of 10&lt;/a&gt;&lt;/em&gt;,
-  Rapid Application Development Blog
+&lt;ul class='bibliography'&gt;
+  &lt;li&gt;
+    Celko, J. (2005), &lt;em&gt;SQL Programming Style&lt;/em&gt;, San Francisco: Morgan
+    Kaufmann&lt;br&gt;Chapter 3.13
+  &lt;/li&gt;
+  &lt;li&gt;
+    Ambler S. W., &lt;em&gt;&lt;a href=&quot;http://www.agiledata.org/essays/keys.html&quot;&gt;
+    Choosing a Primary Key: Natural or Surrogate?&lt;/a&gt;&lt;/em&gt;, Agile Data
+  &lt;/li&gt;
+  &lt;li&gt;
+    Richardson L. (2007), &lt;em&gt;&lt;a
+    href=&quot;http://rapidapplicationdevelopment.blogspot.com/2007/08/in-case-youre-new-to-series-ive.html&quot;&gt;Surrogate
+    vs Natural Primary Keys – Data Modeling Mistake 2 of 10&lt;/a&gt;&lt;/em&gt;, Rapid
+    Application Development Blog
+  &lt;/li&gt;
 &lt;/ul&gt;
 </content>
-    </entry>
+  </entry>
   
 </feed>

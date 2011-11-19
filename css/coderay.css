@@ -5,6 +5,7 @@
   border: 1px solid #aaa;
   font: 1em Verdana, 'Courier New', 'Terminal', monospace;
   color: #100;
+  overflow: scroll;
 }
 .CodeRay pre {
   padding: 0px;

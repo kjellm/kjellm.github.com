@@ -67,8 +67,9 @@ body {
 }
 
 #container {
-    padding: 2em;
+    padding: 1em;
     min-height: 100%;
+    background-image: none;
 }
 
 #portrait { 
@@ -93,17 +94,18 @@ h1 {
  */
 
 html { 
-    background-color: #fff;
     color: #000;
+    background: white url(../woven.png) repeat;
 }
 
 body {  
-    background-image: url(../background-left.png);
-    background-repeat: repeat-y;
+    background: white none repeat-y;
+    border-left: solid 5px black;
+    border-right: solid 5px black;
 }
 
 #container {
-    background: url(../background-right.png) top right repeat-y;
+    /* background: url(../background-right.png) top right repeat-y; */
 }
 
 hr:before { 
@@ -135,7 +137,7 @@ h1 {
     font-family: monospace;
     font-size: 1.5em;
     font-weight: bold;
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
 }
 
 h2 {
@@ -199,6 +201,11 @@ strong {
     font-weight: bold; 
 }
 
+.date {
+    font-style: italic;
+    font-size: smaller;
+}
+
 .sponsor { 
     margin-top: 4em;
     font-size: small;
@@ -247,6 +254,23 @@ div {
 
 span.credit { 
     font-size: 0.5em;
+}
+
+#back-catalogue {
+    float: right;
+    width: 15em;
+    border-left: thin solid #aaa;
+    background-color: #fff;
+    font-size: smaller;
+    margin-left: 1em;
+}
+
+#back-catalogue ol {
+    margin-left: 1em;
+}
+
+#back-catalogue li {
+    list-style-type: none;
 }
 
 /***********************************************************************

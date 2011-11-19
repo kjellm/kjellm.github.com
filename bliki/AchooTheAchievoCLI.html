@@ -1,205 +1,92 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-    "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>Kjell-Magne Øierud :: bliki :: Achoo --- The Achievo CLI</title>
-    <meta name="author" content="" />
-
-    <link rel="alternate" type="application/atom+xml" title="Feed" href="/bliki/feed.atom">
-
-
-
-    <!-- CodeRay syntax highlighting CSS -->
-    <link rel="stylesheet" href="/css/coderay.css" type="text/css" />
- 
-    <!-- Homepage CSS -->
-    <link rel="stylesheet" href="/css/site.css" type="text/css" media="screen, projection" />
-
-    <script type="text/javascript" src="/main.js"></script>
+    <meta content='text/html; charset=utf-8' http-equiv='content-type'>
+    <title>
+      Kjell-Magne Øierud :: bliki :: Achoo --- The Achievo CLI
+    </title>
+    <link href='/bliki/feed.atom' rel='alternate' title='Feed' type='application/atom+xml'>
+    <link href='/css/coderay.css' rel='stylesheet' type='text/css'>
+    <link href='/css/site.css' media='screen, projection' rel='stylesheet' type='text/css'>
+    <script src='/main.js' type='text/javascript'></script>
   </head>
   <body>
-    <div id="container">
+    <div id='container'>
       <h1>Kjell-Magne Øierud :: Bliki</h1>
-
-      <p id="subtitle">Thoughts on software development
-  
-      <div id="menu"><span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] [ <a href="../code">Code</a> ]</span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span></div>
+      <p id='subtitle'>Thoughts on software development</p>
+      <div id='menu'>
+        <span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] </span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span>
+      </div>
+      <div class='date'>
+        2010-02-18 21:22 CET
+      </div>
+      <h2>
+        Achoo --- The Achievo CLI
+      </h2>
       
-
-
-      <div class="date">2010-02-18 21:22 CET</div>
-
-<h2>Achoo --- The Achievo CLI</h2>
-
-
-<p>To ease the pain of hour registration, I have created a command
-line shell for the hour registration system we use at Redpill Linpro
--- <a href="http://achievo.org">Achievo</a>.
-
-<p>The code is hosted on Github, and you can find the code together
-with install instructions <a
-href="http://github.com/kjellm/achoo">here</a>.
-
-<p>To illustrate it's capabilities, I'll walk you through an example
-session.
-
-<h3>Register hours</h3>
-
-<div class="CodeRay"><pre style="font-size:medium;">
-$ <em>rlwrap achoo</em>         # rlwrap adds some line editing goodness, but you can start it with just 'achoo' as well
-Welcome to Achoo!
- 1. Register hours
- 2. Show flexitime balance
- 3. Day hour report
- 4. Week hour report
- 5. Holiday balance
- 6. Lock month
- 0. Exit
-<strong>[1]&gt;</strong> <em>&lt;enter&gt;</em>
-<strong>Date ([today] | ?)&gt;</strong> <em>?</em>
-Accepted formats:
-         today | (+|-)n | [[[YY]YY]-[M]M]-[D]D
-
-    January 2010         February 2010           March 2010
-Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su
-             1  2  3   1  2  3  4  5  6  7   1  2  3  4  5  6  7
- 4  5  6  7  8  9 10   8  9 10 11 12 13 14   8  9 10 11 12 13 14
-11 12 13 14 15 16 17  15 16 17 <span style="color:white; background-color:black;">18</span> 19 20 21  15 16 17 18 19 20 21
-18 19 20 21 22 23 24  22 23 24 25 26 27 28  22 23 24 25 26 27 28
-25 26 27 28 29 30 31                        29 30 31
-
-<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>
-Recently used projects
- 1. p1: NiceCustomer - Consulting
- 2. p2: AnnoyingCustomer - Consulting
- 3. abs: Absence
- 4. var: Various
- 0. Other
-<strong>Project [1]></strong> <em>2</em>
-</pre></div>
-
-<p>If the project you are looking for is not in the list with recently
-used projects, select <em>0</em> to get the complete list of your
-projects.
-
-<p>When there is only one phase assosiated with the selected project,
-achoo will automatically select it and move on. For projects with more
-than one phase, you get a menu:
-
-<div class="CodeRay"><pre style="font-size:medium;">
-Phases
- 1. Cool phase
- 2. Boring phase
-<strong>Phase ID&gt;</strong> <em>2</em>
-VCS logs for 2010-02-18:
---------------------------------<( PROJECT_1 )>--------------------------------
-Added breathtaking feature X
-Refactored Y
---------------------------------<( PROJECT_2 )>--------------------------------
-Made some tests pass
-<strong>Remark&gt;</strong> <em>Fixed a lot of awesome stuff</em>
-Last log:
-Powered on: (0+09:44) Today 06:01 - 15:45
-  Awake: (0+00:09) Today 06:01 - 06:10
-  Awake: (0+07:44) Today 08:01 - 15:45
-
-<strong>Hours [7:30]&gt;</strong> <em>&lt;enter&gt;</em>
-<strong>Do you want to change the defaults for worktime period and/or billing percentage? [N/y]&gt;</strong>  <em>&lt;enter&gt;</em>
-      date: "2010-02-18"
-   project: "p2: AnnoyingCustomer - Consulting"
-     phase: "Boring phase"
-    remark: "Fixed a lot of awesome stuff"
-     hours: "7.5"
-  worktime: "Normal"
-   billing: "Normal (100%)"
-<strong>Submit? [Y/n]&gt;</strong> <em>y</em>
-</pre></div>
-
-<p>Notice that to you get some extra help with registering remark and
-hours. Achoo fetches the log for your commits for the given day and
-shows you when your laptop has been awake (not suspended).
-
-<h3>Flexi time balance</h3>
-
-<div class="CodeRay"><pre style="font-size:medium;">
- :  ...
- 2. Show flexitime balance
- :  ...
-[1]&gt; <em>2</em>
-<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>
-Fetching dayview ...
-Flexi time balance: <u>2:30</u>
-</pre></div>
-
-<h3>Day hour report</h3>
-
-<div class="CodeRay"><pre style="font-size:medium;">
- :  ...
- 3. Day hour report
- :  ...
-<strong>[1]&gt;</strong> <em>3</em>
-<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>
-+-------------------------------+------------+--------+-------+--------------+----------+--------------------+
-| Project                       | Phase      | Remark | Time  | Billing rate | Currency | Billing percentage |
-+-------------------------------+------------+--------+-------+--------------+----------+--------------------+
-| p1: NiceCustomer - Consulting | Cool phase | Foo    | 07:30 | 1000.00      | NOK      | Normal (100%)      |
-+-------------------------------+------------+--------+-------+--------------+----------+--------------------+
-</pre></div>
-
-<h3>Week hour report</h3>
-
-<div class="CodeRay"><pre style="font-size:medium;">
- :  ...
- 4. Week hour report
- :  ...
-<strong>[1]&gt;</strong> <em>4</em>
-<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>
-Fetching weekview ...
-<span style="font-size:small">+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+
-| Project - Phase                            | Mon (02-15) | Tue (02-16) | Wed (02-17) | Thu (02-18) | Fri(02-19) | Sat(02-20) | Sun(02-21) | Total |
-+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+
-| p1: NiceCustomer - Consulting - Nice phase | 7:30        | 2:00        |             |             |            |            |            | 9:30  |
-| abs: Absence - Holiday                     |             | 5:30        | 7:30        | 7:30        |            |            |            | 20:30 |
-+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+
-| Total                                      | 7:30        | 7:30        | 7:30        | 7:30        |            |            |            | 29:30 |
-+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+</span>
-</pre></div>
-
-<h3>Holiday balance</h3>
-
-<div class="CodeRay"><pre style="font-size:medium;">
- :  ...
- 5. Holiday balance
- :  ...
-<strong>[1]&gt;</strong> <em>5</em>
-Balance: <u>26,00</u>
-</pre></div>
-
-<h3>Lock month</h3>
-
-<p>Achoo selects the previous month as the default
-
-<div class="CodeRay"><pre style="font-size:medium;">
- :  ...
- 6. Lock month
- :  ...
-<strong>[1]&gt;</strong> <em>6</em>
-<strong>Period ([201001] | YYYYMM)&gt;</strong> <em>&lt;enter&gt;</em>
-period: 201001
-<strong>Submit? [Y/n]&gt;</strong> <em>n</em>
-Cancelled
-</pre></div>
-
-
-
+      
+      <p>To ease the pain of hour registration, I have created a command
+      line shell for the hour registration system we use at Redpill Linpro
+      -- <a href="http://achievo.org">Achievo</a>.
+      
+      <p>The code is hosted on Github, and you can find the code together
+      with install instructions <a
+      href="http://github.com/kjellm/achoo">here</a>.
+      
+      <p>To illustrate it's capabilities, I'll walk you through an example
+      session.
+      
+      <h3>Register hours</h3>
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A;$ <em>rlwrap achoo</em>         # rlwrap adds some line editing goodness, but you can start it with just 'achoo' as well&#x000A;Welcome to Achoo!&#x000A; 1. Register hours&#x000A; 2. Show flexitime balance&#x000A; 3. Day hour report&#x000A; 4. Week hour report&#x000A; 5. Holiday balance&#x000A; 6. Lock month&#x000A; 0. Exit&#x000A;<strong>[1]&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;<strong>Date ([today] | ?)&gt;</strong> <em>?</em>&#x000A;Accepted formats:&#x000A;         today | (+|-)n | [[[YY]YY]-[M]M]-[D]D&#x000A;&#x000A;    January 2010         February 2010           March 2010&#x000A;Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su&#x000A;             1  2  3   1  2  3  4  5  6  7   1  2  3  4  5  6  7&#x000A; 4  5  6  7  8  9 10   8  9 10 11 12 13 14   8  9 10 11 12 13 14&#x000A;11 12 13 14 15 16 17  15 16 17 <span style="color:white; background-color:black;">18</span> 19 20 21  15 16 17 18 19 20 21&#x000A;18 19 20 21 22 23 24  22 23 24 25 26 27 28  22 23 24 25 26 27 28&#x000A;25 26 27 28 29 30 31                        29 30 31&#x000A;&#x000A;<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;Recently used projects&#x000A; 1. p1: NiceCustomer - Consulting&#x000A; 2. p2: AnnoyingCustomer - Consulting&#x000A; 3. abs: Absence&#x000A; 4. var: Various&#x000A; 0. Other&#x000A;<strong>Project [1]></strong> <em>2</em></pre></div>
+      
+      <p>If the project you are looking for is not in the list with recently
+      used projects, select <em>0</em> to get the complete list of your
+      projects.
+      
+      <p>When there is only one phase assosiated with the selected project,
+      achoo will automatically select it and move on. For projects with more
+      than one phase, you get a menu:
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A;Phases&#x000A; 1. Cool phase&#x000A; 2. Boring phase&#x000A;<strong>Phase ID&gt;</strong> <em>2</em>&#x000A;VCS logs for 2010-02-18:&#x000A;--------------------------------<( PROJECT_1 )>--------------------------------&#x000A;Added breathtaking feature X&#x000A;Refactored Y&#x000A;--------------------------------<( PROJECT_2 )>--------------------------------&#x000A;Made some tests pass&#x000A;<strong>Remark&gt;</strong> <em>Fixed a lot of awesome stuff</em>&#x000A;Last log:&#x000A;Powered on: (0+09:44) Today 06:01 - 15:45&#x000A;  Awake: (0+00:09) Today 06:01 - 06:10&#x000A;  Awake: (0+07:44) Today 08:01 - 15:45&#x000A;&#x000A;<strong>Hours [7:30]&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;<strong>Do you want to change the defaults for worktime period and/or billing percentage? [N/y]&gt;</strong>  <em>&lt;enter&gt;</em>&#x000A;      date: "2010-02-18"&#x000A;   project: "p2: AnnoyingCustomer - Consulting"&#x000A;     phase: "Boring phase"&#x000A;    remark: "Fixed a lot of awesome stuff"&#x000A;     hours: "7.5"&#x000A;  worktime: "Normal"&#x000A;   billing: "Normal (100%)"&#x000A;<strong>Submit? [Y/n]&gt;</strong> <em>y</em></pre></div>
+      
+      <p>Notice that to you get some extra help with registering remark and
+      hours. Achoo fetches the log for your commits for the given day and
+      shows you when your laptop has been awake (not suspended).
+      
+      <h3>Flexi time balance</h3>
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A; :  ...&#x000A; 2. Show flexitime balance&#x000A; :  ...&#x000A;[1]&gt; <em>2</em>&#x000A;<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;Fetching dayview ...&#x000A;Flexi time balance: <u>2:30</u></pre></div>
+      
+      <h3>Day hour report</h3>
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A; :  ...&#x000A; 3. Day hour report&#x000A; :  ...&#x000A;<strong>[1]&gt;</strong> <em>3</em>&#x000A;<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;+-------------------------------+------------+--------+-------+--------------+----------+--------------------+&#x000A;| Project                       | Phase      | Remark | Time  | Billing rate | Currency | Billing percentage |&#x000A;+-------------------------------+------------+--------+-------+--------------+----------+--------------------+&#x000A;| p1: NiceCustomer - Consulting | Cool phase | Foo    | 07:30 | 1000.00      | NOK      | Normal (100%)      |&#x000A;+-------------------------------+------------+--------+-------+--------------+----------+--------------------+</pre></div>
+      
+      <h3>Week hour report</h3>
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A; :  ...&#x000A; 4. Week hour report&#x000A; :  ...&#x000A;<strong>[1]&gt;</strong> <em>4</em>&#x000A;<strong>Date ([today] | ?)&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;Fetching weekview ...&#x000A;<span style="font-size:small">+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+&#x000A;| Project - Phase                            | Mon (02-15) | Tue (02-16) | Wed (02-17) | Thu (02-18) | Fri(02-19) | Sat(02-20) | Sun(02-21) | Total |&#x000A;+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+&#x000A;| p1: NiceCustomer - Consulting - Nice phase | 7:30        | 2:00        |             |             |            |            |            | 9:30  |&#x000A;| abs: Absence - Holiday                     |             | 5:30        | 7:30        | 7:30        |            |            |            | 20:30 |&#x000A;+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+&#x000A;| Total                                      | 7:30        | 7:30        | 7:30        | 7:30        |            |            |            | 29:30 |&#x000A;+--------------------------------------------+-------------+-------------+-------------+-------------+------------+------------+------------+-------+</span></pre></div>
+      
+      <h3>Holiday balance</h3>
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A; :  ...&#x000A; 5. Holiday balance&#x000A; :  ...&#x000A;<strong>[1]&gt;</strong> <em>5</em>&#x000A;Balance: <u>26,00</u></pre></div>
+      
+      <h3>Lock month</h3>
+      
+      <p>Achoo selects the previous month as the default
+      
+      <div class="CodeRay"><pre style="font-size:medium;">&#x000A; :  ...&#x000A; 6. Lock month&#x000A; :  ...&#x000A;<strong>[1]&gt;</strong> <em>6</em>&#x000A;<strong>Period ([201001] | YYYYMM)&gt;</strong> <em>&lt;enter&gt;</em>&#x000A;period: 201001&#x000A;<strong>Submit? [Y/n]&gt;</strong> <em>n</em>&#x000A;Cancelled</pre></div>
       <hr>
-<div class="sponsor">
-  <a href="http://redpill-linpro.com" target="_blank"><img src="../rplp.gif" alt="Redpill Linpro"></a>
-</div>
-
-
-      <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/km-oierud/embed.js"></script><noscript><a href="http://disqus.com/forums/km-oierud/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+      <div class='sponsor'>
+        <a href='http://redpill-linpro.com' target='_blank'>
+          <img alt='Redpill Linpro' src='../rplp.gif'>
+        </a>
+      </div>
+      <div id='disqus_thread'></div>
+      <script src='http://disqus.com/forums/km-oierud/embed.js' type='text/javascript'></script>
+      <noscript>
+        <a href='http://disqus.com/forums/km-oierud/?url=ref'>View the discussion thread.</a>
+      </noscript>
+      <a class='dsq-brlink' href='http://disqus.com'>blog comments powered by <span class="logo-disqus">Disqus</span></a></a>
     </div>
   </body>
 </html>
