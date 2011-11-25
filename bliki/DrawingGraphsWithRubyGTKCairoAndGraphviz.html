@@ -35,7 +35,7 @@
       
       </p><p>Here is a sneak peek on the result.
       
-      </p><div class="illustration"><img src="/drawing_graphs.png" alt="The result"></div>
+      </p><div class="illustration"><img src="/images/drawing_graphs.png" alt="The result"></div>
       
       <p>First we need a simple example graph to work with. Let us define a
         graph as an array of edges. Each edge is an array with two vertices,
@@ -53,7 +53,7 @@
       
       <p>Interaction with neato is done using a pipe, and giving it the
         argument <code>-Tplain</code> produces a graph to stdout with layout
-        information. The output format is described <a href="http://www.graphviz.org/cvs/doc/info/output.html#d:plain">here</a>.
+        information. The output format is described <a href="http://www.graphviz.org/content/output-formats#dplain">here</a>.
       
       </p><pre class="CodeRay"><code class="language-ruby">layout = <span class="co">IO</span>.popen(<span class="s"><span class="dl">'</span><span class="k">neato -Tplain</span><span class="dl">'</span></span>, <span class="s"><span class="dl">'</span><span class="k">r+</span><span class="dl">'</span></span>) <span class="r">do</span> |pipe|&#x000A;  pipe.write(dot)&#x000A;  pipe.close_write&#x000A;  pipe.read&#x000A;<span class="r">end</span></code></pre>
       
@@ -83,7 +83,7 @@
       <hr>
       <div class='sponsor'>
         <a href='http://redpill-linpro.com' target='_blank'>
-          <img alt='Redpill Linpro' src='../rplp.gif'>
+          <img alt='Redpill Linpro' src='/images/rplp.gif'>
         </a>
       </div>
       <div id='disqus_thread'></div>
@@ -91,7 +91,7 @@
       <noscript>
         <a href='http://disqus.com/forums/km-oierud/?url=ref'>View the discussion thread.</a>
       </noscript>
-      <a class='dsq-brlink' href='http://disqus.com'>blog comments powered by <span class="logo-disqus">Disqus</span></a></a>
+      <a class='dsq-brlink' href='http://disqus.com'>blog comments powered by <span class="logo-disqus">Disqus</span></a>
     </div>
   </body>
 </html>

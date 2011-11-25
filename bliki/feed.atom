@@ -5,7 +5,7 @@
   <subtitle>Thoughts on software development</subtitle>
   <link href="http://oierud.name/~kjellm/bliki/" rel="self" />
   <link href="http://oierud.name/~kjellm/" />
-  <updated>2011-11-19T20:22:23+01:00</updated>
+  <updated>2011-11-25T19:27:30+01:00</updated>
   <author>
     <name>Kjell-Magne Øierud</name>
     <email>NA</email>
@@ -27,7 +27,7 @@ line shell for the hour registration system we use at Redpill Linpro
 
 &lt;p&gt;The code is hosted on Github, and you can find the code together
 with install instructions &lt;a
-href=&quot;http://github.com/kjellm/achoo&quot;&gt;here&lt;/a&gt;.
+href=&quot;https://github.com/kjellm/achoo&quot;&gt;here&lt;/a&gt;.
 
 &lt;p&gt;To illustrate it's capabilities, I'll walk you through an example
 session.
@@ -307,15 +307,14 @@ mysql&amp;gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
     <content type="html">
 
 &lt;p&gt;
-  Inspired by &lt;a href=&quot;http://xaprb.com/&quot;&gt;Xaprb's&lt;/a&gt; &lt;a
+  Inspired by &lt;a href=&quot;http://www.xaprb.com/blog/&quot;&gt;Xaprb's&lt;/a&gt; &lt;a
   href=&quot;http://code.google.com/p/mysql-cacti-templates/&quot;&gt;improved graphs for
   Cacti&lt;/a&gt;, I wrote a plugin that creates similar graphs for &lt;a
   href=&quot;http://munin.projects.linpro.no/&quot;&gt;Munin&lt;/a&gt;.
 &lt;/p&gt;
 &lt;p&gt;
-  Hopefully the plugin will be included by the Munin project. But until then,
-  or if you want the latest version, you can find download instructions on my
-  &lt;a href=&quot;../code&quot;&gt;projects page&lt;/a&gt;.
+  The plugin is included in the Munin project. For the newest version, go to
+  &lt;a href=&quot;https://github.com/kjellm/munin-mysql&quot;&gt;my project page on github&lt;/a&gt;.
 &lt;/p&gt;
 &lt;p&gt;Some features:&lt;/p&gt;
 &lt;ul&gt;
@@ -329,7 +328,7 @@ mysql&amp;gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
 &lt;div style='text-align:center'&gt;
-  &lt;img src='../munin-mysql.png' /&gt;
+  &lt;img alt='screenshot collage' src='/images/munin-mysql.png' /&gt;
   &lt;br /&gt;
   &lt;p&gt;&lt;span class='credit'&gt;(Thanks to Bart van Bragt for the graph images)&lt;/span&gt;&lt;/p&gt;
 &lt;/div&gt;
@@ -355,7 +354,7 @@ mysql&amp;gt; &lt;strong&gt;select INET_NTOA6(INET_ATON6(&lt;/strong&gt;
 
 &lt;/p&gt;&lt;p&gt;Here is a sneak peek on the result.
 
-&lt;/p&gt;&lt;div class=&quot;illustration&quot;&gt;&lt;img src=&quot;/drawing_graphs.png&quot; alt=&quot;The result&quot;&gt;&lt;/div&gt;
+&lt;/p&gt;&lt;div class=&quot;illustration&quot;&gt;&lt;img src=&quot;/images/drawing_graphs.png&quot; alt=&quot;The result&quot;&gt;&lt;/div&gt;
 
 &lt;p&gt;First we need a simple example graph to work with. Let us define a
   graph as an array of edges. Each edge is an array with two vertices,
@@ -387,7 +386,7 @@ dot &amp;lt;&amp;lt; &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quo
 
 &lt;p&gt;Interaction with neato is done using a pipe, and giving it the
   argument &lt;code&gt;-Tplain&lt;/code&gt; produces a graph to stdout with layout
-  information. The output format is described &lt;a href=&quot;http://www.graphviz.org/cvs/doc/info/output.html#d:plain&quot;&gt;here&lt;/a&gt;.
+  information. The output format is described &lt;a href=&quot;http://www.graphviz.org/content/output-formats#dplain&quot;&gt;here&lt;/a&gt;.
 
 &lt;/p&gt;&lt;pre class=&quot;CodeRay&quot;&gt;&lt;code class=&quot;language-ruby&quot;&gt;layout = &lt;span class=&quot;co&quot;&gt;IO&lt;/span&gt;.popen(&lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;neato -Tplain&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;, &lt;span class=&quot;s&quot;&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;r+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;/span&gt;) &lt;span class=&quot;r&quot;&gt;do&lt;/span&gt; |pipe|
   pipe.write(dot)

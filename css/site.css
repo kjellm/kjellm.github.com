@@ -86,7 +86,7 @@ body {
 }
 
 h1 {
-    whitespace: nowrap;
+    white-space: nowrap;
 }
 
 /***********************************************************************
@@ -95,7 +95,7 @@ h1 {
 
 html { 
     color: #000;
-    background: white url(../woven.png) repeat;
+    background: white url(/images/woven.png) repeat;
 }
 
 body {  
