@@ -114,6 +114,10 @@ hr:before {
     content: '~';
 }
 
+h1 {
+	background: white;
+}
+
 /***********************************************************************
  *                      T Y P O G R A P H Y
  */
@@ -134,7 +138,7 @@ h2, h3, h4, h5 {
 
 h1 {
     text-align: center;
-    font-family: monospace;
+	letter-spacing: 0.2em;;
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 1em;
