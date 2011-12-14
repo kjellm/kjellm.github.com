@@ -1,123 +1,76 @@
----
-title:      "Kjell-Magne Øierud :: bliki :: IPv6 addresses and MySQL"
-created_at: 2009-02-19 11:49:50.00000 +01:00
-kind:       article
-layout:     bliki
-filters:
-  - :erb
-  - :coderay
----
-<%= render 'partials/bliki_heading' %>
-
-<p>I usually prefer storing IP addresses as integers (unless the DBMS
-  have a special data type for it). Using integers gives compact
-  storage and makes it easy to answer questions like what is the next
-  IP address? In which subnets does it belong? Etc. IPv6 addresses is
-  128 bits long, so to store that as an integer in MySQL you need to
-  use the <code>DECIMAL</code> data type.
-
-<p>In MySQL there is two functions that help you translate between the
-  familiar canonical version and the numeric version of IP addresses:
-  INET_ATON() and INET_NTOA(). However these functions do not work
-  with IPv6 addresses.
-
-<p>One possible solution to this is to implement INET_ATON6() and
-INET_NTOA6() yourself as stored functions:
-
-<h3>INET_ATON6</h3>
-
-<pre class="CodeRay"><code class="language-sql">
-DELIMITER //
-CREATE FUNCTION INET_ATON6(n CHAR(39))
-RETURNS DECIMAL(39) UNSIGNED
-DETERMINISTIC
-BEGIN
-    RETURN CAST(CONV(SUBSTRING(n FROM  1 FOR 4), 16, 10) AS DECIMAL(39))
-                       * 5192296858534827628530496329220096 -- 65536 ^ 7
-         + CAST(CONV(SUBSTRING(n FROM  6 FOR 4), 16, 10) AS DECIMAL(39))
-                       *      79228162514264337593543950336 -- 65536 ^ 6
-         + CAST(CONV(SUBSTRING(n FROM 11 FOR 4), 16, 10) AS DECIMAL(39))
-                       *          1208925819614629174706176 -- 65536 ^ 5
-         + CAST(CONV(SUBSTRING(n FROM 16 FOR 4), 16, 10) AS DECIMAL(39)) 
-                       *               18446744073709551616 -- 65536 ^ 4
-         + CAST(CONV(SUBSTRING(n FROM 21 FOR 4), 16, 10) AS DECIMAL(39))
-                       *                    281474976710656 -- 65536 ^ 3
-         + CAST(CONV(SUBSTRING(n FROM 26 FOR 4), 16, 10) AS DECIMAL(39))
-                       *                         4294967296 -- 65536 ^ 2
-         + CAST(CONV(SUBSTRING(n FROM 31 FOR 4), 16, 10) AS DECIMAL(39))
-                       *                              65536 -- 65536 ^ 1
-         + CAST(CONV(SUBSTRING(n FROM 36 FOR 4), 16, 10) AS DECIMAL(39))
-         ;
-END;
-//
-DELIMITER ;
-</code></pre>
-
-
-<h3>INET_NTOA6</h3>
-<pre class="CodeRay"><code class="language-sql">
-DELIMITER //
-CREATE FUNCTION INET_NTOA6(n DECIMAL(39) UNSIGNED)
-RETURNS CHAR(39)
-DETERMINISTIC
-BEGIN
-  DECLARE a CHAR(39)             DEFAULT '';
-  DECLARE i INT                  DEFAULT 7;
-  DECLARE q DECIMAL(39) UNSIGNED DEFAULT 0;
-  DECLARE r INT                  DEFAULT 0;
-  WHILE i DO
-    -- DIV doesn't work with nubers > bigint
-    SET q := FLOOR(n / 65536);
-    SET r := n MOD 65536;
-    SET n := q;
-    SET a := CONCAT_WS(':', LPAD(CONV(r, 10, 16), 4, '0'), a);
-
-    SET i := i - 1;
-  END WHILE;
-
-  SET a := TRIM(TRAILING ':' FROM CONCAT_WS(':',
-                                            LPAD(CONV(n, 10, 16), 4, '0'),
-                                            a));
-
-  RETURN a;
-
-END;
-//
-DELIMITER ;
-</code></pre>
-
-<p>The code is to be regarded as a proof of concept as it needs sanity
-  checks and handling of simplified address notations before
-  production use. However the following small test verifies that it is
-  not completely broken:
-
-<div class="CodeRay">
-<pre>
-mysql> <strong>SELECT INET_NTOA6(INET_ATON6(</strong>
-    ->   <strong>'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));</strong>
-+-------------------------------------------------------------------+
-| INET_NTOA6(INET_ATON6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')) |
-+-------------------------------------------------------------------+
-| 2001:0DB8:85A3:0000:0000:8A2E:0370:7334                           |
-+-------------------------------------------------------------------+
-1 row in set (0.00 sec)
-
-mysql> <strong>SELECT INET_NTOA6(INET_ATON6(</strong>
-    ->   <strong>'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'));</strong>
-+-------------------------------------------------------------------+
-| INET_NTOA6(INET_ATON6('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff')) |
-+-------------------------------------------------------------------+
-| FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF                           |
-+-------------------------------------------------------------------+
-1 row in set (0.00 sec)
-
-mysql> <strong>select INET_NTOA6(INET_ATON6(</strong>
-    ->   <strong>'0000:0000:0000:0000:0000:0000:0000:0000'));</strong>
-+-------------------------------------------------------------------+
-| INET_NTOA6(INET_ATON6('0000:0000:0000:0000:0000:0000:0000:0000')) |
-+-------------------------------------------------------------------+
-| 0000:0000:0000:0000:0000:0000:0000:0000                           |
-+-------------------------------------------------------------------+
-1 row in set (0.01 sec)
-</pre>
-</div>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta content='text/html; charset=utf-8' http-equiv='content-type'>
+    <title>
+      Kjell-Magne Øierud :: bliki :: IPv6 addresses and MySQL
+    </title>
+    <link href='/bliki/feed.atom' rel='alternate' title='Feed' type='application/atom+xml'>
+    <link href='/css/coderay.css' rel='stylesheet' type='text/css'>
+    <link href='/css/site.css' media='screen, projection' rel='stylesheet' type='text/css'>
+    <script src='/main.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <div id='container'>
+      <h1>Kjell-Magne Øierud :: Bliki</h1>
+      <p id='subtitle'>Thoughts on software development</p>
+      <div id='menu'>
+        <span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] </span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span>
+      </div>
+      <div class="date">
+        2009-02-19 11:49 CET
+      </div>
+      <h2>
+        IPv6 addresses and MySQL
+      </h2>
+      
+      
+      <p>I usually prefer storing IP addresses as integers (unless the DBMS
+        have a special data type for it). Using integers gives compact
+        storage and makes it easy to answer questions like what is the next
+        IP address? In which subnets does it belong? Etc. IPv6 addresses is
+        128 bits long, so to store that as an integer in MySQL you need to
+        use the <code>DECIMAL</code> data type.
+      
+      </p><p>In MySQL there is two functions that help you translate between the
+        familiar canonical version and the numeric version of IP addresses:
+        INET_ATON() and INET_NTOA(). However these functions do not work
+        with IPv6 addresses.
+      
+      </p><p>One possible solution to this is to implement INET_ATON6() and
+      INET_NTOA6() yourself as stored functions:
+      
+      </p><h3>INET_ATON6</h3>
+      
+      <pre class="CodeRay"><code class="language-sql">DELIMITER //&#x000A;<span class="r">CREATE</span> FUNCTION INET_ATON6(n <span class="pt">CHAR</span>(<span class="i">39</span>))&#x000A;RETURNS <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span>&#x000A;DETERMINISTIC&#x000A;<span class="r">BEGIN</span>&#x000A;    RETURN <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span>  <span class="i">1</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       * <span class="i">5192296858534827628530496329220096</span> <span class="c">-- 65536 ^ 7</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span>  <span class="i">6</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       *      <span class="i">79228162514264337593543950336</span> <span class="c">-- 65536 ^ 6</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">11</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       *          <span class="i">1208925819614629174706176</span> <span class="c">-- 65536 ^ 5</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">16</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>)) &#x000A;                       *               <span class="i">18446744073709551616</span> <span class="c">-- 65536 ^ 4</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">21</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       *                    <span class="i">281474976710656</span> <span class="c">-- 65536 ^ 3</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">26</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       *                         <span class="i">4294967296</span> <span class="c">-- 65536 ^ 2</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">31</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;                       *                              <span class="i">65536</span> <span class="c">-- 65536 ^ 1</span>&#x000A;         + <span class="pd">CAST</span>(CONV(SUBSTRING(n <span class="r">FROM</span> <span class="i">36</span> FOR <span class="i">4</span>), <span class="i">16</span>, <span class="i">10</span>) <span class="r">AS</span> <span class="pt">DECIMAL</span>(<span class="i">39</span>))&#x000A;         ;&#x000A;<span class="r">END</span>;&#x000A;//&#x000A;DELIMITER ;</code></pre>
+      
+      
+      <h3>INET_NTOA6</h3>
+      <pre class="CodeRay"><code class="language-sql">DELIMITER //&#x000A;<span class="r">CREATE</span> FUNCTION INET_NTOA6(n <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span>)&#x000A;RETURNS <span class="pt">CHAR</span>(<span class="i">39</span>)&#x000A;DETERMINISTIC&#x000A;<span class="r">BEGIN</span>&#x000A;  DECLARE a <span class="pt">CHAR</span>(<span class="i">39</span>)             <span class="di">DEFAULT</span> <span class="s"><span class="dl">'</span><span class="dl">'</span></span>;&#x000A;  DECLARE i <span class="pt">INT</span>                  <span class="di">DEFAULT</span> <span class="i">7</span>;&#x000A;  DECLARE q <span class="pt">DECIMAL</span>(<span class="i">39</span>) <span class="pt">UNSIGNED</span> <span class="di">DEFAULT</span> <span class="i">0</span>;&#x000A;  DECLARE r <span class="pt">INT</span>                  <span class="di">DEFAULT</span> <span class="i">0</span>;&#x000A;  WHILE i DO&#x000A;    <span class="c">-- DIV doesn't work with nubers &gt; bigint</span>&#x000A;    <span class="r">SET</span> q <span class="er">:</span>= FLOOR(n / <span class="i">65536</span>);&#x000A;    <span class="r">SET</span> r <span class="er">:</span>= n MOD <span class="i">65536</span>;&#x000A;    <span class="r">SET</span> n <span class="er">:</span>= q;&#x000A;    <span class="r">SET</span> a <span class="er">:</span>= CONCAT_WS(<span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span>, LPAD(CONV(r, <span class="i">10</span>, <span class="i">16</span>), <span class="i">4</span>, <span class="s"><span class="dl">'</span><span class="k">0</span><span class="dl">'</span></span>), a);&#x000A;&#x000A;    <span class="r">SET</span> i <span class="er">:</span>= i - <span class="i">1</span>;&#x000A;  <span class="r">END</span> WHILE;&#x000A;&#x000A;  <span class="r">SET</span> a <span class="er">:</span>= TRIM(TRAILING <span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span> <span class="r">FROM</span> CONCAT_WS(<span class="s"><span class="dl">'</span><span class="k">:</span><span class="dl">'</span></span>,&#x000A;                                            LPAD(CONV(n, <span class="i">10</span>, <span class="i">16</span>), <span class="i">4</span>, <span class="s"><span class="dl">'</span><span class="k">0</span><span class="dl">'</span></span>),&#x000A;                                            a));&#x000A;&#x000A;  RETURN a;&#x000A;&#x000A;<span class="r">END</span>;&#x000A;//&#x000A;DELIMITER ;</code></pre>
+      
+      <p>The code is to be regarded as a proof of concept as it needs sanity
+        checks and handling of simplified address notations before
+        production use. However the following small test verifies that it is
+        not completely broken:
+      
+      </p><div class="CodeRay">
+      <pre>&#x000A;mysql&gt; <strong>SELECT INET_NTOA6(INET_ATON6(</strong>&#x000A;    -&gt;   <strong>'2001:0db8:85a3:0000:0000:8a2e:0370:7334'));</strong>&#x000A;+-------------------------------------------------------------------+&#x000A;| INET_NTOA6(INET_ATON6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')) |&#x000A;+-------------------------------------------------------------------+&#x000A;| 2001:0DB8:85A3:0000:0000:8A2E:0370:7334                           |&#x000A;+-------------------------------------------------------------------+&#x000A;1 row in set (0.00 sec)&#x000A;&#x000A;mysql&gt; <strong>SELECT INET_NTOA6(INET_ATON6(</strong>&#x000A;    -&gt;   <strong>'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'));</strong>&#x000A;+-------------------------------------------------------------------+&#x000A;| INET_NTOA6(INET_ATON6('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff')) |&#x000A;+-------------------------------------------------------------------+&#x000A;| FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF                           |&#x000A;+-------------------------------------------------------------------+&#x000A;1 row in set (0.00 sec)&#x000A;&#x000A;mysql&gt; <strong>select INET_NTOA6(INET_ATON6(</strong>&#x000A;    -&gt;   <strong>'0000:0000:0000:0000:0000:0000:0000:0000'));</strong>&#x000A;+-------------------------------------------------------------------+&#x000A;| INET_NTOA6(INET_ATON6('0000:0000:0000:0000:0000:0000:0000:0000')) |&#x000A;+-------------------------------------------------------------------+&#x000A;| 0000:0000:0000:0000:0000:0000:0000:0000                           |&#x000A;+-------------------------------------------------------------------+&#x000A;1 row in set (0.01 sec)</pre>
+      </div>
+      <hr>
+      <div class='sponsor'>
+        <a href='http://redpill-linpro.com' target='_blank'>
+          <img alt='Redpill Linpro' src='/images/rplp.gif'>
+        </a>
+      </div>
+      <div id='disqus_thread'></div>
+      <script type='text/javascript'>
+        var disqus_identifier = IPvaddressesandMySQL
+      </script>
+      <script src='http://disqus.com/forums/km-oierud/embed.js' type='text/javascript'></script>
+      <noscript>
+        <a href='http://disqus.com/forums/km-oierud/?url=ref'>View the discussion thread.</a>
+      </noscript>
+      <a class='dsq-brlink' href='http://disqus.com'>blog comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+  </body>
+</html>

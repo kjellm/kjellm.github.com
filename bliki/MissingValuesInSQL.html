@@ -1,92 +1,146 @@
----
-title:      "Kjell-Magne Øierud :: bliki :: Missing values in SQL"
-created_at: 2008-09-18 20:22:24.00000 +02:00
-layout:     bliki
-kind:       article
----
-
-= render 'partials/bliki_heading'
-= render 'partials/bliki_dbms_topics'
-
-%p
-  In SQL we use NULL as a placeholder for missing values. It has at least
-  three different uses.
-
-%ol
-  %li
-    To mark a value in a column as 'missing'.
-  %li
-    As placeholders in the result of an <a
-    href="http://en.wikipedia.org/wiki/Join_(SQL)#Outer_joins">outer join</a>
-    where 'no match' are found between rows.
-  %li
-    As the result of arithmetic operations with one or more operands that are
-    NULL. Here a NULL means 'unknown', unknown because information that is
-    needed for evaluating the expression is missing.
-
-
-%p
-  If a value in a column is NULL, all you know is that it is missing. If you
-  need to know why, you can store that information in a separate column.
-  Another approach is to disallow NULLs and use an encoding that has distinct
-  values for missing data. An example is the standard encoding for gender: <a
-  href="http://en.wikipedia.org/wiki/ISO_5218">ISO 5218</a>.
-
-%p
-  The usage of NULL is one of the big controversies in SQL and relational
-  systems. Some feels that it introduces unnecessary complexity, and the
-  general advice seems to be to use NULLs only when there is no better option.
-
-%h3 Reasons to avoid NULL
-
-%ul
-  %li
-    NULL behaves differently from similar non-value markers in most
-    programming languages.
-  %li
-    Some confuses NULL with the empty string, zero, or false.
-  %li
-    NULLs introduces 3-valued logic. That is, in addition to TRUE and FALSE
-    you also have UNKNOWN, a source of many misunderstandings and errors in
-    SQL statements.
-  %li
-    Many functions treat NULL in a special manner. To remember how NULL is
-    handled by different functions is painful. Some examples: GROUP BY puts
-    all rows with NULLs in the same group, thous treating them equal when in
-    fact the equality is unknown. The SUM aggregate function ignores NULLs
-    when summarizing the values of a column.
-  %li
-    Having columns that might be NULL in a table, typically introduces a
-    penalty on performance.
-  %li
-    Mistakes are Easily made when dealing with ALL, ANY, IN, and EXISTS
-    queries.
-  %li
-    Having many nullable columns in a table might indicate that the table is
-    not properly <a
-    href="http://en.wikipedia.org/wiki/Database_normalization">normalized</a>.
-
-%h3 Reasons to use NULL
-
-%ul
-  %li
-    It is a good idea to allow NULL when you need to mark a value as missing
-    and there is no easy way handle missing values in any reasonable encoding
-    for the column. Just be aware that you don't fall in any of the traps
-    mentioned above.
-
-%h3 Read more
-
-%ul.bibliography
-  %li
-    Celcko, J. (2005), <em>SQL For Smarties</em>, San Francisco: Morgan Kaufman<br>Chapter 6
-  %li
-    Celcko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufman<br>Chapter 5.3.3
-  %li
-    Garcia-Molina, H., Ullman, J., &amp; Widom, J. (2002), <em>Database systems: The complete book</em>, New Jersey: Prentice Hall<br>Chapter 6.1.5
-  %li
-    <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29">Null (SQL)</a></em>, Wikipedia
-  %li
-    <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy">Null (SQL) :: Controversy</a></em>, Wikipedia
-  %li
-    de Haan, L., Gennick, J. (2005), <em><a href="http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html">Nulls: Nothing to Worry About</a></em>, Oracle Magazinea
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta content='text/html; charset=utf-8' http-equiv='content-type'>
+    <title>
+      Kjell-Magne Øierud :: bliki :: Missing values in SQL
+    </title>
+    <link href='/bliki/feed.atom' rel='alternate' title='Feed' type='application/atom+xml'>
+    <link href='/css/coderay.css' rel='stylesheet' type='text/css'>
+    <link href='/css/site.css' media='screen, projection' rel='stylesheet' type='text/css'>
+    <script src='/main.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <div id='container'>
+      <h1>Kjell-Magne Øierud :: Bliki</h1>
+      <p id='subtitle'>Thoughts on software development</p>
+      <div id='menu'>
+        <span style="float:left;">[ <a href="..">Home</a> ] [ <a href="."><strong>Blog</strong></a> ] </span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span>
+      </div>
+      <div class='date'>
+        2008-09-18 20:22 CEST
+      </div>
+      <h2>
+        Missing values in SQL
+      </h2>
+      <div class='notice'>
+        <p>
+          This article is part of a series on <a
+          href="SelectedTopicsOnDatabaseManagementSystems.html">selected topics on
+          database management systems</a>
+        </p>
+      </div>
+      <p>
+        In SQL we use NULL as a placeholder for missing values. It has at least
+        three different uses.
+      </p>
+      <ol>
+        <li>
+          To mark a value in a column as 'missing'.
+        </li>
+        <li>
+          As placeholders in the result of an <a
+          href="http://en.wikipedia.org/wiki/Join_(SQL)#Outer_joins">outer join</a>
+          where 'no match' are found between rows.
+        </li>
+        <li>
+          As the result of arithmetic operations with one or more operands that are
+          NULL. Here a NULL means 'unknown', unknown because information that is
+          needed for evaluating the expression is missing.
+        </li>
+      </ol>
+      <p>
+        If a value in a column is NULL, all you know is that it is missing. If you
+        need to know why, you can store that information in a separate column.
+        Another approach is to disallow NULLs and use an encoding that has distinct
+        values for missing data. An example is the standard encoding for gender: <a
+        href="http://en.wikipedia.org/wiki/ISO_5218">ISO 5218</a>.
+      </p>
+      <p>
+        The usage of NULL is one of the big controversies in SQL and relational
+        systems. Some feels that it introduces unnecessary complexity, and the
+        general advice seems to be to use NULLs only when there is no better option.
+      </p>
+      <h3>Reasons to avoid NULL</h3>
+      <ul>
+        <li>
+          NULL behaves differently from similar non-value markers in most
+          programming languages.
+        </li>
+        <li>
+          Some confuses NULL with the empty string, zero, or false.
+        </li>
+        <li>
+          NULLs introduces 3-valued logic. That is, in addition to TRUE and FALSE
+          you also have UNKNOWN, a source of many misunderstandings and errors in
+          SQL statements.
+        </li>
+        <li>
+          Many functions treat NULL in a special manner. To remember how NULL is
+          handled by different functions is painful. Some examples: GROUP BY puts
+          all rows with NULLs in the same group, thous treating them equal when in
+          fact the equality is unknown. The SUM aggregate function ignores NULLs
+          when summarizing the values of a column.
+        </li>
+        <li>
+          Having columns that might be NULL in a table, typically introduces a
+          penalty on performance.
+        </li>
+        <li>
+          Mistakes are Easily made when dealing with ALL, ANY, IN, and EXISTS
+          queries.
+        </li>
+        <li>
+          Having many nullable columns in a table might indicate that the table is
+          not properly <a
+          href="http://en.wikipedia.org/wiki/Database_normalization">normalized</a>.
+        </li>
+      </ul>
+      <h3>Reasons to use NULL</h3>
+      <ul>
+        <li>
+          It is a good idea to allow NULL when you need to mark a value as missing
+          and there is no easy way handle missing values in any reasonable encoding
+          for the column. Just be aware that you don't fall in any of the traps
+          mentioned above.
+        </li>
+      </ul>
+      <h3>Read more</h3>
+      <ul class='bibliography'>
+        <li>
+          Celcko, J. (2005), <em>SQL For Smarties</em>, San Francisco: Morgan Kaufman<br>Chapter 6
+        </li>
+        <li>
+          Celcko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufman<br>Chapter 5.3.3
+        </li>
+        <li>
+          Garcia-Molina, H., Ullman, J., &amp; Widom, J. (2002), <em>Database systems: The complete book</em>, New Jersey: Prentice Hall<br>Chapter 6.1.5
+        </li>
+        <li>
+          <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29">Null (SQL)</a></em>, Wikipedia
+        </li>
+        <li>
+          <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy">Null (SQL) :: Controversy</a></em>, Wikipedia
+        </li>
+        <li>
+          de Haan, L., Gennick, J. (2005), <em><a href="http://www.oracle.com/technology/oramag/oracle/05-jul/o45sql.html">Nulls: Nothing to Worry About</a></em>, Oracle Magazinea
+        </li>
+      </ul>
+      <hr>
+      <div class='sponsor'>
+        <a href='http://redpill-linpro.com' target='_blank'>
+          <img alt='Redpill Linpro' src='/images/rplp.gif'>
+        </a>
+      </div>
+      <div id='disqus_thread'></div>
+      <script type='text/javascript'>
+        var disqus_identifier = MissingvaluesinSQL
+      </script>
+      <script src='http://disqus.com/forums/km-oierud/embed.js' type='text/javascript'></script>
+      <noscript>
+        <a href='http://disqus.com/forums/km-oierud/?url=ref'>View the discussion thread.</a>
+      </noscript>
+      <a class='dsq-brlink' href='http://disqus.com'>blog comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+  </body>
+</html>
