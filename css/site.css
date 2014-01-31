@@ -95,13 +95,13 @@ h1 {
 
 html { 
     color: #000;
-    background: white url(/images/woven.png) repeat;
+    background: #f2f2f2;
 }
 
-body {  
-    background: white none repeat-y;
-    border-left: solid 5px black;
-    border-right: solid 5px black;
+#container {  
+    background: #fafafa none repeat-y;
+    border-left: solid 1px #dedede;
+    border-right: solid 1px #dedede;
 }
 
 #container {
@@ -114,8 +114,8 @@ hr:before {
     content: '~';
 }
 
-h1 {
-	background: white;
+#back-catalogue {
+  /* background-color: #eee; */
 }
 
 /***********************************************************************
@@ -130,6 +130,15 @@ html {
      * set a fixed font size as default (I usually prefer font-size:
      * 100%). */
     font-size: 12pt; 
+    height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+#container {
+  min-height: 100%;
 }
 
 h2, h3, h4, h5 { 
@@ -264,7 +273,6 @@ span.credit {
     float: right;
     width: 15em;
     border-left: thin solid #aaa;
-    background-color: #fff;
     font-size: smaller;
     margin-left: 1em;
 }
