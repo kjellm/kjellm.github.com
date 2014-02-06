@@ -1,0 +1,732 @@
+---
+title:  'Kjell-Magne Øierud :: Project Initiation Document'
+layout: bliki
+---
+
+In my experience as a software developer doing contracting work, I
+have found that there are some things that are important for a
+succesfull project. This post will not concern it self with project
+management at large.
+
+1. Manage expectations. Make sure that the expectations of all parties
+   are aligned.
+2. Make sure all that the necessary conditions are present for a good
+   start. I.e whats needed for reaching first milestone.
+
+
+
+As a believer in light weight processes, and in the principle of
+postponing decisions to the last responsible time. I suggest that all
+the points in this document can be specified as to be unknown or
+undecided, but I believe that it is good to state that explicitly.
+
+Here are my take on what needs to be in a project initiation document.
+
+
+### Preamble
+
+- Document version, author, and date. Before the project starts, there
+  will most likely be a lot of back and forth. To avoid the
+  possibility of confusion with old versions of the document.
+- Describe the purpose with the document. Important that every
+  paragraph in this document is understood and accepted by all
+  parties.
+- Make it clear that any initial estimates are based on what is stated
+  explicitly in this document.
+- $CUSTOMER is free to change anything at a later stage, in
+  consultation with the developer, knowing that this might have
+  consequences with regards to time, price and quality.
+
+### Participants
+
+Enumerate participants together with roles and responsibilities.
+
+### Process
+
+Describe the development process: meetings, iteration cycle, bug
+reporting, bug handling, QA, release management, source code
+
+#### Weekly cycle
+
+1. Developer works on features and fixes bugs as agreed on. $CUSTOMER
+   tests work done previous week, report bugs.
+2. (Telephone/skype) Meeting at end of week. Developer reports
+   (demonstrates) on work done. Plan work for next week. Prioritize:
+   fixing bugs found vs new features.
+3. Deploy new version for testing. Who deploys?
+
+
+### Milestones
+
+First milestone should always be a minimal system deployed to a
+production like environment. Ensure as much as possible of processes
+and infrastructure is in place.
+
+### Documentation
+
+<!-- What documentation is required by $CUSTOMER? Where should it be published?
+
+How to start and stop services, configuration, troubleshooting. Public APIs
+
+-->
+
+
+Platform
+--------
+
+<!-- Hardware, operating system, infrastructure, major libraries. Who
+is responsible for what? -->
+
+
+Auditablity
+-----------
+
+<!-- I.e logging -->
+
+Crosscutting concerns
+---------------------
+
+<!-- Any other requirements that are not a spesific -->
+
+### Configuration
+
+File format: [https://github.com/mojombo/toml]
+
+The system will have a configuration file. Any errors detected when
+processing this file will result in a log entry and a system exit.
+
+Configurable variables:
+
+- data directory. Used for API key data file. Default is
+  $HOME.
+
+- connection parameters for external services
+
+- how long to wait (timeout) for a response from external services.
+
+#### Tests
+
+Configuration file not found, check for log message on console and
+system exit status.
+
+Configuration file contains junk, check for log message on console and
+system exit status.
+
+
+### Performace
+
+These numbers depends on the performance of the external systems
+
+- What is the response time requirements? Response times inside the
+  90th percentile should be below X. X = ?
+
+- How many requests per minute?
+
+#### Tests
+
+Create a simple stress test with a mix of requests. (Apache Bench,
+httperf, siege).
+
+Since the system don't have very strict requirements on performance
+and responsiveness, we will make a simple test.
+
+Customer runs these benchmarks after each deploy of a new version of
+the service. The test results is to be reported back to developer.
+
+It is to be expected to see the test fail in the beginning of the
+project, as it is unknown how development environment performs
+relative to production environment.
+
+### Metrics
+
+None provided.
+
+### Availability
+
+- No special requirements.
+
+- No special measures taken to handle DOS-attacks.
+
+### Versioning
+
+The service will not version its API. Clients are expected to handle
+(ignore) new attributes in JSON returned by the service.
+
+External services
+-----------------
+
+Unknown how to use these services. Assumed to be straight forward. The
+system will not retry failed or timed out requests to these services.
+
+### Error handling
+
+If an error occurs while processing an request, the service will stop
+further processing and send an error response. The system will not
+roll back any changes done to external services prior to the error.
+
+
+Client authentication
+---------------------
+
+Client authenticates with an API key. API keys are generated by
+
+    $ ruby -rsecurerandom -e 'p SecureRandom.hex(32)'
+
+[http://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html]
+
+This will give a 32 byte random number formated as an hexadecimal
+number.
+
+Client API-keys are maintained in a plain file, each record separated
+by a new line character. Contains both the key and a name, the values
+separated by a space.
+
+API key is checked on each request before further processing.
+
+Once the API-key is authenticated, the client has full access to the
+API.
+
+If the key check fails a 'HTTP 404 Not Found' is returned with an
+empty body. (Can respond with something more useful, but that is less
+secure)
+
+The system will have one ping endpoint that is suitable for testing
+client authentication. (Also useful as an health check indicating that
+the system is up and responsive).
+
+### Tests
+
+For all tests, given the following api keys
+
+    ID      | Key
+    ----------------------------------------------------------------------------
+    A       | "bed4384969d64ac9fb8df4563808cbf2ecbf8aac2158d9d95e16a2e52c015bb7"
+    B       | "304b7d938ea36d7f1cc90a3187488af31eb65b9a73244d06cd0e7008671a309d"
+
+And time
+
+    1970-01-01T07:00:00Z
+
+#### 1
+
+Given a well-formed ping-request with API key with ID 'A' or 'B'.
+
+Then the response should be 'HTTP 200 OK' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z A Ping
+
+#### 2
+
+Given a well-formed ping-request and with the API key "An invalid api key".
+
+Then the response should be 'HTTP 404 Not Found' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z ? Authentication failed, invalid API key
+
+#### 3
+
+Given a well-formed ping-request and with no API key.
+
+Then the response should be 'HTTP 404 Not Found' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z ? Authentication failed, no API key
+
+
+Request checking
+----------------
+
+All requests need to be well formed for the service process the
+request. These checks will be done for all requests:
+
+- Only expected parameters are given
+- Parameter values are valid
+- Correct request method
+
+### Tests
+
+FIXME
+
+
+Resources
+---------
+
+Define all resources in the following chapter. Each resource
+
+Resource: Ping
+--------------
+
+Used to check that service is up and responsive. Can also be used to
+test an API key.
+
+### Request:
+
+    HTTP GET /ping?key=<aKey>
+
+### Response success:
+
+    HTTP 200 OK
+
+### Response failure:
+
+    HTTP 404 Not Found
+
+Happens if:
+
+- API key is missing or invalid
+
+
+Resource: Customer
+------------------
+
+### Identification
+
+- URI?
+- Which queries and API-requests are needed? In what order?
+- What parameters?
+
+#### Request
+
+    HTTP GET /customer?key=<aKey>&FIXME
+
+#### Response
+
+Success:
+
+    HTTP 200 OK, Content-Type: application/json
+    {customer: {id: <anID>}}
+
+Failure:
+
+If a call to external service fails or no customer found:
+
+    HTTP 204 No Content
+
+
+### Limit internet access
+
+- URI?
+- Which queries and API-requests are needed? In what order?
+- What parameters?
+
+#### Request
+
+    HTTP POST /customer/<puid>/FIXME
+    key=<aKey>, FIXME
+
+#### Response
+
+Success:
+
+    HTTP 200 OK
+
+Failure:
+
+If a call to external service fails:
+
+    HTTP 204 No Content
+
+### Change user password
+
+- URI?
+- Which queries and API-requests are needed? In what order?
+- What parameters?
+
+### Request
+
+    HTTP POST /customer/<puid>/FIXME
+    key=<aKey>, FIXME
+
+### Response
+
+Success:
+
+    HTTP 200 OK
+
+Failure:
+
+If a call to external service fails:
+
+    HTTP 204 No Content
+Specification
+=============
+
+_Document version 1, Kjell-Magne Øierud, 2014-01-30._
+
+THE SERVICE NEEDS A NAME.
+
+DRAFT. This is suggestions, please feel free to disagree and suggest
+corrections. Important that every paragraph in this document is
+understood and accepted by all parties.
+
+This document defines the intention: What is to be delivered,
+responsibilities, etc. It is to be considered the starting
+point.
+
+Any initial estimates are limited in scope to what is stated
+explicitly in this document.
+
+Customer is free to change anything at a later stage, in consultation
+with the developer, knowing that this might have consequences with
+regards to time, price and quality.
+
+
+Process
+-------
+
+### Weekly cycle
+
+(Or biweekly, if Customer prefers it)
+
+1. Developer works on features and fixes bugs as agreed on. Customer
+   tests work done previous week, report bugs.
+2. Telephone meeting (skype?) at end of week. Developer reports on
+   work done. Plan work for next week. Prioritize: fixing bugs found
+   vs new features.
+3. Customer deploys new version for testing.
+
+### Other
+
+- What to use for reporting bugs and prioritize features. trillo?
+
+- Source code is stored in a Git repositories on developers laptop and
+  on a Customer server. Git repositories are synced daily at a minimum.
+
+- Deployment: Done by Customer by running deploy script on
+  server. Parameter is version number (latest if omitted). Deploy
+  script needs access to Customer's Git repository.
+
+
+Milestones
+----------
+
+1. Deployed on production server with a ping service
+2. First API-endpoint deployed
+3. Second endpoint etc.
+
+
+Cross cutting concerns
+----------------------
+
+### Documentation
+
+- How to start and stop the service, configuration, logging.
+
+- The API gets documented by enumerating all endpoints with
+  spesification of request and response.
+
+- Where should documentation be published? Suggestion: On
+  '/doc/api.html', no API-key required.
+
+### Platform
+
+System will run on a dedicated VMware instance, provisioned by
+Customer.
+
+Customer is responsible for:
+
+- Operating system: CentOS. Which version? 6.5?
+- Web server: Nginx
+
+The system will be developed using the following major components:
+
+- Ruby 2.1
+- Sinatra
+- Unicorn
+
+These and all other minor dependencies will be bundled together with
+the developed system.
+
+### Transport protocol
+
+HTTPS. This is handled on the server configuration level. Certificate
+provided by Customer.
+
+### Logging
+
+- Logs to STDERR.
+
+- Start up script captures STDERR and redirects to a file. Log
+  rotation handled on server configuration level.
+
+- Log format: A timestamp followed by log level, client
+  name, time used (when relevant), and the message.
+
+- Log IP address for each request.
+
+- Standard log levels: Debug, Info, Warning, Error, Fatal.
+
+- System logs all requests and all interaction with other services on
+  log level INFO.
+
+- System logs all failed interactions with other services on log level
+  ERROR.
+
+- Any situation that causes the system to exit gets logged on level
+  FATAL.
+
+### Configuration
+
+File format: [https://github.com/mojombo/toml]
+
+The system will have a configuration file. Any errors detected when
+processing this file will result in a log entry and a system exit.
+
+Configurable variables:
+
+- data directory. Used for API key data file. Default is
+  $HOME.
+
+- connection parameters for external services
+
+- how long to wait (timeout) for a response from external services.
+
+#### Tests
+
+Configuration file not found, check for log message on console and
+system exit status.
+
+Configuration file contains junk, check for log message on console and
+system exit status.
+
+
+### Performace
+
+These numbers depends on the performance of the external systems
+
+
+- What is the response time requirements? Response times inside the
+  90th percentile should be below X. X = ?
+
+- How many requests per minute?
+
+#### Tests
+
+Create a simple stress test with a mix of requests. (Apache Bench,
+httperf, siege).
+
+Since the system don't have very strict requirements on performance
+and responsiveness, we will make a simple test.
+
+Customer runs these benchmarks after each deploy of a new version of
+the service. The test results is to be reported back to developer.
+
+It is to be expected to see the test fail in the beginning of the
+project, as it is unknown how development environment performs
+relative to production environment.
+
+### Metrics
+
+None provided.
+
+### Availability
+
+- No special requirements.
+
+- No special measures taken to handle DOS-attacks.
+
+### Versioning
+
+The service will not version its API. Clients are expected to handle
+(ignore) new attributes in JSON returned by the service.
+
+External services
+-----------------
+
+Unknown how to use these services. Assumed to be straight forward. The
+system will not retry failed or timed out requests to these services.
+
+### Error handling
+
+If an error occurs while processing an request, the service will stop
+further processing and send an error response. The system will not
+roll back any changes done to external services prior to the error.
+
+
+Client authentication
+---------------------
+
+Client authenticates with an API key. API keys are generated by
+
+    $ ruby -rsecurerandom -e 'p SecureRandom.hex(32)'
+
+[http://ruby-doc.org/stdlib-2.1.0/libdoc/securerandom/rdoc/SecureRandom.html]
+
+This will give a 32 byte random number formated as an hexadecimal
+number.
+
+Client API-keys are maintained in a plain file, each record separated
+by a new line character. Contains both the key and a name, the values
+separated by a space.
+
+API key is checked on each request before further processing.
+
+Once the API-key is authenticated, the client has full access to the
+API.
+
+If the key check fails a 'HTTP 404 Not Found' is returned with an
+empty body. (Can respond with something more useful, but that is less
+secure)
+
+The system will have one ping endpoint that is suitable for testing
+client authentication. (Also useful as an health check indicating that
+the system is up and responsive).
+
+### Tests
+
+For all tests, given the following api keys
+
+    ID      | Key
+    ----------------------------------------------------------------------------
+    A       | "bed4384969d64ac9fb8df4563808cbf2ecbf8aac2158d9d95e16a2e52c015bb7"
+    B       | "304b7d938ea36d7f1cc90a3187488af31eb65b9a73244d06cd0e7008671a309d"
+
+And time
+
+    1970-01-01T07:00:00Z
+
+#### 1
+
+Given a well-formed ping-request with API key with ID 'A' or 'B'.
+
+Then the response should be 'HTTP 200 OK' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z A Ping
+
+#### 2
+
+Given a well-formed ping-request and with the API key "An invalid api key".
+
+Then the response should be 'HTTP 404 Not Found' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z ? Authentication failed, invalid API key
+
+#### 3
+
+Given a well-formed ping-request and with no API key.
+
+Then the response should be 'HTTP 404 Not Found' with an empty body.
+And the following message should be logged
+
+    1970-01-01T07:00:00Z ? Authentication failed, no API key
+
+
+Request checking
+----------------
+
+All requests need to be well formed for the service process the
+request. These checks will be done for all requests:
+
+- Only expected parameters are given
+- Parameter values are valid
+- Correct request method
+
+### Tests
+
+FIXME
+
+
+Resources
+---------
+
+Define all resources in the following chapter. Each resource
+
+Resource: Ping
+--------------
+
+Used to check that service is up and responsive. Can also be used to
+test an API key.
+
+### Request:
+
+    HTTP GET /ping?key=<aKey>
+
+### Response success:
+
+    HTTP 200 OK
+
+### Response failure:
+
+    HTTP 404 Not Found
+
+Happens if:
+
+- API key is missing or invalid
+
+
+
+Source code and data
+--------------------
+
+### Security
+
+- Stored on developers laptop. Mac OS X, encrypted with Disk Utility.
+- Also stored on portable backup disk, encrypted with Disk
+  Utility. Located at Redpill Linpro HQ.
+
+###
+
+- Git repository on developers laptop
+- FIXME Requirements from customer on how to deliver source code? How often?
+
+
+Process
+-------
+
+Developer works primarily from outside Customers office.
+
+Weekly telephone (skype?) meetings at 1 pm. Thursdays. FIXME With whom?
+
+FIXME Who decides the priorities?
+
+FIXME Meet at Customer when required to be able to get the work done.
+
+
+Documentation
+-------------
+
+FIXME What is required?
+
+
+Platform
+--------
+
+System is developed to run on a VMware instance with CentOS. FIXME version?
+
+Puppet manifest documents server configuration requirements.
+
+
+Deployment
+----------
+
+Source code is packaged how? and delivered how?
+
+
+Test requirements?
+------------------
+
+QA.
+
+Customer is responsible for testing the solution and report bugs.
+
+What system should we use for bug-tracking?
+
+
+Milestones
+----------
+
+1. Deployed with a ping service
+2. First API-endpoint deployed
+3. Second endpoint etc.
+
+API Versioning
+--------------
+
+Don't.
+
+Requirements
+------------
