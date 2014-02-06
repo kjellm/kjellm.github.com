@@ -59,7 +59,7 @@ html {
 }
 
 body {  
-    width: 55em;
+    width: 45em;
     min-height: 100%;
     height: auto;
     text-align: left;
@@ -104,26 +104,19 @@ html {
     border-right: solid 1px #dedede;
 }
 
-#container {
-    /* background: url(../background-right.png) top right repeat-y; */
-}
-
 hr:before { 
     /* HACK Should not be in :before ... doesn't work in firefox,
     works in Konqeror */
     content: '~';
 }
 
-#back-catalogue {
-  /* background-color: #eee; */
-}
 
 /***********************************************************************
  *                      T Y P O G R A P H Y
  */
 
 html { 
-    font-family: Verdana, sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans Std', 'Gill Sans MT', sans-serif;
 
     /* Different default size on monospace (12pt) and other fonts (16
      * pt) in firefox and ie (not konqueror). Because of this I need to
@@ -143,14 +136,14 @@ body {
 
 h2, h3, h4, h5 { 
     margin-bottom: 1em;
+    font-weight: bold;
 }
 
 h1 {
-    text-align: center;
-	letter-spacing: 0.2em;;
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 1em;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 1em;
 }
 
 h2 {
@@ -285,44 +278,22 @@ span.credit {
     list-style-type: none;
 }
 
-/***********************************************************************
- *                   C O D E   E X A M P L E S
- */
-
-pre.code-example { 
-    margin: 0 2em 1em 1em;
-    padding: 1em;
-    background-color: #104e8b;
-    color: #87ceeb;
-    font-size: 1em; 
+#copy {
+  padding-top: 2em;
+  font-style: italic;
+  text-align: center;
+  font-size: small;
 }
 
-.code-example .constant { 
-    color: #98fb98;
+ul.posts {
+  list-style-type: none;
+  margin-left: 0;
 }
 
-.code-example .string,
-.code-example .regex { 
-    color: #ffa07a;
+ul.posts > li {
+  margin-bottom: 2em;
 }
 
-.code-example .keyword { 
-    color: #00ffff;
-}
-
-.code-example .string .expr, 
-.code-example .global { 
-    color: #eedd82;
-}
-
-.code-example .symbol { 
-    color: #7fffd4;
-}
-
-.code-example .comment { 
-    color: #ffa500;
-}
-
-body {
-  font-family: Verdana, "Bitstream Vera Sans", sans-serif;
+ul.posts h2 {
+  font-weight: normal;
 }

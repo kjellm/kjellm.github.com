@@ -1,0 +1,9 @@
+name: Your New Jekyll Site
+markdown: redcarpet
+pygments: true
+exclude: [bin, vendor]
+permalink: /bliki/:title.html
+timezone: Europe/Oslo
+pygments: true
+
+excerpt_separator: "\n\n\n"
