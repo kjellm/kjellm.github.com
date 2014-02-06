@@ -3,14 +3,17 @@ layout: default
 title: Kjell-Magne Øierud
 ---
 
-<p id="subtitle">Software developer
-
 <div id="menu">
-  <span style="float:left;">[ <strong>Home</strong> ] [ <a href="about.html">About</a> ] </span><span style="float: right;">[ <a href="feed.atom">Feed</a> ]</span>
+  <span style="float:left;">[ <em>Home</em> ] [ <a href="about.html">About</a> ] </span><span style="float: right;">[ <a href="bliki/feed.atom">Feed</a> ]</span>
 </div>
 
 <ul class="posts">
   {% for post in site.posts %}
-  <li><h2 style="float: left; width: 100%; vertical-align: bottom;"><span style="float: left;">{{ post.title | split: '::' | last }}</span><span style="float: right; font-weight: normal; font-size: small; font-style: italic; vertical-align: bottom;">{{ post.date | date_to_string }}</span></h2>{{ post.excerpt }}<a href="{{ post.url }}">Read more.</a><hr/></li>
+  <li>
+    {% include heading.html post=post %}
+    {{ post.excerpt }}
+    <a href="{{ post.url }}">Read more.</a>
+    <hr/>
+  </li>
   {% endfor %}
 </ul>

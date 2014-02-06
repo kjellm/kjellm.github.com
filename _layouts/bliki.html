@@ -1,10 +1,6 @@
 {% include html_head.html %}
-
-<p id="subtitle">Thoughts on software development
-
 {% include bliki_menu.html %}
-<div class="date">{{ page.date | date: '%Y-%m-%d %H:%M %Z'}}</div>
-{% include bliki_heading.html %}
+{% include heading.html post=page %}
 {{ content }}
-
+<hr/>
 {% include html_tail.html %}
