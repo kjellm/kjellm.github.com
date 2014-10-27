@@ -4,7 +4,7 @@ date:       2014-10-28 17:39:00.00000 +01:00
 layout:     bliki
 ---
 
-A small shell snippet that will automatically run `pdflatex` when the source file is changed, and display a notification if it fails. The notification thing only works on OS X :-/
+A small shell snippet that will automatically run `pdflatex` when the source file is changed. It will display a nice Notification Center message (OS X only :-/ ) if the compile fails.
 
 ```sh
 while true; do
