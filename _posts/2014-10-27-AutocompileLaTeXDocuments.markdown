@@ -16,3 +16,11 @@ while true; do
   fi
 done
 ```
+
+And here is a version using fswatch:
+
+```sh
+fswatch -i 'something.tex' -e '.*' . | \
+  xargs -t -n1 -I % \
+    bash -c "pdflatex % || osascript -e 'display notification \"Latex compilation failed\" with title \"ERROR\"'"
+```
