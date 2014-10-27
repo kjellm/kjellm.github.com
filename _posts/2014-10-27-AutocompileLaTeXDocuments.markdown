@@ -8,7 +8,7 @@ A small shell snippet that will automatically run `pdflatex` when the source fil
 
 ```sh
 while true; do
-  if [ cv.tex -nt cv.pdf ]; then
+  if [ something.tex -nt something.pdf ]; then
     pdflatex --interaction=nonstopmode cv.tex || \
       osascript -e 'display notification "Latex compilation failed" with title "ERROR"'
       sleep 1
