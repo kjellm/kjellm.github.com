@@ -6,6 +6,7 @@ layout:     bliki
 
 A small shell snippet that will automatically run `pdflatex` when the source file is changed. It will display a nice Notification Center message (OS X only :-/ ) if the compile fails.
 
+
 ```sh
 while true; do
   if [ something.tex -nt something.pdf ]; then
