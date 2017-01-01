@@ -5,13 +5,12 @@ title: Event Sourcing
 
 You can see the entire source code in [this gist][1].
 
-Some key somethings:
-
+Some key supporting ideas:
 
 - Domain Driven Design (DDD). Patterns used here are:
+  - Repositories
   - Aggregates
   - Entities
-  - Repositories
   - Value Objects
 - Command Query Responsibility Segregation (CQRS)
 - Pub/sub
@@ -25,15 +24,51 @@ further refinements before suitable for real world usage.
 
 ### Setup
 
-See [base.rb][2]
-
-### CQRS: Command side
-
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=cmd.rb"></script>
+See [base.rb][2]. The code here are not necessary to understand the
+concepts shown in this article. Included for completness.
 
 ### Event Sourcing
 
+At the root there is the Event Store. The Event Store holds Event
+Streams. One Event Strem per persisted Aggregate.
+
+Event Streams are append only data structures, holding Events.
+
+The event store is accessed through Event Store Repositories, one
+repository per aggregate type. The repository knows how to recreate
+the current state of an aggregate from the aggregate's event stream.
+
+#### Concurrency
+
+Optimistic locking: All changes must be done through a UnitOfWork
+which keep track of the expected version of the event stream. The
+expected version is compared to actual version before doing any
+changes to the event stream.
+
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=event.rb"></script>
+
+### CQRS: Command side
+
+A command can be either accepted or rejected by the system. On
+acceptance nothing is returned. On rejection an error is raised.
+
+#### On IDs
+
+Since nothing is returned from an accepted command, the client needs
+to include an ID even in create requests. This can be accomplished by
+using GUIDs for IDs.
+
+<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=cmd.rb"></script>
+
+### CRUD
+
+Even in a richely modeled domain, the need for simple entities that
+only needs CRUD operations arises. By using the principle of
+"convention over configuration", this can be handled with a very small
+amount of code. The code below encodes a "convention" for CRUD
+Aggregates.
+
+<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=crud.rb"></script>
 
 ### Domain Model
 
@@ -42,10 +77,6 @@ See [base.rb][2]
 ### CQRS: Read side
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=read.rb"></script>
-
-### CRUD
-
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=crud.rb"></script>
 
 ### A simple test application/client
 
