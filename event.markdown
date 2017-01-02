@@ -1,20 +1,27 @@
 ---
 layout: bliki
-title: Event Sourcing
+title: Event Sourcing - a practical example in Ruby
 ---
 
-You can see the entire source code in [this gist][1].
+Event sourcing is the idea that you, rather than saving the current
+state of a system, can rebuild it by replaying stored events. You
+often see event sourcing in conjunction with some key supporting
+ideas:
 
-Some key supporting ideas:
+- Domain Driven Design (DDD)
+- Command Query Responsibility Segregation (CQRS)
+- Pub/sub
 
-- Domain Driven Design (DDD). Patterns used here are:
+DDD patterns that are particularily relevant to event sourcing are:
+
+  - Ubiquitous language
   - Repositories
   - Aggregates
   - Entities
   - Value Objects
-- Command Query Responsibility Segregation (CQRS)
-- Pub/sub
-- GUID
+  - Domain Events
+
+You can see the entire source code in [this gist][1].
 
 My intention is not to explain all these concepts in detail, but
 rather to show how all comes together.
@@ -40,10 +47,11 @@ the current state of an aggregate from the aggregate's event stream.
 
 #### Concurrency
 
-Optimistic locking: All changes must be done through a UnitOfWork
-which keep track of the expected version of the event stream. The
-expected version is compared to actual version before doing any
-changes to the event stream.
+To prevent concurrent access to an event stream to result in a corrupt
+strem, we use optimistic locking: All changes must be done through a
+UnitOfWork which keep track of the expected version of the event
+stream. The expected version is compared to the actual version before
+any changes are done to the event stream.
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=event.rb"></script>
 
