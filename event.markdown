@@ -3,6 +3,9 @@ layout: bliki
 title: Event Sourcing - a practical example in Ruby
 ---
 
+[1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
+[2]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1#file-base-rb
+
 Event sourcing is the idea that you, rather than saving the current
 state of a system, can rebuild it by replaying stored events. You
 often see event sourcing in conjunction with some key supporting
@@ -105,6 +108,3 @@ Tying it all together
   <li>
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
 </ul>
-
-[1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
-[2]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1#file-base-rb
