@@ -5,15 +5,19 @@ title: Event Sourcing - a practical example in Ruby
 
 [1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
 [2]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1#file-base-rb
+[ddd]: https://en.wikipedia.org/wiki/Domain-driven_design
+[cqrs]: http://martinfowler.com/bliki/CQRS.html
+[pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
+[crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 
 Event sourcing is the idea that you, rather than saving the current
 state of a system, can rebuild it by replaying stored events. You
 often see event sourcing in conjunction with some key supporting
 ideas:
 
-- Domain Driven Design (DDD)
-- Command Query Responsibility Segregation (CQRS)
-- Pub/sub
+- [Domain Driven Design][ddd] (DDD)
+- [Command Query Responsibility Segregation][cqrs] (CQRS)
+- [Publish/subscribe][pubsub] (Pub/sub)
 
 DDD patterns that are particularily relevant to event sourcing are:
 
@@ -24,13 +28,13 @@ DDD patterns that are particularily relevant to event sourcing are:
   - Value Objects
   - Domain Events
 
-You can see the entire source code in [this gist][1].
-
 My intention is not to explain all these concepts in detail, but
 rather to show how all comes together.
 
-The code is by design a simplification. Most classes would need
-further refinements before suitable for real world usage.
+The code is simple by design. Most classes would need further
+refinements before suitable for real world usage.
+
+You can see the entire source code in [this gist][1].
 
 ### Setup
 
@@ -74,7 +78,7 @@ using GUIDs for IDs.
 ### CRUD
 
 Even in a richely modeled domain, the need for simple entities that
-only needs CRUD operations arises. By using the principle of
+only needs [CRUD][crud] operations arises. By using the principle of
 "convention over configuration", this can be handled with a very small
 amount of code. The code below encodes a "convention" for CRUD
 Aggregates.
