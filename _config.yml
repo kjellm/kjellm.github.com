@@ -1,6 +1,6 @@
 name: Your New Jekyll Site
-markdown: redcarpet
-highlighter: pygments
+markdown: kramdown
+highlighter: rouge
 exclude: [bin, vendor]
 permalink: /bliki/:title.html
 timezone: Europe/Oslo
