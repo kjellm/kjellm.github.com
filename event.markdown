@@ -81,11 +81,22 @@ Aggregates.
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=crud.rb"></script>
 
-### Domain Model
+### Domain Model (CQRS: Command side)
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=model.rb"></script>
 
 ### CQRS: Read side
+
+We have two options on the read side: Use the event store
+repositories, or maintain read optimized projections. The first
+alternative are good enough if you don't need querying beyond simple
+retrieval by ID.
+
+When the first option is good enough, I suggest that you do not use
+the repositories directly but sets up read side versions that forwards
+to the event store repositories. In this way you can enforce the read
+only nature and you make it easier to change to a projection at a
+later stage if deemed necessary.
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=read.rb"></script>
 
