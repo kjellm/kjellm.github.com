@@ -22,6 +22,7 @@ Some features:
 <div class="illustration"><img src="/images/munin-mysql.png" alt="screenshot collage"/>
 <br/>
 <p><span class="credit">Thanks to Bart van Bragt for the graph images</span></p>
+</div>
 
 [1]: http://www.xaprb.com/blog/
 [2]: http://code.google.com/p/mysql-cacti-templates/
