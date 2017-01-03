@@ -130,6 +130,14 @@ h1 {
 
 }
 
+@media (max-width: 700px) {
+    html {
+        color: #000;
+        background: #fafafa;
+    }
+}
+
+
 hr:before {
     /* HACK Should not be in :before ... doesn't work in firefox,
     works in Konqeror */
