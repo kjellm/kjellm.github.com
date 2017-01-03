@@ -59,25 +59,47 @@ html {
 }
 
 body {
-    width: 45em;
     min-height: 100%;
     height: auto;
     text-align: left;
     margin: 0 auto;
 }
 
+@media (min-width: 500px) {
+
+    body {
+        width: 45em;
+    }
+
+    #portrait {
+    }
+
+    #interests {
+        margin-top: 3em;
+        padding-right: 2em;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    body {
+        width: 100%;
+    }
+
+    #portrait {
+        display: none;
+    }
+
+    #interests {
+        float: left;
+    }
+}
+
 #container {
     padding: 1em;
     min-height: 100%;
     background-image: none;
-}
-
-#portrait {
-}
-
-#interests {
-    margin-top: 3em;
-    padding-right: 2em;
 }
 
 #subtitle {
@@ -93,15 +115,19 @@ h1 {
  *                          C O L O U R
  */
 
-html {
-    color: #000;
-    background: #f2f2f2;
-}
+@media (min-width: 500px) {
 
-#container {
-    background: #fafafa none repeat-y;
-    border-left: solid 1px #dedede;
-    border-right: solid 1px #dedede;
+    html {
+        color: #000;
+        background: #f2f2f2;
+    }
+
+    #container {
+        background: #fafafa none repeat-y;
+        border-left: solid 1px #dedede;
+        border-right: solid 1px #dedede;
+    }
+
 }
 
 hr:before {
@@ -228,6 +254,11 @@ h2 .date {
 
 h2 .title {
   float: left;
+}
+
+h2 .title a {
+    color: black;
+    text-decoration: none;
 }
 
 .sponsor {
