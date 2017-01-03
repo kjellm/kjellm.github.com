@@ -10,8 +10,8 @@ title: Event Sourcing - a practical example in Ruby
 [pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
 [crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 
-Event sourcing is the idea that you, rather than saving the current
-state of a system, can rebuild it by replaying stored events. You
+Event sourcing is the idea that, rather than saving the current
+state of a system, you can rebuild it by replaying stored events. You
 often see event sourcing in conjunction with some key supporting
 ideas:
 
