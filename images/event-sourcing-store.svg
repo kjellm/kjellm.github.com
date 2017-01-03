@@ -2,12 +2,12 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-1 0 443 225" width="443pt" height="225pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.2.2 
-    <dc:date>2017-01-03 08:11:59 +0000</dc:date>
+    <dc:date>2017-01-03 08:36:59 +0000</dc:date>
   </metadata>
   <defs>
-    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="532.22656" cap-height="719.7266" ascent="770.0195" descent="-229.98047" font-weight="bold">
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
       <font-face-src>
-        <font-face-name name="Helvetica-Bold"/>
+        <font-face-name name="HelveticaNeue"/>
       </font-face-src>
     </font-face>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="UMLInheritance_Marker" viewBox="-1 -8 14 16" markerWidth="14" markerHeight="16" color="black">
@@ -15,9 +15,9 @@
         <path d="M 12 0 L 0 -7 L 0 7 Z" fill="none" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
-    <font-face font-family="Helvetica" font-size="9" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
+    <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
       <font-face-src>
-        <font-face-name name="Helvetica"/>
+        <font-face-name name="HelveticaNeue"/>
       </font-face-src>
     </font-face>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
@@ -32,53 +32,52 @@
       <title>Layer 1</title>
       <rect x="174" y="97" width="99" height="36" fill="white"/>
       <rect x="174" y="97" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(179 108)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="11.157227" y="11" textLength="66.68555">Event Store</tspan>
+      <text transform="translate(179 107.832)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="62.448">Event Store</tspan>
       </text>
       <rect x="342" y="97" width="99" height="36" fill="white"/>
       <rect x="342" y="97" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(347 108)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="6.1503906" y="11" textLength="76.69922">Event Stream</tspan>
+      <text transform="translate(347 107.832)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="8.38" y="11" textLength="72.24">Event Stream</tspan>
       </text>
       <rect x="0" y="97" width="105" height="36" fill="white"/>
       <rect x="0" y="97" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(5 101)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="5.163086" y="11" textLength="88.00781">Pub Sub Event </tspan>
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="2.154297" y="25" textLength="90.69141">Store Decorator</tspan>
+      <text transform="translate(5 100.664)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="7.486" y="11" textLength="83.364">Pub Sub Event </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="4.726" y="25.336" textLength="85.548">Store Decorator</tspan>
       </text>
       <rect x="3" y="6" width="99" height="36" fill="white"/>
       <rect x="3" y="6" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(8 10)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="11.157227" y="11" textLength="70.01953">Event Store </tspan>
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="13.161133" y="25" textLength="62.677734">Repository</tspan>
+      <text transform="translate(8 9.664001)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="65.784">Event Store </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="15.502" y="25.336" textLength="57.996">Repository</tspan>
       </text>
       <rect x="3" y="188" width="99" height="36" fill="white"/>
       <rect x="3" y="188" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(8 199)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="7.943359" y="11" textLength="54.65039">Unit Of W</tspan>
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="62.38281" y="11" textLength="18.673828">ork</tspan>
+      <text transform="translate(8 198.832)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="9.826" y="11" textLength="69.348">Unit Of Work</tspan>
       </text>
       <path d="M 105 115 L 120.5 115 L 158.5 115 L 160.5 115" marker-end="url(#UMLInheritance_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <line x1="273" y1="115" x2="342" y2="115" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(330.82457 115.54651)" fill="black">
-        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".2487793" y="9" textLength="3.5024414">*</tspan>
+      <text transform="translate(330.82457 115.42051)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="500" x=".416" y="9" textLength="3.168">*</tspan>
       </text>
-      <text transform="translate(280.64362 101.47675)" fill="black">
-        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".49731445" y="9" textLength="5.005371">1</tspan>
+      <text transform="translate(280.64362 101.35075)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="500" x=".498" y="9" textLength="5.004">1</tspan>
       </text>
       <line x1="52.5" y1="42" x2="52.5" y2="87.1" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <line x1="52.5" y1="188" x2="52.5" y2="142.9" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <rect x="342" y="188" width="99" height="36" fill="white"/>
       <rect x="342" y="188" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(347 199)" fill="black">
-        <tspan font-family="Helvetica" font-size="12" font-weight="bold" x="28.161133" y="11" textLength="32.677734">Event</tspan>
+      <text transform="translate(347 198.832)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="29.386" y="11" textLength="30.228">Event</tspan>
       </text>
       <line x1="391.5" y1="133" x2="391.5" y2="188" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(383.4535 175.18625)" fill="black">
-        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".2487793" y="9" textLength="3.5024414">*</tspan>
+      <text transform="translate(383.4535 175.06025)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="500" x=".416" y="9" textLength="3.168">*</tspan>
       </text>
-      <text transform="translate(396.52325 135.98404)" fill="black">
-        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".49731445" y="9" textLength="5.005371">1</tspan>
+      <text transform="translate(396.52325 135.85804)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="500" x=".498" y="9" textLength="5.004">1</tspan>
       </text>
     </g>
   </g>
