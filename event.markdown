@@ -44,7 +44,7 @@ concepts shown in this article. Included for completness.
 ### Event Sourcing
 
 <div class="illustration">
-  <img src="images/event-sourcing-store.png" title="Event store class diagram"/>
+  <img src="images/event-sourcing-store.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
 At the root there is the Event Store. The Event Store holds Event

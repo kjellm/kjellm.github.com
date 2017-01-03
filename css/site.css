@@ -65,7 +65,7 @@ body {
     margin: 0 auto;
 }
 
-@media (min-width: 500px) {
+@media (min-width: 700px) {
 
     body {
         width: 45em;
@@ -81,7 +81,7 @@ body {
 
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
 
     body {
         width: 100%;
@@ -115,7 +115,7 @@ h1 {
  *                          C O L O U R
  */
 
-@media (min-width: 500px) {
+@media (min-width: 700px) {
 
     html {
         color: #000;
