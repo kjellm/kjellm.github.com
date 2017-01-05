@@ -44,10 +44,10 @@ concepts shown in this article. Included for completness.
 ### Event Sourcing
 
 <div class="illustration">
-  <img src="images/event-sourceing/event-sourceing-store.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/store.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
-{% highlight ruby %}
+``` ruby
 class EventStoreError < StandardError
 end
 
@@ -56,7 +56,7 @@ end
 
 class Event < ValueObject
 end
-{% endhighlight %}
+```
 
 At the root there is the Event Store. The Event Store holds Event
 Streams. One Event Strem per persisted Aggregate. The event store I
@@ -64,7 +64,7 @@ have implemented here only holds the stream in memory, but I hope that
 it is easy to imagine how it can be turned into a store that uses
 files or a database as a backend.
 
-{% highlight ruby %}
+``` ruby
 class EventStore < BaseObject
 
   def initialize
@@ -77,10 +77,7 @@ class EventStore < BaseObject
   end
 
   def append(id, expected_version, *events)
-    stream = streams.fetch id
-    stream.version == expected_version or
-      raise EventStoreConcurrencyError
-    stream.append(*events)
+    streams.fetch(id).append(*events)
   end
 
   def event_stream_for(id)
@@ -96,11 +93,11 @@ class EventStore < BaseObject
   attr_reader :streams
 
 end
-{% endhighlight %}
+```
 
 Event Streams are append only data structures, holding Events.
 
-{% highlight ruby %}
+``` ruby
 class EventStream < BaseObject
 
   def initialize(**args)
@@ -124,9 +121,30 @@ class EventStream < BaseObject
 
   attr_reader :event_sequence
 end
-{% endhighlight %}
+```
 
-{% highlight ruby %}
+#### Concurrency
+
+To prevent concurrent access to an event stream to result in a corrupt
+strem, we use optimistic locking: All changes must be done through a
+UnitOfWork which keep track of the expected version of the event
+stream. The expected version is compared to the actual version before
+any changes are done to the event stream.
+
+``` ruby
+class EventStoreOptimisticLockDecorator < DelegateClass(EventStore)
+
+  def append(id, expected_version, *events)
+    stream = (__getobj__.send :streams).fetch id
+    stream.version == expected_version or
+      raise EventStoreConcurrencyError
+    super id, *events
+  end
+
+end
+```
+
+``` ruby
 class EventStorePubSubDecorator < DelegateClass(EventStore)
 
   def initialize(obj)
@@ -156,9 +174,9 @@ class EventStorePubSubDecorator < DelegateClass(EventStore)
   end
 
 end
-{% endhighlight %}
+```
 
-{% highlight ruby %}
+``` ruby
 class EventStoreLoggDecorator < DelegateClass(EventStore)
 
   def append(id, expected_version, *events)
@@ -167,19 +185,11 @@ class EventStoreLoggDecorator < DelegateClass(EventStore)
   end
 
 end
-{% endhighlight %}
+```
 
 The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event stream.
-
-#### Concurrency
-
-To prevent concurrent access to an event stream to result in a corrupt
-strem, we use optimistic locking: All changes must be done through a
-UnitOfWork which keep track of the expected version of the event
-stream. The expected version is compared to the actual version before
-any changes are done to the event stream.
 
 ```ruby
 class EventStoreRepository < BaseObject
@@ -264,7 +274,11 @@ class CommandHandler < BaseObject
   include InstanceMethods
 
 end
+```
 
+Next is a class that adds logging to `CommandHandlers`.
+
+``` ruby
 class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
 
   def initialize(obj)
@@ -281,7 +295,17 @@ class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
 end
 ```
 
-```ruby
+The `Command` objects are a good place to validate data comming in to
+the system. I have added some rudimentary validation rules to
+illustrate this. I am not adding any coercion of values given to the
+command, I believe this responsibility belongs to the creator of the
+`Command` object.
+
+Beyond validation, command objects are simple Data Transfer Objects
+(DTOs).
+
+
+``` ruby
 class Command < ValueObject
 
   def initialize(*args)
@@ -322,6 +346,11 @@ only needs [CRUD][crud] operations arises. By using the principle of
 amount of code. The code below encodes a "convention" for CRUD
 Aggregates.
 
+I have left deletes as an excercise for the reader. Hint: We never
+actually delete anything from the event store. So a delete must be
+handled by a delete event appended to the event stream.
+
+
 ``` ruby
 class CrudCommandHandler < CommandHandler
 
@@ -353,6 +382,7 @@ class CrudCommandHandler < CommandHandler
     def process_update(command)
       obj = repository.find command.id
       raise ArgumentError if obj.nil?
+      raise ArgumentError if obj.id != command.id
       obj.set_attributes command.to_h
       validator(obj).assert_validity
       event = self.class.const_get("#{type}Updated").new(command.to_h)
@@ -360,18 +390,15 @@ class CrudCommandHandler < CommandHandler
         uow.append event
       end
     end
-
-    def command_to_update_attrs(command)
-      attrs = command.to_h
-      attrs.delete :id
-      attrs
-    end
   end
 
   include InstanceMethods
 
 end
+```
 
+
+``` ruby
 module CrudAggregate
 
   module ClassMethods
@@ -418,16 +445,11 @@ end
   <img src="images/event-sourceing/domain.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
+Shows an example of using CrudAggregate. All stuff rolled into one
+class. Useful for the simplest aggregates that only needs CRUD
+operations.
+
 ``` ruby
-#
-# R E L E A S E
-#
-# a.k.a. Album
-#
-# Shows an example of using CrudAggregate. All stuff rolled into one
-# class. Useful for the simplest aggregates that only needs CRUD
-# operations.
-#
 
 RELEASE_ATTRIBUTES = %I(id title tracks)
 
@@ -440,7 +462,9 @@ class Release < Entity
     # Do something here
   end
 end
+```
 
+``` ruby
 class ReleaseCommand < Command
 
   private
@@ -450,7 +474,9 @@ class ReleaseCommand < Command
     non_blank_string(title)
   end
 end
+```
 
+``` ruby
 class CreateRelease < ReleaseCommand
   attributes *RELEASE_ATTRIBUTES
 end
@@ -466,14 +492,12 @@ end
 class ReleaseUpdated < Event
   attributes *RELEASE_ATTRIBUTES
 end
+```
 
-#
-# R E C O R D I N G
-#
-# Shows an example where all the different responsibilities are
-# handled by separate objects.
-#
+Shows an example where all the different responsibilities are handled
+by separate objects.
 
+``` ruby
 class RecordingRepository < EventStoreRepository
 
   def type
@@ -595,7 +619,9 @@ class RecordingProjectionClass < RepositoryProjection
   end
 
 end
+```
 
+``` ruby
 class ReleaseProjectionClass < BaseObject
 
   def initialize
@@ -631,7 +657,9 @@ class ReleaseProjectionClass < BaseObject
     track_ids.map! { |id| RecordingProjection.find(id).to_h }
   end
 end
+```
 
+``` ruby
 class TotalsProjectionClass < BaseObject
 
   def initialize
@@ -647,7 +675,11 @@ class TotalsProjectionClass < BaseObject
   attr_reader :totals
 
 end
+```
 
+Make singletons
+
+``` ruby
 RecordingProjection = RecordingProjectionClass.new
 ReleaseProjection = ReleaseProjectionClass.new
 TotalsProjection = TotalsProjectionClass.new
