@@ -71,6 +71,13 @@ How to start and stop services, configuration, troubleshooting. Public APIs
 -->
 
 
+### Rules for using open source software
+
+Any restriction on what licenses are allowed?
+
+### Relevant laws and regulations
+
+
 Platform
 --------
 

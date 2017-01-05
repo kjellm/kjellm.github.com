@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 1133" width="500pt" height="1133pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 60" width="500pt" height="5pc" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.2.2 
-    <dc:date>2017-01-05 16:35:14 +0000</dc:date>
+    <dc:date>2017-01-05 20:33:42 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
@@ -20,17 +20,17 @@
     <title>cqrs-read</title>
     <g>
       <title>Layer 1</title>
-      <rect x="109" y="41" width="105" height="36" fill="white"/>
-      <rect x="109" y="41" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(114 51.832)" fill="black">
+      <rect x="113" y="12" width="105" height="36" fill="white"/>
+      <rect x="113" y="12" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(118 22.832)" fill="black">
         <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="32.056" y="11" textLength="30.888">Client</tspan>
       </text>
-      <rect x="278" y="41" width="105" height="36" fill="white"/>
-      <rect x="278" y="41" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(283 51.832)" fill="black">
+      <rect x="282" y="12" width="105" height="36" fill="white"/>
+      <rect x="282" y="12" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(287 22.832)" fill="black">
         <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="20.392" y="11" textLength="54.216">Projection</tspan>
       </text>
-      <line x1="214" y1="59" x2="268.1" y2="59" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <line x1="218" y1="30" x2="272.1" y2="30" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
     </g>
   </g>
 </svg>
