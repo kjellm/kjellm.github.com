@@ -59,6 +59,169 @@ The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event stream.
 
+{% highlight ruby %}
+class EventStoreError < StandardError
+end
+
+class EventStoreConcurrencyError < EventStoreError
+end
+
+class Event < ValueObject
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class EventStore < BaseObject
+
+  def initialize
+    @streams = {}
+  end
+
+  def create(id)
+    raise EventStoreError, "Stream exists for #{id}" if streams.key? id
+    streams[id] = EventStream.new
+  end
+
+  def append(id, expected_version, *events)
+    stream = streams.fetch id
+    stream.version == expected_version or
+      raise EventStoreConcurrencyError
+    stream.append(*events)
+  end
+
+  def event_stream_for(id)
+    streams[id]&.clone
+  end
+
+  def event_stream_version_for(id)
+    streams[id]&.version || 0
+  end
+
+  private
+
+  attr_reader :streams
+
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class EventStream < BaseObject
+
+  def initialize(**args)
+    super
+    @event_sequence = []
+  end
+
+  def version
+    @event_sequence.length
+  end
+
+  def append(*events)
+    event_sequence.push(*events)
+  end
+
+  def to_a
+    @event_sequence.clone
+  end
+
+  private
+
+  attr_reader :event_sequence
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class EventStorePubSubDecorator < DelegateClass(EventStore)
+
+  def initialize(obj)
+    super
+    @subscribers = []
+  end
+
+  def subscribe(subscriber)
+    subscribers << subscriber
+  end
+
+  def append(id, expected_version, *events)
+    super
+    publish(*events)
+  end
+
+  private
+
+  attr_reader :subscribers
+
+  def publish(*events)
+    subscribers.each do |sub|
+      events.each do |e|
+        sub.apply e
+      end
+    end
+  end
+
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class EventStoreLoggDecorator < DelegateClass(EventStore)
+
+  def append(id, expected_version, *events)
+    super
+    logg "New events: #{events}"
+  end
+
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class EventStoreRepository < BaseObject
+
+  module InstanceMethods
+    def find(id)
+      stream = registry.event_store.event_stream_for(id)
+      return if stream.nil?
+      build stream.to_a
+    end
+
+    def unit_of_work(id)
+      yield UnitOfWork.new(id)
+    end
+
+    private
+
+    def build(stream)
+      obj = type.new stream.first.to_h
+      stream[1..-1].each do |event|
+        message = "apply_" + event.class.name.snake_case
+        send message.to_sym, obj, event
+      end
+      obj
+    end
+  end
+
+  include InstanceMethods
+end
+{% endhighlight %}
+
+{% highlight ruby %}
+class UnitOfWork < BaseObject
+
+  def initialize(id)
+    @id = id
+    @expected_version = registry.event_store.event_stream_version_for(id)
+  end
+
+  def create
+    registry.event_store.create @id
+  end
+
+  def append(*events)
+    registry.event_store.append @id, @expected_version, *events
+  end
+
+end
+{% endhighlight %}
+
 #### Concurrency
 
 To prevent concurrent access to an event stream to result in a corrupt
