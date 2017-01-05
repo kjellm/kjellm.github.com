@@ -126,7 +126,7 @@ Tying it all together
     Boston, MA: Addison Wesley
   <li>
     Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley</em>,
-    Chapter 8 and appendix A
+    Chapters 4, 8, and appendix A
   <li>
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
 </ul>
