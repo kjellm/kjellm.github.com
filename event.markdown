@@ -124,12 +124,9 @@ Tying it all together
   <li>
     Evans, E. (2004), <em>Domain Driven Design: Tackling complexity in the heart of software</em>,
     Boston, MA: Addison Wesley
-  </li>
   <li>
-    Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley,
+    Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley</em>,
     Chapter 8 and appendix A
-  </li>
   <li>
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
-  </li>
 </ul>
