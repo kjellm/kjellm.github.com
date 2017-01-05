@@ -162,6 +162,12 @@ body {
   height: 100%;
 }
 
+code {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.9em;
+}
+
+
 #container {
   min-height: 100%;
 }

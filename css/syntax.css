@@ -1,12 +1,15 @@
-.highlight {
+div .highlight {
   padding: 0.5em;
   margin: 0 0.5em 1em 0.5em;
   background-color: #f2f2f2;
   border: 1px solid #dedede;
   font-size: 0.9em;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   color: #100;
   overflow: scroll;
+}
+
+.highlight span {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
 .highlight .c { color: #999988; font-style: italic } /* Comment */
