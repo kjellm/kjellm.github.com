@@ -44,7 +44,7 @@ concepts shown in this article. Included for completness.
 ### Event Sourcing
 
 <div class="illustration">
-  <img src="images/event-sourcing-store.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/event-sourceing-store.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
 At the root there is the Event Store. The Event Store holds Event
@@ -69,7 +69,11 @@ any changes are done to the event stream.
 
 <script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=event.rb"></script>
 
-### CQRS: Command side
+### CQRS: Command side infrastructure
+
+<div class="illustration">
+  <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" title="CQRS Command class diagram"/>
+</div>
 
 A command can be either accepted or rejected by the system. On
 acceptance nothing is returned. On rejection an error is raised.
@@ -98,6 +102,12 @@ Aggregates.
 
 ### CQRS: Read side
 
+<div class="illustration">
+  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" title="Event store class diagram"/>
+</div>
+
+
+
 We have two options on the read side: Use the event store
 repositories, or maintain read optimized projections. The first
 alternative are good enough if you don't need querying beyond simple
@@ -125,7 +135,7 @@ Tying it all together
     Evans, E. (2004), <em>Domain Driven Design: Tackling complexity in the heart of software</em>,
     Boston, MA: Addison Wesley
   <li>
-    Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley</em>,
+    Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley,
     Chapters 4, 8, and appendix A
   <li>
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument

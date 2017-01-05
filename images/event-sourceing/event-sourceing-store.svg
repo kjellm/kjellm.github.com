@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-2 0 495 225" width="495pt" height="225pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.2.2 
-    <dc:date>2017-01-04 14:57:13 +0000</dc:date>
+    <dc:date>2017-01-05 16:32:57 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
@@ -32,7 +32,7 @@
     </font-face>
   </defs>
   <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
-    <title>Canvas 1</title>
+    <title>event-sourceing-store</title>
     <g>
       <title>Layer 1</title>
       <rect x="225" y="97" width="99" height="36" fill="white"/>
@@ -78,7 +78,7 @@
       <text transform="translate(432.4535 171.06025)" fill="black">
         <tspan font-family="Helvetica Neue" font-size="9" font-weight="500" x=".416" y="9" textLength="3.168">*</tspan>
       </text>
-      <path d="M 54 24 L 3 24 L 3 206 L 44.1 206" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <path d="M 54 24 L 42.1 24 L 3 24 L 3 206 L 42.1 206 L 44.1 206" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
       <text transform="translate(3.5 105.88243)" fill="black">
         <tspan font-family="Helvetica" font-size="10" font-weight="500" x="0" y="10" textLength="38.916016">«create»</tspan>
       </text>
