@@ -47,18 +47,6 @@ concepts shown in this article. Included for completness.
   <img src="images/event-sourceing/event-sourceing-store.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
-At the root there is the Event Store. The Event Store holds Event
-Streams. One Event Strem per persisted Aggregate. The event store I
-have implemented here only holds the stream in memory, but I hope that
-it is easy to imagine how it can be turned into a store that uses
-files or a database as a backend.
-
-Event Streams are append only data structures, holding Events.
-
-The event store is accessed through Event Store Repositories, one
-repository per aggregate type. The repository knows how to recreate
-the current state of an aggregate from the aggregate's event stream.
-
 {% highlight ruby %}
 class EventStoreError < StandardError
 end
@@ -69,6 +57,12 @@ end
 class Event < ValueObject
 end
 {% endhighlight %}
+
+At the root there is the Event Store. The Event Store holds Event
+Streams. One Event Strem per persisted Aggregate. The event store I
+have implemented here only holds the stream in memory, but I hope that
+it is easy to imagine how it can be turned into a store that uses
+files or a database as a backend.
 
 {% highlight ruby %}
 class EventStore < BaseObject
@@ -103,6 +97,8 @@ class EventStore < BaseObject
 
 end
 {% endhighlight %}
+
+Event Streams are append only data structures, holding Events.
 
 {% highlight ruby %}
 class EventStream < BaseObject
@@ -173,7 +169,19 @@ class EventStoreLoggDecorator < DelegateClass(EventStore)
 end
 {% endhighlight %}
 
-{% highlight ruby %}
+The event store is accessed through Event Store Repositories, one
+repository per aggregate type. The repository knows how to recreate
+the current state of an aggregate from the aggregate's event stream.
+
+#### Concurrency
+
+To prevent concurrent access to an event stream to result in a corrupt
+strem, we use optimistic locking: All changes must be done through a
+UnitOfWork which keep track of the expected version of the event
+stream. The expected version is compared to the actual version before
+any changes are done to the event stream.
+
+```ruby
 class EventStoreRepository < BaseObject
 
   module InstanceMethods
@@ -201,9 +209,9 @@ class EventStoreRepository < BaseObject
 
   include InstanceMethods
 end
-{% endhighlight %}
+```
 
-{% highlight ruby %}
+``` ruby
 class UnitOfWork < BaseObject
 
   def initialize(id)
@@ -220,17 +228,7 @@ class UnitOfWork < BaseObject
   end
 
 end
-{% endhighlight %}
-
-#### Concurrency
-
-To prevent concurrent access to an event stream to result in a corrupt
-strem, we use optimistic locking: All changes must be done through a
-UnitOfWork which keep track of the expected version of the event
-stream. The expected version is compared to the actual version before
-any changes are done to the event stream.
-
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=event.rb"></script>
+```
 
 ### CQRS: Command side infrastructure
 
@@ -247,7 +245,74 @@ Since nothing is returned from an accepted command, the client needs
 to include an ID even in create requests. This can be accomplished by
 using GUIDs for IDs.
 
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=cmd.rb"></script>
+
+```ruby
+class CommandHandler < BaseObject
+
+  module InstanceMethods
+    def handle(command)
+      process(command)
+      return
+    end
+
+    def process(command)
+      message = "process_" + command.class.name.snake_case
+      send message.to_sym, command
+    end
+  end
+
+  include InstanceMethods
+
+end
+
+class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
+
+  def initialize(obj)
+    super obj
+  end
+
+  def handle(command)
+    logg "Start handling: #{command.inspect}"
+    super
+  ensure
+    logg "Done handling: #{command.class.name}"
+  end
+
+end
+```
+
+```ruby
+class Command < ValueObject
+
+  def initialize(*args)
+    super
+    validate
+  end
+
+  private
+
+  def validate
+    raise "Implement in subclass! #{self.class.name}"
+  end
+
+  def required(*values)
+    values.none?(&:nil?) or
+      raise ArgumentError
+  end
+
+  def non_blank_string(obj)
+    return unless obj
+    obj.is_a?(String) && !obj.strip.empty? or
+      raise ArgumentError
+  end
+
+  def positive_integer(obj)
+    return unless obj
+    obj.is_a?(Integer) && obj > 0 or
+      raise ArgumentError
+  end
+end
+```
 
 ### CRUD
 
@@ -257,19 +322,243 @@ only needs [CRUD][crud] operations arises. By using the principle of
 amount of code. The code below encodes a "convention" for CRUD
 Aggregates.
 
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=crud.rb"></script>
+``` ruby
+class CrudCommandHandler < CommandHandler
+
+  module InstanceMethods
+    private
+
+    def validator(obj)
+      raise "Implement in subclass!"
+    end
+
+    def repository
+      raise "Implement in subclass!"
+    end
+
+    def type
+      raise "Implement in subclass!"
+    end
+
+    def process_create(command)
+      obj = type.new(command.to_h)
+      validator(obj).assert_validity
+      event = self.class.const_get("#{type}Created").new(command.to_h)
+      repository.unit_of_work(command.id) do |uow|
+        uow.create
+        uow.append event
+      end
+    end
+
+    def process_update(command)
+      obj = repository.find command.id
+      raise ArgumentError if obj.nil?
+      obj.set_attributes command.to_h
+      validator(obj).assert_validity
+      event = self.class.const_get("#{type}Updated").new(command.to_h)
+      repository.unit_of_work(command.id) do |uow|
+        uow.append event
+      end
+    end
+
+    def command_to_update_attrs(command)
+      attrs = command.to_h
+      attrs.delete :id
+      attrs
+    end
+  end
+
+  include InstanceMethods
+
+end
+
+module CrudAggregate
+
+  module ClassMethods
+    def repository
+      self
+    end
+
+    def validator(obj)
+      obj
+    end
+  end
+
+  def assert_validity
+  end
+
+  def self.included(othermod)
+    othermod.extend CommandHandler::InstanceMethods
+    othermod.extend CrudCommandHandler::InstanceMethods
+    othermod.extend EventStoreRepository::InstanceMethods
+    othermod.extend ClassMethods
+
+    othermod_name = othermod.name.snake_case
+
+    othermod.define_singleton_method("type") { othermod }
+
+    othermod.define_singleton_method "process_create_#{othermod_name}" do |command|
+      process_create command
+    end
+
+    othermod.define_singleton_method "process_update_#{othermod_name}" do |command|
+      process_update command
+    end
+
+    othermod.define_singleton_method("apply_#{othermod_name}_updated") do |obj, event|
+      obj.set_attributes(event.to_h)
+    end
+  end
+end
+```
 
 ### Domain Model (CQRS: Command side)
 
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=model.rb"></script>
+<div class="illustration">
+  <img src="images/event-sourceing/domain.svg" style="width: 80%" title="Event store class diagram"/>
+</div>
+
+``` ruby
+#
+# R E L E A S E
+#
+# a.k.a. Album
+#
+# Shows an example of using CrudAggregate. All stuff rolled into one
+# class. Useful for the simplest aggregates that only needs CRUD
+# operations.
+#
+
+RELEASE_ATTRIBUTES = %I(id title tracks)
+
+class Release < Entity
+  attributes *RELEASE_ATTRIBUTES
+
+  include CrudAggregate
+
+  def assert_validity
+    # Do something here
+  end
+end
+
+class ReleaseCommand < Command
+
+  private
+
+  def validate
+    required(*RELEASE_ATTRIBUTES.map {|m| send m})
+    non_blank_string(title)
+  end
+end
+
+class CreateRelease < ReleaseCommand
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class ReleaseCreated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class UpdateRelease < ReleaseCommand
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class ReleaseUpdated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+
+#
+# R E C O R D I N G
+#
+# Shows an example where all the different responsibilities are
+# handled by separate objects.
+#
+
+class RecordingRepository < EventStoreRepository
+
+  def type
+    Recording
+  end
+
+  def apply_recording_updated(recording, event)
+    recording.set_attributes(event.to_h)
+  end
+
+end
+
+class RecordingValidator < BaseObject
+
+  def initialize(obj)
+  end
+
+  def assert_validity
+    # Do something here
+  end
+end
+
+class RecordingCommandHandler < CrudCommandHandler
+
+  private
+
+  def type; Recording; end
+
+  def repository
+    @repository ||= registry.repository_for(Recording)
+  end
+
+  def validator(obj)
+    RecordingValidator.new(obj)
+  end
+
+  def process_create_recording(command)
+    process_create(command)
+  end
+
+  def process_update_recording(command)
+    process_update(command)
+  end
+end
+
+RECORDING_ATTRIBUTES = %I(id title artist duration)
+
+class RecordingCommand < Command
+
+  private
+
+  def validate
+    required(*RECORDING_ATTRIBUTES.map {|m| send m})
+    non_blank_string(title)
+    non_blank_string(artist)
+    positive_integer(duration)
+  end
+end
+
+class CreateRecording < RecordingCommand
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class RecordingCreated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class UpdateRecording < RecordingCommand
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class RecordingUpdated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class Recording < Entity
+  attributes *RECORDING_ATTRIBUTES
+end
+```
 
 ### CQRS: Read side
 
 <div class="illustration">
   <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
-
-
 
 We have two options on the read side: Use the event store
 repositories, or maintain read optimized projections. The first
@@ -282,14 +571,155 @@ to the event store repositories. In this way you can enforce the read
 only nature and you make it easier to change to a projection at a
 later stage if deemed necessary.
 
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=read.rb"></script>
+``` ruby
+class RepositoryProjection < BaseObject
+
+  def initialize
+    @repository = registry.repository_for type
+  end
+
+  def find(id)
+    repository.find(id).to_h
+  end
+
+  private
+
+  attr_reader :repository
+
+end
+
+class RecordingProjectionClass < RepositoryProjection
+
+  def type
+    Recording
+  end
+
+end
+
+class ReleaseProjectionClass < BaseObject
+
+  def initialize
+    registry.event_store.subscribe(self)
+    @releases = {}
+  end
+
+  def find(id)
+    @releases[id].clone
+  end
+
+  def apply(event)
+    case event
+    when ReleaseCreated
+      release = event.to_h
+      track_id_to_data release.fetch(:tracks)
+      @releases[event.id] = release
+    when ReleaseUpdated
+      release = event.to_h
+      track_id_to_data release.fetch(:tracks)
+      @releases[event.id].merge! release
+    when RecordingUpdated
+      @releases.values.each do |r|
+        r.fetch(:tracks).map! {|track| track.fetch(:id)}
+        track_id_to_data r.fetch(:tracks)
+      end
+    end
+  end
+
+  private
+
+  def track_id_to_data(track_ids)
+    track_ids.map! { |id| RecordingProjection.find(id).to_h }
+  end
+end
+
+class TotalsProjectionClass < BaseObject
+
+  def initialize
+    registry.event_store.subscribe(self)
+    @totals = Hash.new(0)
+  end
+
+  def apply(event)
+    return unless [RecordingCreated, ReleaseCreated].include? event.class
+    @totals[event.class] += 1
+  end
+
+  attr_reader :totals
+
+end
+
+RecordingProjection = RecordingProjectionClass.new
+ReleaseProjection = ReleaseProjectionClass.new
+TotalsProjection = TotalsProjectionClass.new
+```
 
 ### A simple test application/client
 
 Tying it all together
 
-<script src="https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1.js?file=app.rb"></script>
+``` ruby
+require_relative 'base'
+require_relative 'event'
+require_relative 'cmd'
+require_relative 'crud'
+require_relative 'model'
+require_relative 'read'
 
+require 'pp'
+
+class Application < BaseObject
+
+  def main
+    puts "LOGG ---------------------------------------------------------"
+    recording_id = UUID.generate
+    recording_data = {id: recording_id, title: "Sledge Hammer",
+                      artist: "Peter Gabriel", duration: 313}
+    run(recording_data, CreateRecording, Recording)
+
+    release_id = UUID.generate
+    run({id: release_id, title: "So", tracks: []},
+        CreateRelease, Release)
+    run({id: UUID.generate, title: "Shaking The Tree",
+         tracks: [recording_id]},
+        CreateRelease, Release)
+
+    run({id: release_id, title: "So", tracks: [recording_id]},
+        UpdateRelease, Release)
+
+    run(recording_data.merge({ title:  "Sledgehammer" }),
+        UpdateRecording, Recording)
+
+    # Some failing commands, look in log for verification of failure
+    run({id: "Non-existing ID", title: "Foobar"},
+        UpdateRecording, Recording)
+
+    puts
+    puts "EVENT STORE ------------------------------------------------"
+    pp registry.event_store
+
+    puts
+    puts "PROJECTIONS ------------------------------------------------"
+    p ReleaseProjection.find release_id
+    p RecordingProjection.find recording_id
+    p TotalsProjection.totals
+  end
+
+  private
+
+  def run(request_data, command_class, aggregate)
+    logg "Incoming request with data: #{request_data.inspect}"
+    command_handler = registry.command_handler_for(aggregate)
+    command = command_class.new(request_data)
+    command_handler.handle command
+  rescue StandardError => e
+    logg "ERROR: Command #{command} failed because of: #{e}"
+  end
+
+end
+
+Application.new.main
+
+```
 
 ### Read more
 
