@@ -138,9 +138,7 @@ h1 {
 }
 
 
-hr:before {
-    /* HACK Should not be in :before ... doesn't work in firefox,
-    works in Konqeror */
+hr::before {
     content: '~';
 }
 
