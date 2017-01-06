@@ -223,7 +223,7 @@ class EventStoreRepository < BaseObject
     end
 
     def unit_of_work(id)
-      yield UnitOfWork.new(id)
+      yield UnitOfWork.new(registry.event_store, id)
     end
 
     private
@@ -245,18 +245,23 @@ end
 ``` ruby
 class UnitOfWork < BaseObject
 
-  def initialize(id)
+  def initialize(event_store, id)
     @id = id
-    @expected_version = registry.event_store.event_stream_version_for(id)
+    @event_store = event_store
+    @expected_version = event_store.event_stream_version_for(id)
   end
 
   def create
-    registry.event_store.create @id
+    event_store.create id
   end
 
   def append(*events)
-    registry.event_store.append @id, @expected_version, *events
+    event_store.append id, expected_version, *events
   end
+
+  private
+
+  attr_reader :id, :event_store, :expected_version
 
 end
 ```
