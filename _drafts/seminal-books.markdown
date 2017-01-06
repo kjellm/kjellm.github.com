@@ -1,14 +1,15 @@
 ---
-title:      "Kjell-Magne Øierud :: Seminal Ideas in Software Development"
+title:      "Kjell-Magne Øierud :: Seminal Books in Software Development"
 layout:     bliki
 ---
 
-I really love reading books
-
-This is a list of books that have had a really big impact on how I
-think about Software Development.
+There are almoust countless books on the topic of software
+development, but only few stand up to the test of time. Here are three
+books that I think qualify.
 
 ### The Art of UNIX Programming
+
+This book outlines the history of UNIX, its community and philosophy
 
 ### Domain Driven Design
 
@@ -19,3 +20,5 @@ think about Software Development.
 ### The Pragmatic Programmer
 
 ### Don't Make Me Think!
+
+###
