@@ -123,6 +123,20 @@ class EventStream < BaseObject
 end
 ```
 
+We need some more auxilary functionality from the event store, so the
+store we actually use are decorated like shown below. More on these
+classes later.
+
+``` ruby
+def event_store
+  @event_store ||=
+    EventStoreLoggDecorator.new(
+      EventStorePubSubDecorator.new(
+        EventStoreOptimisticLockDecorator.new(
+          EventStore.new)))
+end
+```
+
 #### Concurrency
 
 To prevent concurrent access to an event stream to result in a corrupt
@@ -143,6 +157,10 @@ class EventStoreOptimisticLockDecorator < DelegateClass(EventStore)
 
 end
 ```
+
+To allow projections (read side data structures) to keep track of the
+changes done to the system, we publish the events to registered
+subscribers.
 
 ``` ruby
 class EventStorePubSubDecorator < DelegateClass(EventStore)
@@ -176,6 +194,9 @@ class EventStorePubSubDecorator < DelegateClass(EventStore)
 end
 ```
 
+Logg appended events
+
+
 ``` ruby
 class EventStoreLoggDecorator < DelegateClass(EventStore)
 
@@ -191,7 +212,7 @@ The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event stream.
 
-```ruby
+``` ruby
 class EventStoreRepository < BaseObject
 
   module InstanceMethods
@@ -611,7 +632,7 @@ class RepositoryProjection < BaseObject
 
 end
 
-class RecordingProjectionClass < RepositoryProjection
+class RecordingProjection < RepositoryProjection
 
   def type
     Recording
@@ -621,7 +642,15 @@ end
 ```
 
 ``` ruby
-class ReleaseProjectionClass < BaseObject
+class SubscriberProjection < BaseObject
+
+  def initialize
+    registry.event_store.subscribe(self)
+  end
+
+end
+
+class ReleaseProjection < SubscriberProjection
 
   def initialize
     registry.event_store.subscribe(self)
@@ -659,7 +688,7 @@ end
 ```
 
 ``` ruby
-class TotalsProjectionClass < BaseObject
+class TotalsProjection < SubscriberProjection
 
   def initialize
     registry.event_store.subscribe(self)
@@ -679,9 +708,9 @@ end
 Make singletons
 
 ``` ruby
-RecordingProjection = RecordingProjectionClass.new
-ReleaseProjection = ReleaseProjectionClass.new
-TotalsProjection = TotalsProjectionClass.new
+TheRecordingProjection = RecordingProjection.new
+TheReleaseProjection = ReleaseProjection.new
+TheTotalsProjection = TotalsProjection.new
 ```
 
 ### A simple test application/client
@@ -730,9 +759,9 @@ class Application < BaseObject
 
     puts
     puts "PROJECTIONS ------------------------------------------------"
-    p ReleaseProjection.find release_id
-    p RecordingProjection.find recording_id
-    p TotalsProjection.totals
+    p TheReleaseProjection.find release_id
+    p TheRecordingProjection.find recording_id
+    p TheTotalsProjection.totals
   end
 
   private
