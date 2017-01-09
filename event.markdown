@@ -44,7 +44,7 @@ concepts shown in this article. Included for completness.
 ### Event Sourcing
 
 <div class="illustration">
-  <img src="images/event-sourceing/store.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
 </div>
 
 {::comment}
@@ -165,7 +165,7 @@ classes later. I have chosen the decorator pattern for augmenting the
 event store. This gives ability to configure at runtime.
 
 <div class="illustration">
-  <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
   <div class="caption">Event store decorators</div>
 </div>
 
@@ -173,7 +173,7 @@ The following diagram shows the runtime configuration of the
 decorators.
 
 <div class="illustration">
-  <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" alt="Event store decorators object diagram"/>
   <div class="caption">Runtime configuration of event store decorators</div>
 </div>
 
@@ -275,7 +275,7 @@ end
 ### CQRS: Command side infrastructure
 
 <div class="illustration">
-  <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" title="CQRS Command class diagram"/>
+  <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
 </div>
 
 A command can be either accepted or rejected by the system. On
@@ -476,7 +476,7 @@ The domain model in this article is the super simple domain of
 releases of recorded music (a.k.a. albums).
 
 <div class="illustration">
-  <img src="images/event-sourceing/domain.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
 </div>
 
 Shows an example of using CrudAggregate. All stuff rolled into one
@@ -615,7 +615,7 @@ end
 ### CQRS: Read side
 
 <div class="illustration">
-  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" title="Event store class diagram"/>
+  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
 </div>
 
 We have two options on the read side: Use the event store
@@ -789,9 +789,12 @@ end
   <li>
     Evans, E. (2004), <em>Domain Driven Design: Tackling complexity in the heart of software</em>,
     Boston, MA: Addison Wesley
+  </li>
   <li>
     Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley,
     Chapters 4, 8, and appendix A
+  </li>
   <li>
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
+  </li>
 </ul>
