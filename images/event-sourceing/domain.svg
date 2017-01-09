@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 60" width="500pt" height="5pc" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.2.2 
-    <dc:date>2017-01-05 20:33:42 +0000</dc:date>
+    <dc:date>2017-01-09 19:00:27 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
@@ -16,6 +16,11 @@
       </g>
     </marker>
     <font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica" font-size="9" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
       <font-face-src>
         <font-face-name name="Helvetica"/>
       </font-face-src>
@@ -38,6 +43,9 @@
       <line x1="218" y1="29" x2="272.1" y2="29" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <text transform="translate(252.5 15)" fill="black">
         <tspan font-family="Helvetica" font-size="10" font-weight="500" x=".16503906" y="10" textLength="21.669922">track</tspan>
+      </text>
+      <text transform="translate(266 31)" fill="black">
+        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".2487793" y="9" textLength="3.5024414">*</tspan>
       </text>
     </g>
   </g>

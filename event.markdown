@@ -47,6 +47,7 @@ concepts shown in this article. Included for completness.
   <img src="images/event-sourceing/store.svg" style="width: 80%" title="Event store class diagram"/>
 </div>
 
+{::comment}
 ``` ruby
 class EventStoreError < StandardError
 end
@@ -57,6 +58,7 @@ end
 class Event < ValueObject
 end
 ```
+{:/comment}
 
 At the root there is the Event Store. The Event Store holds Event
 Streams. One Event Strem per persisted Aggregate. The event store I
@@ -123,19 +125,57 @@ class EventStream < BaseObject
 end
 ```
 
-We need some more auxilary functionality from the event store, so the
-store we actually use are decorated like shown below. More on these
-classes later.
+The event store is accessed through Event Store Repositories, one
+repository per aggregate type. The repository knows how to recreate
+the current state of an aggregate from the aggregate's event
+stream. The purpose of `#unit_of_work` will be explained later.
 
 ``` ruby
-def event_store
-  @event_store ||=
-    EventStoreLoggDecorator.new(
-      EventStorePubSubDecorator.new(
-        EventStoreOptimisticLockDecorator.new(
-          EventStore.new)))
+class EventStoreRepository < BaseObject
+
+  module InstanceMethods
+    def find(id)
+      stream = registry.event_store.event_stream_for(id)
+      return if stream.nil?
+      build stream.to_a
+    end
+
+    def unit_of_work(id)
+      yield UnitOfWork.new(registry.event_store, id)
+    end
+
+    private
+
+    def build(stream)
+      obj = type.new stream.first.to_h
+      stream[1..-1].each do |event|
+        message = "apply_" + event.class.name.snake_case
+        send message.to_sym, obj, event
+      end
+      obj
+    end
+  end
+
+  include InstanceMethods
 end
 ```
+We need some more auxilary functionality from the event store, so the
+store we actually use are decorated like shown below. More on these
+classes later. I have chosen the decorator pattern for augmenting the
+event store. This gives ability to configure at runtime.
+
+<div class="illustration">
+  <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" title="Event store class diagram"/>
+  <div class="caption">Event store decorators</div>
+</div>
+
+The following diagram shows the runtime configuration of the
+decorators.
+
+<div class="illustration">
+  <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" title="Event store class diagram"/>
+  <div class="caption">Runtime configuration of event store decorators</div>
+</div>
 
 #### Concurrency
 
@@ -205,40 +245,6 @@ class EventStoreLoggDecorator < DelegateClass(EventStore)
     logg "New events: #{events}"
   end
 
-end
-```
-
-The event store is accessed through Event Store Repositories, one
-repository per aggregate type. The repository knows how to recreate
-the current state of an aggregate from the aggregate's event stream.
-
-``` ruby
-class EventStoreRepository < BaseObject
-
-  module InstanceMethods
-    def find(id)
-      stream = registry.event_store.event_stream_for(id)
-      return if stream.nil?
-      build stream.to_a
-    end
-
-    def unit_of_work(id)
-      yield UnitOfWork.new(registry.event_store, id)
-    end
-
-    private
-
-    def build(stream)
-      obj = type.new stream.first.to_h
-      stream[1..-1].each do |event|
-        message = "apply_" + event.class.name.snake_case
-        send message.to_sym, obj, event
-      end
-      obj
-    end
-  end
-
-  include InstanceMethods
 end
 ```
 
@@ -465,6 +471,9 @@ end
 ```
 
 ### Domain Model (CQRS: Command side)
+
+The domain model in this article is the super simple domain of
+releases of recorded music (a.k.a. albums).
 
 <div class="illustration">
   <img src="images/event-sourceing/domain.svg" style="width: 80%" title="Event store class diagram"/>
@@ -723,15 +732,6 @@ TheTotalsProjection = TotalsProjection.new
 Tying it all together
 
 ``` ruby
-require_relative 'base'
-require_relative 'event'
-require_relative 'cmd'
-require_relative 'crud'
-require_relative 'model'
-require_relative 'read'
-
-require 'pp'
-
 class Application < BaseObject
 
   def main
@@ -781,9 +781,6 @@ class Application < BaseObject
   end
 
 end
-
-Application.new.main
-
 ```
 
 ### Read more

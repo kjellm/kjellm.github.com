@@ -319,6 +319,11 @@ div {
     text-align: center;
 }
 
+.illustration .caption {
+    color: #666;
+    font-style: italic;
+}
+
 span.credit {
     font-size: 0.5em;
 }

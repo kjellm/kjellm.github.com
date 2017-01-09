@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 180" width="500pt" height="15pc" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata> Produced by OmniGraffle 7.2.2 
+    <dc:date>2017-01-09 19:00:27 +0000</dc:date>
+  </metadata>
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="UMLInheritance_Marker" viewBox="-1 -8 14 16" markerWidth="14" markerHeight="16" color="black">
+      <g>
+        <path d="M 12 0 L 0 -7 L 0 7 Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="StickArrow_Marker" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 0 M 0 -3 L 8 0 L 0 3" fill="none" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>store-decorators</title>
+    <g>
+      <title>Layer 1</title>
+      <rect x="291" y="14" width="99" height="36" fill="white"/>
+      <rect x="291" y="14" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(296 24.832)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="62.448">Event Store</tspan>
+      </text>
+      <rect x="171.08696" y="133" width="119" height="36" fill="white"/>
+      <rect x="171.08696" y="133" width="119" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(176.08696 136.664)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x=".044" y="11" textLength="112.248">Event Store PubSub </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="27.836" y="25.336" textLength="53.328">Decorator</tspan>
+      </text>
+      <rect x="34.869565" y="133" width="99" height="36" fill="white"/>
+      <rect x="34.869565" y="133" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(39.869565 136.664)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="65.784">Event Store </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="2.5" y="25.336" textLength="84">Logg Decorator</tspan>
+      </text>
+      <rect x="327.86957" y="133" width="141" height="36" fill="white"/>
+      <rect x="327.86957" y="133" width="141" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(332.86957 136.664)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="5.374" y="11" textLength="123.588">Event Store Optimistic </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="24.052" y="25.336" textLength="82.896">Lock Decorator</tspan>
+      </text>
+      <path d="M 109.11957 132.5 L 109.11957 117 L 109.11957 91 L 163.5 91 L 163.5 65.5 L 163.5 63.5" marker-end="url(#UMLInheritance_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path d="M 230.58696 133 L 230.58696 117.5 L 230.58696 91.5 L 163.5 91.5 L 163.5 65.5 L 163.5 63.5" marker-end="url(#UMLInheritance_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path d="M 398.36957 133 L 398.36957 117.5 L 398.36957 91.5 L 163.5 91.5 L 163.5 65.5 L 163.5 63.5" marker-end="url(#UMLInheritance_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="114" y="14" width="99" height="36" fill="white"/>
+      <rect x="114" y="14" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(119 17.664001)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="65.784">Event Store </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="17.836" y="25.336" textLength="53.328">Decorator</tspan>
+      </text>
+      <path d="M 213 32 L 224.9 32 L 279.1 32 L 281.1 32" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+    </g>
+  </g>
+</svg>
