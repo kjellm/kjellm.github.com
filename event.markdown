@@ -9,6 +9,7 @@ title: Event Sourcing - a practical example in Ruby
 [cqrs]: http://martinfowler.com/bliki/CQRS.html
 [pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
 [crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
+[refinements]: https://ruby-doc.org/core-2.4.0/doc/syntax/refinements_rdoc.html
 
 Event sourcing is the idea that, rather than saving the current
 state of a system, you can rebuild it by replaying stored events. You
@@ -39,7 +40,16 @@ You can see the entire source code in [this gist][1].
 ### Setup
 
 See [base.rb][2]. The code here are not necessary to understand the
-concepts shown in this article. Included for completness.
+concepts shown in this article. Included for completness. In short,
+the code here contains:
+
+- Some monkeypatching of `String` and `Hash`. (Would
+  use [refinements][refinements] for this in a real project)
+- `BaseObject`
+- `Registry` class that allows lookup of command handlers,
+  repositories, and the event store.
+- `UUID` module
+- Base classes for entities and value objects.
 
 ### Event Sourcing
 
