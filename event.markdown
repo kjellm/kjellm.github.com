@@ -861,11 +861,11 @@ end
 ### Notes
 
 [^ddd-patterns]:
+    DDD patterns that are particularily relevant to event sourcing are:
 
-DDD patterns that are particularily relevant to event sourcing are:
-  - Ubiquitous language
-  - Repositories
-  - Aggregates
-  - Entities
-  - Value Objects
-  - Domain Events
+    - Ubiquitous language
+    - Repositories
+    - Aggregates
+    - Entities
+    - Value Objects
+    - Domain Events
