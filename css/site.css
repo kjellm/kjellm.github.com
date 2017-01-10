@@ -320,17 +320,22 @@ div {
     margin-bottom: 1em;
 }
 
+/* Legacy, use <figure> */
 .illustration {
     text-align: center;
 }
 
-.illustration .caption {
-    color: #666;
-    font-style: italic;
-}
-
 span.credit {
     font-size: 0.5em;
+}
+
+figure {
+    text-align: center;
+}
+
+figcaption {
+    color: #666;
+    font-style: italic;
 }
 
 #back-catalogue {

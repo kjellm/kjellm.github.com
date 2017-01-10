@@ -48,10 +48,10 @@ it later if you want. In short, the code here contains:
 
 ### Event Sourcing
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
-  <div class="caption">Class diagram of the event store and related classes</div>
-</div>
+  <figcaption>Class diagram of the event store and related classes</figcaption>
+</figure>
 
 {::comment}
 ``` ruby
@@ -177,18 +177,18 @@ store we actually use are decorated like shown below. More on these
 classes later. I have chosen the decorator pattern for augmenting the
 event store. This gives ability to configure at runtime.
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
-  <div class="caption">Event store decorators</div>
-</div>
+  <figcaption>Event store decorators</figcaption>
+</figure>
 
 The following diagram shows the runtime configuration of the
 decorators.
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" alt="Event store decorators object diagram"/>
-  <div class="caption">Runtime configuration of event store decorators</div>
-</div>
+  <figcaption>Runtime configuration of event store decorators</figcaption>
+</figure>
 
 ##### Concurrency
 
@@ -291,10 +291,10 @@ end
 The public interface for all changes to the system is through Commands
 and Command Handlers.
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
-  <div class="caption">Class diagram for Commands, Command Handlers, and related classes</div>
-</div>
+  <figcaption>Class diagram for Commands, Command Handlers, and related classes</figcaption>
+</figure>
 
 A Command can be either accepted or rejected by the system. On
 acceptance nothing is returned. On rejection an error is raised.
@@ -504,9 +504,9 @@ handled by a delete event appended to the event stream.
 The domain model in this article is the super simple domain of
 releases of recorded music (a.k.a. albums).
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
-</div>
+</figure>
 
 Shows an example of using CrudAggregate. All stuff rolled into one
 class. Useful for the simplest aggregates that only needs CRUD
@@ -643,9 +643,9 @@ end
 
 ### CQRS: Read side
 
-<div class="illustration">
+<figure>
   <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
-</div>
+</figure>
 
 We have two options on the read side: Use the event store
 repositories, or maintain read optimized projections. The first
