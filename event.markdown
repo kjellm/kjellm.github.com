@@ -11,50 +11,46 @@ title: Event Sourcing - a practical example in Ruby
 [crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 [refinements]: https://ruby-doc.org/core-2.4.0/doc/syntax/refinements_rdoc.html
 
-Event sourcing is the idea that, rather than saving the current
-state of a system, you can rebuild it by replaying stored events. You
-often see event sourcing in conjunction with some key supporting
-ideas:
+Event sourcing is the idea that, rather than saving the current state
+of a system, you save events. The state of the system can then be
+rebuilt by replaying these stored events. You often see event sourcing
+in conjunction with some key supporting ideas:
 
-- [Domain Driven Design][ddd] (DDD)
+- [Domain Driven Design][ddd] (DDD) [^ddd-patterns]
 - [Command Query Responsibility Segregation][cqrs] (CQRS)
 - [Publish/subscribe][pubsub] (Pub/sub)
 
-DDD patterns that are particularily relevant to event sourcing are:
-
-  - Ubiquitous language
-  - Repositories
-  - Aggregates
-  - Entities
-  - Value Objects
-  - Domain Events
-
 My intention is not to explain all these concepts in detail, but
-rather to show how all comes together.
-
-The code is simple by design. Most classes would need further
-refinements before suitable for real world usage.
+rather to show how all comes together. I hope to be able to do this in
+a concise and readable manner. As such, the code is simple by
+design. Most classes would need further refinements before suitable
+for real world usage.
 
 You can see the entire source code in [this gist][1].
 
 ### Setup
 
 See [base.rb][2]. The code here are not necessary to understand the
-concepts shown in this article. Included for completness. In short,
-the code here contains:
+concepts shown in this article. I encurage you to not look at this
+code for now, but rather read on and eventually come back and look at
+it later if you want. In short, the code here contains:
 
 - Some monkeypatching of `String` and `Hash`. (Would
   use [refinements][refinements] for this in a real project)
-- `BaseObject`
-- `Registry` class that allows lookup of command handlers,
-  repositories, and the event store.
-- `UUID` module
+- A `UUID` module
+- A `BaseObject` that all classes inherits from. It provides:
+  - `::attributes`
+  - A `#registry` that allows lookup of command handlers,
+    repositories, and the event store.
+  - `#logg`
+  - `#to_h`
 - Base classes for entities and value objects.
 
 ### Event Sourcing
 
 <div class="illustration">
   <img src="images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
+  <div class="caption">Class diagram of the event store and related classes</div>
 </div>
 
 {::comment}
@@ -70,11 +66,14 @@ end
 ```
 {:/comment}
 
+#### The basics
+
 At the root there is the Event Store. The Event Store holds Event
-Streams. One Event Strem per persisted Aggregate. The event store I
-have implemented here only holds the stream in memory, but I hope that
-it is easy to imagine how it can be turned into a store that uses
-files or a database as a backend.
+Streams. One Event Strem per persisted Aggregate.
+
+Note: The event store I have implemented here holds the streams purely
+in memory, but I hope that it is easy to imagine how it can be turned
+into a store that uses files or a proper database as a backend.
 
 ``` ruby
 class EventStore < BaseObject
@@ -138,7 +137,8 @@ end
 The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event
-stream. The purpose of `#unit_of_work` will be explained later.
+stream. The purpose of `#unit_of_work` will be explained later in the
+concurrency section.
 
 ``` ruby
 class EventStoreRepository < BaseObject
@@ -169,6 +169,9 @@ class EventStoreRepository < BaseObject
   include InstanceMethods
 end
 ```
+
+#### Extending the store
+
 We need some more auxilary functionality from the event store, so the
 store we actually use are decorated like shown below. More on these
 classes later. I have chosen the decorator pattern for augmenting the
@@ -187,7 +190,7 @@ decorators.
   <div class="caption">Runtime configuration of event store decorators</div>
 </div>
 
-#### Concurrency
+##### Concurrency
 
 To prevent concurrent access to an event stream to result in a corrupt
 strem, we use optimistic locking: All changes must be done through a
@@ -207,6 +210,32 @@ class EventStoreOptimisticLockDecorator < DelegateClass(EventStore)
 
 end
 ```
+
+``` ruby
+class UnitOfWork < BaseObject
+
+  def initialize(event_store, id)
+    @id = id
+    @event_store = event_store
+    @expected_version = event_store.event_stream_version_for(id)
+  end
+
+  def create
+    event_store.create id
+  end
+
+  def append(*events)
+    event_store.append id, expected_version, *events
+  end
+
+  private
+
+  attr_reader :id, :event_store, :expected_version
+
+end
+```
+
+##### Publish/subscribe
 
 To allow projections (read side data structures) to keep track of the
 changes done to the system, we publish the events to registered
@@ -244,8 +273,7 @@ class EventStorePubSubDecorator < DelegateClass(EventStore)
 end
 ```
 
-Logg appended events
-
+#### Logging
 
 ``` ruby
 class EventStoreLoggDecorator < DelegateClass(EventStore)
@@ -258,45 +286,24 @@ class EventStoreLoggDecorator < DelegateClass(EventStore)
 end
 ```
 
-``` ruby
-class UnitOfWork < BaseObject
-
-  def initialize(event_store, id)
-    @id = id
-    @event_store = event_store
-    @expected_version = event_store.event_stream_version_for(id)
-  end
-
-  def create
-    event_store.create id
-  end
-
-  def append(*events)
-    event_store.append id, expected_version, *events
-  end
-
-  private
-
-  attr_reader :id, :event_store, :expected_version
-
-end
-```
-
 ### CQRS: Command side infrastructure
+
+The public interface for all changes to the system is through Commands
+and Command Handlers.
 
 <div class="illustration">
   <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
+  <div class="caption">Class diagram for Commands, Command Handlers, and related classes</div>
 </div>
 
-A command can be either accepted or rejected by the system. On
+A Command can be either accepted or rejected by the system. On
 acceptance nothing is returned. On rejection an error is raised.
-
-#### On IDs
 
 Since nothing is returned from an accepted command, the client needs
 to include an ID even in create requests. This can be accomplished by
 using GUIDs for IDs.
 
+Here we define the base Command Handler.
 
 ```ruby
 class CommandHandler < BaseObject
@@ -318,7 +325,12 @@ class CommandHandler < BaseObject
 end
 ```
 
-Next is a class that adds logging to `CommandHandlers`.
+The purpose of the `#handle`/`#process` split is to ensure that void
+is always returned as the result of the command handling.
+
+Next is a class that adds logging to `CommandHandlers` by
+decoration. Logging of commands is most likely an important aspect of
+a system, but the event store should not used for this.
 
 ``` ruby
 class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
@@ -339,13 +351,7 @@ end
 
 The `Command` objects are a good place to validate data comming in to
 the system. I have added some rudimentary validation rules to
-illustrate this. I am not adding any coercion of values given to the
-command, I believe this responsibility belongs to the creator of the
-`Command` object.
-
-Beyond validation, command objects are simple Data Transfer Objects
-(DTOs).
-
+illustrate this.
 
 ``` ruby
 
@@ -388,18 +394,20 @@ class Command < ValueObject
 end
 ```
 
+I am not adding any coercion of values given to the command, I believe
+this responsibility belongs to the creator of the `Command` objects.
+
+Beyond validation, command objects are simple Data Transfer Objects
+(DTOs).
+
+
 ### CRUD
 
 Even in a richely modeled domain, the need for simple entities that
-only needs [CRUD][crud] operations arises. By using the principle of
-"convention over configuration", this can be handled with a very small
-amount of code. The code below encodes a "convention" for CRUD
+only needs [CRUD][crud] operations might arise. By using the principle
+of "convention over configuration", this can be handled with a very
+small amount of code. The code below encodes a "convention" for CRUD
 Aggregates.
-
-I have left deletes as an excercise for the reader. Hint: We never
-actually delete anything from the event store. So a delete must be
-handled by a delete event appended to the event stream.
-
 
 ``` ruby
 class CrudCommandHandler < CommandHandler
@@ -446,7 +454,6 @@ class CrudCommandHandler < CommandHandler
 end
 ```
 
-
 ``` ruby
 module CrudAggregate
 
@@ -487,6 +494,10 @@ module CrudAggregate
   end
 end
 ```
+
+I have left deletes as an excercise for the reader. Hint: We never
+actually delete anything from the event store. So a delete must be
+handled by a delete event appended to the event stream.
 
 ### Domain Model (CQRS: Command side)
 
@@ -641,6 +652,12 @@ repositories, or maintain read optimized projections. The first
 alternative are good enough if you don't need querying beyond simple
 retrieval by ID.
 
+Note: Again I have made an in-memory-only database. And again I hope
+that it will be easy for you to see how this could be changed to use
+something like a search engine or a relational database.
+
+#### The simplest case
+
 When the first option is good enough, I suggest that you do not use
 the repositories directly but sets up read side versions that forwards
 to the event store repositories. In this way you can enforce the read
@@ -662,8 +679,17 @@ class RepositoryProjection < BaseObject
 
   attr_reader :repository
 
+  def type
+    raise "Implement in subclass! #{self.class.name}"
+  end
+
 end
 
+```
+
+We choose this strategy for Recordings.
+
+``` ruby
 class RecordingProjection < RepositoryProjection
 
   def type
@@ -673,6 +699,10 @@ class RecordingProjection < RepositoryProjection
 end
 ```
 
+#### Seperate read side
+
+Maintain by subscribing to domain events published by the event store.
+
 ``` ruby
 class SubscriberProjection < BaseObject
 
@@ -681,6 +711,12 @@ class SubscriberProjection < BaseObject
   end
 
 end
+```
+
+Here is how to use this strategy with Releases. Here we also include
+all recordings associated with a given release.
+
+``` ruby
 
 class ReleaseProjection < SubscriberProjection
 
@@ -719,6 +755,10 @@ class ReleaseProjection < SubscriberProjection
 end
 ```
 
+This strategy allows for all sorts of read optimized projections to be
+maintained. Here is an example projection that keeps track of the
+total number of Releases and Recordings stored by the system.
+
 ``` ruby
 class TotalsProjection < SubscriberProjection
 
@@ -737,7 +777,7 @@ class TotalsProjection < SubscriberProjection
 end
 ```
 
-Make singletons
+The projections are made available to the system via these constants.
 
 ``` ruby
 TheRecordingProjection = RecordingProjection.new
@@ -816,3 +856,16 @@ end
     <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
   </li>
 </ul>
+
+
+### Notes
+
+[^ddd-patterns]:
+
+DDD patterns that are particularily relevant to event sourcing are:
+  - Ubiquitous language
+  - Repositories
+  - Aggregates
+  - Entities
+  - Value Objects
+  - Domain Events

@@ -200,6 +200,11 @@ ul, ol {
     margin: 1em 0 1em 2em;
 }
 
+ul ul, ol ul {
+    margin-top: 0.25em;
+    list-style-type: circle;
+}
+
 ol {
     list-style-type: decimal;
 }
