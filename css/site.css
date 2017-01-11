@@ -183,17 +183,23 @@ h1 {
 }
 
 h2 {
-  font-size: 1.2em;
+  font-size: 1.5em;
 }
 
 h3 {
-  font-size: 1.1em;
-  border-bottom: solid thin #dedede;
+  font-size: 1.3em;
 }
 
-h4, h5 {
+h4 {
+    font-size: 1.1em;
+    font-style: italic;
+    margin-bottom: 0.5em;
+}
+
+h5 {
     font-size: 1em;
     font-style: italic;
+    margin-bottom: 0.5em;
 }
 
 ul, ol {
