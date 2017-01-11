@@ -416,7 +416,140 @@ Beyond validation, command objects are simple Data Transfer Objects
 (DTOs).
 
 
+### CQRS: Read side infrastructure
+
+On the read side you can keep things really simple. The idea here is
+to set up projections that derive the current state from the event
+streams.
+
+``` ruby
+class RepositoryProjection < BaseObject
+
+  def initialize
+    @repository = registry.repository_for type
+  end
+
+  def find(id)
+    repository.find(id).to_h
+  end
+
+  private
+
+  attr_reader :repository
+
+  def type
+    raise "Implement in subclass! #{self.class.name}"
+  end
+
+end
+
+```
+
+``` ruby
+class SubscriberProjection < BaseObject
+
+  def initialize
+    registry.event_store.subscribe(self)
+  end
+
+  def apply(event)
+    handler_name = "when_#{event.class.name.snake_case}".to_sym
+    send handler_name, event if respond_to?(handler_name)
+  end
+
+end
+```
+
+
 ## A simple example
+
+The domain model in this article is the super simple domain of
+releases of recorded music (a.k.a. albums).
+
+<figure>
+  <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
+</figure>
+
+``` ruby
+RELEASE_ATTRIBUTES = %I(id title tracks)
+
+class Release < Entity
+  attributes *RELEASE_ATTRIBUTES
+
+  include CrudAggregate
+
+  def assert_validity
+    # Do something here
+  end
+end
+
+RECORDING_ATTRIBUTES = %I(id title artist duration)
+
+class Recording < Entity
+  attributes *RECORDING_ATTRIBUTES
+end
+```
+
+Commands and events
+
+``` ruby
+class ReleaseCommand < Command
+
+  private
+
+  def validate
+    required(*RELEASE_ATTRIBUTES.map {|m| send m})
+    non_blank_string(title)
+  end
+end
+
+class CreateRelease < ReleaseCommand
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class ReleaseCreated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class UpdateRelease < ReleaseCommand
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class ReleaseUpdated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+```
+
+``` ruby
+class RecordingCommand < Command
+
+  private
+
+  def validate
+    required(*RECORDING_ATTRIBUTES.map {|m| send m})
+    non_blank_string(title)
+    non_blank_string(artist)
+    positive_integer(duration)
+  end
+end
+
+class CreateRecording < RecordingCommand
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class RecordingCreated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class UpdateRecording < RecordingCommand
+  attributes *RECORDING_ATTRIBUTES
+end
+
+class RecordingUpdated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
+```
+
 
 ### CRUD
 
@@ -518,61 +651,10 @@ handled by a delete event appended to the event stream.
 
 ### Domain Model (CQRS: Command side)
 
-The domain model in this article is the super simple domain of
-releases of recorded music (a.k.a. albums).
-
-<figure>
-  <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
-</figure>
-
 Shows an example of using CrudAggregate. All stuff rolled into one
 class. Useful for the simplest aggregates that only needs CRUD
 operations.
 
-``` ruby
-
-RELEASE_ATTRIBUTES = %I(id title tracks)
-
-class Release < Entity
-  attributes *RELEASE_ATTRIBUTES
-
-  include CrudAggregate
-
-  def assert_validity
-    # Do something here
-  end
-end
-```
-
-``` ruby
-class ReleaseCommand < Command
-
-  private
-
-  def validate
-    required(*RELEASE_ATTRIBUTES.map {|m| send m})
-    non_blank_string(title)
-  end
-end
-```
-
-``` ruby
-class CreateRelease < ReleaseCommand
-  attributes *RELEASE_ATTRIBUTES
-end
-
-class ReleaseCreated < Event
-  attributes *RELEASE_ATTRIBUTES
-end
-
-class UpdateRelease < ReleaseCommand
-  attributes *RELEASE_ATTRIBUTES
-end
-
-class ReleaseUpdated < Event
-  attributes *RELEASE_ATTRIBUTES
-end
-```
 
 Shows an example where all the different responsibilities are handled
 by separate objects.
@@ -622,40 +704,6 @@ class RecordingCommandHandler < CrudCommandHandler
     process_update(command)
   end
 end
-
-RECORDING_ATTRIBUTES = %I(id title artist duration)
-
-class RecordingCommand < Command
-
-  private
-
-  def validate
-    required(*RECORDING_ATTRIBUTES.map {|m| send m})
-    non_blank_string(title)
-    non_blank_string(artist)
-    positive_integer(duration)
-  end
-end
-
-class CreateRecording < RecordingCommand
-  attributes *RECORDING_ATTRIBUTES
-end
-
-class RecordingCreated < Event
-  attributes *RECORDING_ATTRIBUTES
-end
-
-class UpdateRecording < RecordingCommand
-  attributes *RECORDING_ATTRIBUTES
-end
-
-class RecordingUpdated < Event
-  attributes *RECORDING_ATTRIBUTES
-end
-
-class Recording < Entity
-  attributes *RECORDING_ATTRIBUTES
-end
 ```
 
 ### CQRS: Read side
@@ -681,29 +729,6 @@ to the event store repositories. In this way you can enforce the read
 only nature and you make it easier to change to a projection at a
 later stage if deemed necessary.
 
-``` ruby
-class RepositoryProjection < BaseObject
-
-  def initialize
-    @repository = registry.repository_for type
-  end
-
-  def find(id)
-    repository.find(id).to_h
-  end
-
-  private
-
-  attr_reader :repository
-
-  def type
-    raise "Implement in subclass! #{self.class.name}"
-  end
-
-end
-
-```
-
 We choose this strategy for Recordings.
 
 ``` ruby
@@ -719,16 +744,6 @@ end
 #### Seperate read side
 
 Maintain by subscribing to domain events published by the event store.
-
-``` ruby
-class SubscriberProjection < BaseObject
-
-  def initialize
-    registry.event_store.subscribe(self)
-  end
-
-end
-```
 
 Here is how to use this strategy with Releases. Here we also include
 all recordings associated with a given release.
@@ -746,29 +761,45 @@ class ReleaseProjection < SubscriberProjection
     @releases[id].clone
   end
 
-  def apply(event)
-    case event
-    when ReleaseCreated
-      release = event.to_h
-      track_id_to_data release.fetch(:tracks)
-      @releases[event.id] = release
-    when ReleaseUpdated
-      release = event.to_h
-      track_id_to_data release.fetch(:tracks)
-      @releases[event.id].merge! release
-    when RecordingUpdated
-      @releases.values.each do |r|
-        r.fetch(:tracks).map! {|track| track.fetch(:id)}
-        track_id_to_data r.fetch(:tracks)
-      end
-    end
+  def when_release_created(event)
+    release = build_release_from_event_data event
+    @releases[event.id] = release
+  end
+
+  def when_release_updated(event)
+    release = build_release_from_event_data event
+    @releases[event.id].merge! release
+  end
+
+  def when_recording_updated(_event)
+    refresh_all_tracks
   end
 
   private
 
-  def track_id_to_data(track_ids)
-    track_ids.map! { |id| RecordingProjection.find(id).to_h }
+  def build_release_from_event_data(event)
+    release = event.to_h
+    track_id_to_data release.fetch(:tracks)
+    derive_artist_from_tracks(release)
+    release
   end
+
+  def track_id_to_data(track_ids)
+    track_ids.map! { |id| TheRecordingProjection.find(id).to_h }
+  end
+
+  def refresh_all_tracks
+    @releases.values.each do |r|
+      r.fetch(:tracks).map! {|track| track.fetch(:id)}
+      track_id_to_data r.fetch(:tracks)
+    end
+  end
+
+  def derive_artist_from_tracks(release)
+    artists = release[:tracks].map {|rec| rec[:artist]}.uniq
+    release[:artist] = artists.length == 1 ? artists.first : "Various artists"
+  end
+
 end
 ```
 
@@ -784,12 +815,21 @@ class TotalsProjection < SubscriberProjection
     @totals = Hash.new(0)
   end
 
-  def apply(event)
-    return unless [RecordingCreated, ReleaseCreated].include? event.class
-    @totals[event.class] += 1
+  def when_recording_created(event)
+    handle_create_event event
+  end
+
+  def when_release_created(event)
+    handle_create_event event
   end
 
   attr_reader :totals
+
+  private
+
+  def handle_create_event(event)
+    @totals[event.class] += 1
+  end
 
 end
 ```
