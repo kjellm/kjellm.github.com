@@ -35,16 +35,16 @@ concepts shown in this article. I encurage you to not look at this
 code for now, but rather read on and eventually come back and look at
 it later if you want. In short, the code here contains:
 
-- Some monkeypatching of `String` and `Hash`. (Would
+- Some monkeypatching of String and Hash. (Would
   use [refinements][refinements] for this in a real project)
-- A `UUID` module
-- A `BaseObject` that all classes inherits from. It provides:
-  - `::attributes`
-  - A `#registry` that allows lookup of command handlers,
+- A UUID module
+- A BaseObject that all classes inherits from. It provides:
+  - a class method for defining *attributes*
+  - a *registry* method that allows lookup of command handlers,
     repositories, and the event store.
-  - `#logg`
-  - `#to_h`
-- Base classes for entities and value objects.
+  - a *logg* method
+  - a *to_h* method
+- Base classes for Entities and Value Objects.
 
 ### Event Sourcing
 
@@ -69,7 +69,7 @@ end
 #### The basics
 
 At the root there is the Event Store. The Event Store holds Event
-Streams. One Event Strem per persisted Aggregate.
+Streams: One Event Strem per persisted Aggregate.
 
 Note: The event store I have implemented here holds the streams purely
 in memory, but I hope that it is easy to imagine how it can be turned
