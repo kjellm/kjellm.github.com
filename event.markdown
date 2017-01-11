@@ -28,6 +28,14 @@ for real world usage.
 
 You can see the entire source code in [this gist][1].
 
+
+I have structured this document in two parts. The first part is the
+infrastructure: Event store, base classes for repositories, command
+handlers, etc. The second part is an example of a tiny application for
+a tiny domain.
+
+## Infrastructure
+
 ### Setup
 
 See [base.rb][2]. The code here are not necessary to understand the
@@ -134,11 +142,18 @@ class EventStream < BaseObject
 end
 ```
 
+Events are simple value objects.
+
+``` ruby
+class Event < ValueObject
+end
+```
+
 The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event
-stream. The purpose of `#unit_of_work` will be explained later in the
-concurrency section.
+stream. All changes are done through the *unit_of_work* method. This
+will be explained in the section on concurrency.
 
 ``` ruby
 class EventStoreRepository < BaseObject
@@ -173,9 +188,9 @@ end
 #### Extending the store
 
 We need some more auxilary functionality from the event store, so the
-store we actually use are decorated like shown below. More on these
-classes later. I have chosen the decorator pattern for augmenting the
-event store. This gives ability to configure at runtime.
+store we actually use are decorated like shown below. I have chosen
+the decorator pattern for augmenting the event store. This gives
+ability to configure at runtime.
 
 <figure>
   <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
@@ -400,6 +415,8 @@ this responsibility belongs to the creator of the `Command` objects.
 Beyond validation, command objects are simple Data Transfer Objects
 (DTOs).
 
+
+## A simple example
 
 ### CRUD
 
