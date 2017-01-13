@@ -1,6 +1,6 @@
 ---
 layout: bliki
-title: Event Sourcing - a practical example in Ruby
+title: Event Sourcing - a practical example implemented in Ruby
 ---
 
 [1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
@@ -10,6 +10,8 @@ title: Event Sourcing - a practical example in Ruby
 [pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
 [crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 [refinements]: https://ruby-doc.org/core-2.4.0/doc/syntax/refinements_rdoc.html
+[uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier
+[guid]: https://en.wikipedia.org/wiki/Globally_unique_identifier
 
 Event sourcing is the idea that, rather than saving the current state
 of a system, you save events. The state of the system can then be
@@ -21,40 +23,47 @@ in conjunction with some key supporting ideas:
 - [Publish/subscribe][pubsub] (Pub/sub)
 
 My intention is not to explain all these concepts in detail, but
-rather to show how all comes together. I hope to be able to do this in
-a concise and readable manner. As such, the code is simple by
-design. Most classes would need further refinements before suitable
-for real world usage. My intention for this article is for it to be an
-light introduction and an companion to other sources.
+rather to show, with code written in Ruby[^ruby], how all comes
+together. I hope to be able to do this in a concise and readable
+manner. As such, the code is simple by design. Most classes would need
+further refinements before being suitable for real world usage. My
+intention for this article is for it to be an light introduction and
+an companion to other sources.
+
 
 I have structured this document in two parts. The first part is the
-infrastructure: Event store, base classes for repositories, command
-handlers, etc. In the second part I will illustrate how this
-infrastructure can be used by making an tiny example application for a
-tiny example domain. Here I will also illuminate how CRUD operations
-can be implemented in a concise way.
+infrastructure, the building blocks: an event store, base classes for
+repositories, command handlers, etc. In the second part I will
+illustrate how this infrastructure can be used by making an tiny
+example application for a tiny example domain. Here I will also
+illuminate how CRUD operations can be implemented in a concise way.
 
-You can see the entire source code in [this gist][1].
+You can download the entire source code from [this gist][1].
 
 ## Infrastructure
 
 ### Setup
 
-See [base.rb][2]. The code here are not necessary to understand the
-concepts shown in this article. I encurage you to not look at this
-code for now, but rather read on and eventually come back and look at
-it later if you want. In short, the code here contains:
+Before we can begin for real, we need to do some setup. The rest of
+the code shown in this article depends on the following:
 
 - Some monkeypatching of String and Hash. (Would
   use [refinements][refinements] for this in a real project)
-- A UUID module
+- A [UUID][uuid] module
 - A BaseObject that all classes inherits from. It provides:
   - a class method for defining *attributes*
   - a *registry* method that allows lookup of command handlers,
     repositories, and the event store.
   - a *logg* method
   - a *to_h* method
-- Base classes for Entities and Value Objects.
+- Exception classes.
+- Base classes for Entities, Value Objects, and Events.
+
+The code implementing this are not necessary to understand in order to
+understand the code shown in this article. So I will only link to
+it [here][2]. I encurage you to not look at this code for now, but
+rather read on and eventually come back and look at it later if you
+want.
 
 ### Event Sourcing
 
@@ -62,19 +71,6 @@ it later if you want. In short, the code here contains:
   <img src="images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
   <figcaption>Class diagram of the event store and related classes</figcaption>
 </figure>
-
-{::comment}
-``` ruby
-class EventStoreError < StandardError
-end
-
-class EventStoreConcurrencyError < EventStoreError
-end
-
-class Event < ValueObject
-end
-```
-{:/comment}
 
 #### The basics
 
@@ -154,8 +150,8 @@ end
 The event store is accessed through Event Store Repositories, one
 repository per aggregate type. The repository knows how to recreate
 the current state of an aggregate from the aggregate's event
-stream. All changes are done through the *unit_of_work* method. This
-will be explained in the section on concurrency.
+stream. All changes are done through the *unit_of_work* method. The
+reason for this will be explained in the section on concurrency.
 
 ``` ruby
 class EventStoreRepository < BaseObject
@@ -186,6 +182,11 @@ class EventStoreRepository < BaseObject
   include InstanceMethods
 end
 ```
+
+In case you wondered, the purpose with the InstanceMethods module
+above is to allow users of this class to choose whether they want to
+inherit the class or include it as a mixin. This technique will be
+used again, and it's usefulness will be demonstrated later.
 
 #### Extending the store
 
@@ -318,7 +319,7 @@ acceptance nothing is returned. On rejection an error is raised.
 
 Since nothing is returned from an accepted command, the client needs
 to include an ID even in create requests. This can be accomplished by
-using GUIDs for IDs.
+using [GUIDs][guid] for IDs.
 
 Here we define the base Command Handler.
 
@@ -496,7 +497,9 @@ releases of recorded music (a.k.a. albums).
 ### Domain model
 
 Lets start with the commands. In this domain we only have commands for
-creating and updating the releases and the recordings. First for Releases:
+creating and updating the releases and the recordings. Since updates
+are required to include all attributes, validations for updates and
+creates are the same. First are commands for Releases:
 
 ``` ruby
 RELEASE_ATTRIBUTES = %I(id title tracks)
@@ -965,3 +968,9 @@ end
     I have left deletes as an excercise for the reader. Hint: We never
     actually delete anything from the event store. So a delete must be
     handled by a delete event appended to the event stream.
+
+[^ruby]:
+    I have chosen Ruby here since it is the language I feel I can
+    express object oriented code most cleanly in. And I hope that
+    Rubys clean and friendly syntax will make it easy to see how these
+    ideas could be implemented in another programming language.
