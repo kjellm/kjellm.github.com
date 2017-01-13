@@ -496,6 +496,8 @@ releases of recorded music (a.k.a. albums).
 
 ### Domain model
 
+#### Commands
+
 Lets start with the commands. In this domain we only have commands for
 creating and updating the releases and the recordings. Since updates
 are required to include all attributes, validations for updates and
@@ -760,13 +762,11 @@ Validator)
 
 #### The query side
 
-Note: Again I have made an in-memory-only database. And again I hope
-that it will be easy for you to see how this could be changed to use
-something like a search engine or a relational database.
-
 ##### The simplest case
 
-We choose this strategy for Recordings.
+Remember that I suggested that for the simplest cases we could use the
+event store repositories as backends for fake projections. I have
+choosen to show this strategy using Recordings.
 
 ``` ruby
 class RecordingProjection < RepositoryProjection
@@ -778,12 +778,19 @@ class RecordingProjection < RepositoryProjection
 end
 ```
 
-##### Seperate read side
+##### A real projection
 
-Maintain by subscribing to domain events published by the event store.
+Here I show how to maintain the current state for Releases using a
+real projection. This is done as I have described earlier by
+subscribing to domain events published by the event store.
 
-Here is how to use this strategy with Releases. Here we also include
-all recordings associated with a given release.
+In this projection we also handle Recording events so that we can
+include all recordings associated with a given release. We also use
+them to derive an *artist* for the whole release.
+
+Note: Again I have made an in-memory-only database. And again I hope
+that it will be easy for you to see how this could be changed to use
+something like a relational database or a search engine.
 
 ``` ruby
 
@@ -839,6 +846,8 @@ class ReleaseProjection < SubscriberProjection
 
 end
 ```
+
+### One more
 
 This strategy allows for all sorts of read optimized projections to be
 maintained. Here is an example projection that keeps track of the
@@ -939,15 +948,15 @@ end
 
 <ul class="bibliography">
   <li>
+    <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
+  </li>
+  <li>
     Evans, E. (2004), <em>Domain Driven Design: Tackling complexity in the heart of software</em>,
     Boston, MA: Addison Wesley
   </li>
   <li>
     Vernon, V. (2013), <em>Implementing Domain-Driven Design</em>, Boston, MA: Addison Wesley,
     Chapters 4, 8, and appendix A
-  </li>
-  <li>
-    <em><a href="http://cqrs.nu/Faq">CQRS, Event Sourcing and DDD FAQ</a></em>, Edument
   </li>
 </ul>
 
