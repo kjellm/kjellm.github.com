@@ -1,0 +1,18 @@
+html {
+    color: black;
+    background-color: white;
+}
+
+#container {
+    background: white none repeat-y;
+    border-left: none;
+    border-right: none;
+}
+
+#menu {
+    display: none;
+}
+
+#subtitle {
+    margin-bottom: 2em;
+}
