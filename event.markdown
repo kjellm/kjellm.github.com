@@ -24,15 +24,17 @@ My intention is not to explain all these concepts in detail, but
 rather to show how all comes together. I hope to be able to do this in
 a concise and readable manner. As such, the code is simple by
 design. Most classes would need further refinements before suitable
-for real world usage.
-
-You can see the entire source code in [this gist][1].
-
+for real world usage. My intention for this article is for it to be an
+light introduction and an companion to other sources.
 
 I have structured this document in two parts. The first part is the
 infrastructure: Event store, base classes for repositories, command
-handlers, etc. The second part is an example of a tiny application for
-a tiny domain.
+handlers, etc. In the second part I will illustrate how this
+infrastructure can be used by making an tiny example application for a
+tiny example domain. Here I will also illuminate how CRUD operations
+can be implemented in a concise way.
+
+You can see the entire source code in [this gist][1].
 
 ## Infrastructure
 
@@ -301,7 +303,7 @@ class EventStoreLoggDecorator < DelegateClass(EventStore)
 end
 ```
 
-### CQRS: Command side infrastructure
+### CQRS: Command side
 
 The public interface for all changes to the system is through Commands
 and Command Handlers.
@@ -416,11 +418,32 @@ Beyond validation, command objects are simple Data Transfer Objects
 (DTOs).
 
 
-### CQRS: Read side infrastructure
+### CQRS: Read side
 
-On the read side you can keep things really simple. The idea here is
-to set up projections that derive the current state from the event
-streams.
+On the read side you are free to keep things really simple. The idea
+here is to set up projections that derive the current state from the
+event streams.
+
+<figure>
+  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
+  <figcaption>Class diagram for (a) fake projections, and (b) real projections</figcaption>
+</figure>
+
+We have two options:
+
+- (a) For really simple cases where we don't need high performance or
+  querying (beyond find by ID), we can use the event store
+  repositories directly. I call these for *fake projections*.
+- (b) In other cases we can maintain read optimized projections, by
+  subscribing to events published from the event store.
+
+When the first option is good enough, I suggest that you do not use
+the repositories directly but sets up read side versions that forwards
+to the event store repositories. In this way you can enforce the read
+only nature and you make it easier to change to a projection at a
+later stage if deemed necessary. To further hide this fact as an
+implementation detail, I suggest also calling these classes for
+projections.
 
 ``` ruby
 class RepositoryProjection < BaseObject
@@ -470,29 +493,14 @@ releases of recorded music (a.k.a. albums).
   <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
 </figure>
 
+### Domain model
+
+Lets start with the commands. In this domain we only have commands for
+creating and updating the releases and the recordings. First for Releases:
+
 ``` ruby
 RELEASE_ATTRIBUTES = %I(id title tracks)
 
-class Release < Entity
-  attributes *RELEASE_ATTRIBUTES
-
-  include CrudAggregate
-
-  def assert_validity
-    # Do something here
-  end
-end
-
-RECORDING_ATTRIBUTES = %I(id title artist duration)
-
-class Recording < Entity
-  attributes *RECORDING_ATTRIBUTES
-end
-```
-
-Commands and events
-
-``` ruby
 class ReleaseCommand < Command
 
   private
@@ -507,20 +515,16 @@ class CreateRelease < ReleaseCommand
   attributes *RELEASE_ATTRIBUTES
 end
 
-class ReleaseCreated < Event
-  attributes *RELEASE_ATTRIBUTES
-end
-
 class UpdateRelease < ReleaseCommand
-  attributes *RELEASE_ATTRIBUTES
-end
-
-class ReleaseUpdated < Event
   attributes *RELEASE_ATTRIBUTES
 end
 ```
 
+And then for Recordings:
+
 ``` ruby
+RECORDING_ATTRIBUTES = %I(id title artist duration)
+
 class RecordingCommand < Command
 
   private
@@ -537,27 +541,33 @@ class CreateRecording < RecordingCommand
   attributes *RECORDING_ATTRIBUTES
 end
 
-class RecordingCreated < Event
-  attributes *RECORDING_ATTRIBUTES
-end
-
 class UpdateRecording < RecordingCommand
-  attributes *RECORDING_ATTRIBUTES
-end
-
-class RecordingUpdated < Event
   attributes *RECORDING_ATTRIBUTES
 end
 ```
 
+#### Command handling
 
-### CRUD
+Before I show how to handle these commands, I need to take a detour to
+discuss CRUD.
 
 Even in a richely modeled domain, the need for simple entities that
 only needs [CRUD][crud] operations might arise. By using the principle
-of "convention over configuration", this can be handled with a very
+of *convention over configuration*, this can be handled with a very
 small amount of code. The code below encodes a "convention" for CRUD
-Aggregates.
+aggregates. In short the convention is:
+
+- The names of the commands are 'Create' or 'Update' followed by the
+  aggregate name.
+- Handling the commands will create one event named after the
+  aggregate name followed by 'Created' or 'Updated'
+- Update commands and events contains all aggregate fields, not just
+  the ones that are changed.
+- Aggregates will be validated before creating any events.
+
+Here is a CRUD Command Handler that are capable of handling
+create and update commands for any aggregate that follows these
+conventions. [^delete]
 
 ``` ruby
 class CrudCommandHandler < CommandHandler
@@ -604,62 +614,21 @@ class CrudCommandHandler < CommandHandler
 end
 ```
 
+Lets use this and implement the rest of the domain for the Recording aggregate.
+
 ``` ruby
-module CrudAggregate
-
-  module ClassMethods
-    def repository
-      self
-    end
-
-    def validator(obj)
-      obj
-    end
-  end
-
-  def assert_validity
-  end
-
-  def self.included(othermod)
-    othermod.extend CommandHandler::InstanceMethods
-    othermod.extend CrudCommandHandler::InstanceMethods
-    othermod.extend EventStoreRepository::InstanceMethods
-    othermod.extend ClassMethods
-
-    othermod_name = othermod.name.snake_case
-
-    othermod.define_singleton_method("type") { othermod }
-
-    othermod.define_singleton_method "process_create_#{othermod_name}" do |command|
-      process_create command
-    end
-
-    othermod.define_singleton_method "process_update_#{othermod_name}" do |command|
-      process_update command
-    end
-
-    othermod.define_singleton_method("apply_#{othermod_name}_updated") do |obj, event|
-      obj.set_attributes(event.to_h)
-    end
-  end
+class Recording < Entity
+  attributes *RECORDING_ATTRIBUTES
 end
-```
 
-I have left deletes as an excercise for the reader. Hint: We never
-actually delete anything from the event store. So a delete must be
-handled by a delete event appended to the event stream.
+class RecordingCreated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
 
-### Domain Model (CQRS: Command side)
+class RecordingUpdated < Event
+  attributes *RECORDING_ATTRIBUTES
+end
 
-Shows an example of using CrudAggregate. All stuff rolled into one
-class. Useful for the simplest aggregates that only needs CRUD
-operations.
-
-
-Shows an example where all the different responsibilities are handled
-by separate objects.
-
-``` ruby
 class RecordingRepository < EventStoreRepository
 
   def type
@@ -706,28 +675,93 @@ class RecordingCommandHandler < CrudCommandHandler
 end
 ```
 
-### CQRS: Read side
+#### Taking it even further
 
-<figure>
-  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
-</figure>
+We are now ready define a module that can be included that roles all
+stuff into one.
 
-We have two options on the read side: Use the event store
-repositories, or maintain read optimized projections. The first
-alternative are good enough if you don't need querying beyond simple
-retrieval by ID.
+
+Shows an example where all the different responsibilities are handled
+by separate objects.
+
+Shows an example of using CrudAggregate. All stuff rolled into one
+class. Useful for the simplest aggregates that only needs CRUD
+operations.
+
+``` ruby
+module CrudAggregate
+
+  module ClassMethods
+    def repository
+      self
+    end
+
+    def validator(obj)
+      obj
+    end
+  end
+
+  def assert_validity
+  end
+
+  def self.included(othermod)
+    othermod.extend CommandHandler::InstanceMethods
+    othermod.extend CrudCommandHandler::InstanceMethods
+    othermod.extend EventStoreRepository::InstanceMethods
+    othermod.extend ClassMethods
+
+    othermod_name = othermod.name.snake_case
+
+    othermod.define_singleton_method("type") { othermod }
+
+    othermod.define_singleton_method "process_create_#{othermod_name}" do |command|
+      process_create command
+    end
+
+    othermod.define_singleton_method "process_update_#{othermod_name}" do |command|
+      process_update command
+    end
+
+    othermod.define_singleton_method("apply_#{othermod_name}_updated") do |obj, event|
+      obj.set_attributes(event.to_h)
+    end
+  end
+end
+```
+
+Lets use this to implement the rest of the domain for Release aggregates.
+
+``` ruby
+class Release < Entity
+  attributes *RELEASE_ATTRIBUTES
+
+  include CrudAggregate
+
+  def assert_validity
+    # Do something here
+  end
+end
+
+class ReleaseCreated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+
+class ReleaseUpdated < Event
+  attributes *RELEASE_ATTRIBUTES
+end
+```
+
+A note on validations. Single attribute (type and constraints on that
+type): Command. Comparing several attributes: Aggregate (or Aggregate
+Validator)
+
+#### The query side
 
 Note: Again I have made an in-memory-only database. And again I hope
 that it will be easy for you to see how this could be changed to use
 something like a search engine or a relational database.
 
-#### The simplest case
-
-When the first option is good enough, I suggest that you do not use
-the repositories directly but sets up read side versions that forwards
-to the event store repositories. In this way you can enforce the read
-only nature and you make it easier to change to a projection at a
-later stage if deemed necessary.
+##### The simplest case
 
 We choose this strategy for Recordings.
 
@@ -741,7 +775,7 @@ class RecordingProjection < RepositoryProjection
 end
 ```
 
-#### Seperate read side
+##### Seperate read side
 
 Maintain by subscribing to domain events published by the event store.
 
@@ -898,7 +932,7 @@ class Application < BaseObject
 end
 ```
 
-### Read more
+## Read more
 
 <ul class="bibliography">
   <li>
@@ -915,7 +949,7 @@ end
 </ul>
 
 
-### Notes
+## Notes
 
 [^ddd-patterns]:
     DDD patterns that are particularily relevant to event sourcing are:
@@ -926,3 +960,8 @@ end
     - Entities
     - Value Objects
     - Domain Events
+
+[^delete]:
+    I have left deletes as an excercise for the reader. Hint: We never
+    actually delete anything from the event store. So a delete must be
+    handled by a delete event appended to the event stream.
