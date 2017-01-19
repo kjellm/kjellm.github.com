@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 60" width="500pt" height="5pc" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 500 130" width="500pt" height="130pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.2.2 
-    <dc:date>2017-01-05 20:33:42 +0000</dc:date>
+    <dc:date>2017-01-13 14:03:48 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="500">
@@ -15,22 +15,60 @@
         <path d="M 8 0 L 0 0 M 0 -3 L 8 0 L 0 3" fill="none" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
+    <font-face font-family="Helvetica" font-size="9" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica" font-size="10" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="522.9492" cap-height="717.28516" ascent="770.0195" descent="-229.98047" font-weight="500">
+      <font-face-src>
+        <font-face-name name="Helvetica"/>
+      </font-face-src>
+    </font-face>
   </defs>
   <g stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
     <title>cqrs-read</title>
     <g>
       <title>Layer 1</title>
-      <rect x="113" y="12" width="105" height="36" fill="white"/>
-      <rect x="113" y="12" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(118 22.832)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="32.056" y="11" textLength="30.888">Client</tspan>
+      <rect x="390" y="12" width="99" height="36" fill="white"/>
+      <rect x="390" y="12" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(395 15.664001)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="15.388" y="11" textLength="61.56">Subscriber </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="17.392" y="25.336" textLength="54.216">Projection</tspan>
       </text>
-      <rect x="282" y="12" width="105" height="36" fill="white"/>
-      <rect x="282" y="12" width="105" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <text transform="translate(287 22.832)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="20.392" y="11" textLength="54.216">Projection</tspan>
+      <rect x="390" y="83.5" width="99" height="36" fill="white"/>
+      <rect x="390" y="83.5" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(395 94.332)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="29.386" y="11" textLength="30.228">Event</tspan>
       </text>
-      <line x1="218" y1="30" x2="272.1" y2="30" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <rect x="176.5" y="12" width="119" height="36" fill="white"/>
+      <rect x="176.5" y="12" width="119" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(181.5 15.664001)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x=".044" y="11" textLength="112.248">Event Store PubSub </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="27.836" y="25.336" textLength="53.328">Decorator</tspan>
+      </text>
+      <line x1="295.5" y1="30" x2="380.1" y2="30" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(375.43364 30.546512)" fill="black">
+        <tspan font-family="Helvetica" font-size="9" font-weight="500" x=".2487793" y="9" textLength="3.5024414">*</tspan>
+      </text>
+      <text transform="translate(329.22807 18)" fill="black">
+        <tspan font-family="Helvetica" font-size="10" font-weight="500" x=".43603516" y="10" textLength="46.12793">subscriber</tspan>
+      </text>
+      <path d="M 215 48 L 215 101.5 L 378.1 101.5 L 380.1 101.5" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <line x1="439.5" y1="48" x2="439.5" y2="73.6" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <rect x="14" y="11.546512" width="99" height="36" fill="white"/>
+      <rect x="14" y="11.546512" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(19 15.210514)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="15.502" y="11" textLength="61.332">Repository </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="17.392" y="25.336" textLength="54.216">Projection</tspan>
+      </text>
+      <rect x="14" y="83.5" width="99" height="36" fill="white"/>
+      <rect x="14" y="83.5" width="99" height="36" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(19 87.164)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="13.276" y="11" textLength="65.784">Event Store </tspan>
+        <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" x="15.502" y="25.336" textLength="57.996">Repository</tspan>
+      </text>
+      <line x1="63.5" y1="47.54651" x2="63.5" y2="73.6" marker-end="url(#StickArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
     </g>
   </g>
 </svg>

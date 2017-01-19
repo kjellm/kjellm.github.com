@@ -14,41 +14,39 @@ title: Event Sourcing - a practical example implemented in Ruby
 [guid]: https://en.wikipedia.org/wiki/Globally_unique_identifier
 
 Event sourcing is the idea that, rather than saving the current state
-of a system, you save events. The state of the system can then be
-rebuilt by replaying these stored events. You often see event sourcing
-in conjunction with some key supporting ideas:
+of a system, you save events. The state of the system at any point in
+time can then be rebuilt by replaying these stored events. You often
+see event sourcing in conjunction with some other key supporting
+ideas:
 
 - [Domain Driven Design][ddd] (DDD) [^ddd-patterns]
 - [Command Query Responsibility Segregation][cqrs] (CQRS)
 - [Publish/subscribe][pubsub] (Pub/sub)
 
 My intention is not to explain all these concepts in detail, but
-rather to show, with code written in Ruby[^ruby], how all comes
-together. I hope to be able to do this in a concise and readable
+rather to show, with code written in Ruby[^ruby], one way that all can
+come together. I hope to be able to do this in a concise and readable
 manner. As such, the code is simple by design. Most classes would need
-further refinements before being suitable for real world usage. My
-intention for this article is for it to be an light introduction and
-an companion to other sources.
+further refinements before being suitable for real world usage. I hope
+that you find this article to be a nice companion to other, more in
+depth, sources.
 
-
-I have structured this document in two parts. The first part is the
-infrastructure, the building blocks: an event store, base classes for
-repositories, command handlers, etc. In the second part I will
-illustrate how this infrastructure can be used by making an tiny
-example application for a tiny example domain. Here I will also
-illuminate how CRUD operations can be implemented in a concise way.
+This article is divided into two parts. The first part sets up the
+infrastructure, the building blocks. In the second part I will
+illustrate how this infrastructure can be used to make a tiny example
+application for a tiny example domain.
 
 You can download the entire source code from [this gist][1].
 
 ## Infrastructure
 
-### Setup
+### Prerequisites
 
-Before we can begin for real, we need to do some setup. The rest of
-the code shown in this article depends on the following:
+Before we can begin for real, we need to do define some basic classes
+and methods, that the rest of the code shown in this article depends
+on:
 
-- Some monkeypatching of String and Hash. (Would
-  use [refinements][refinements] for this in a real project)
+- Some monkeypatching of String and Hash.[^refinements]
 - A [UUID][uuid] module
 - A BaseObject that all classes inherits from. It provides:
   - a class method for defining *attributes*
@@ -57,13 +55,13 @@ the code shown in this article depends on the following:
   - a *logg* method
   - a *to_h* method
 - Exception classes.
-- Base classes for Entities, Value Objects, and Events.
+- Base classes for *entities* and *value objects*.
 
-The code implementing this are not necessary to understand in order to
-understand the code shown in this article. So I will only link to
-it [here][2]. I encurage you to not look at this code for now, but
-rather read on and eventually come back and look at it later if you
-want.
+You will find the implementation [here][2]. But I will encurage you to
+*not* look at it now, but rather read on and come back for it later. I
+will postulate that it is not necessary to have knowledge of this code
+to understand the rest of this article.
+
 
 ### Event Sourcing
 
@@ -74,12 +72,10 @@ want.
 
 #### The basics
 
-At the root there is the Event Store. The Event Store holds Event
-Streams: One Event Strem per persisted Aggregate.
-
-Note: The event store I have implemented here holds the streams purely
-in memory, but I hope that it is easy to imagine how it can be turned
-into a store that uses files or a proper database as a backend.
+At the root of event sourcing are the *event store*. The event store
+holds *event streams*: One event stream per persisted *aggregate*. The
+store have no knowledge of the aggregates themselves apart from their
+IDs.[^in-memory-event-store]
 
 ``` ruby
 class EventStore < BaseObject
@@ -112,7 +108,7 @@ class EventStore < BaseObject
 end
 ```
 
-Event Streams are append only data structures, holding Events.
+Event streams are append only data structures, holding *events*.
 
 ``` ruby
 class EventStream < BaseObject
@@ -147,11 +143,15 @@ class Event < ValueObject
 end
 ```
 
-The event store is accessed through Event Store Repositories, one
-repository per aggregate type. The repository knows how to recreate
-the current state of an aggregate from the aggregate's event
-stream. All changes are done through the *unit_of_work* method. The
-reason for this will be explained in the section on concurrency.
+The event store is accessed through event store *repositories*, one
+repository per aggregate type. The repository knows
+
+- how to recreate the present state of an aggregate from the
+aggregate's event stream.
+- how to do changes to an event stream through a *unit of work*.
+
+The reason for the unit of work will be explained in the section on
+concurrency.
 
 ``` ruby
 class EventStoreRepository < BaseObject
@@ -183,25 +183,23 @@ class EventStoreRepository < BaseObject
 end
 ```
 
-In case you wondered, the purpose with the InstanceMethods module
-above is to allow users of this class to choose whether they want to
-inherit the class or include it as a mixin. This technique will be
-used again, and it's usefulness will be demonstrated later.
+The purpose with the `InstanceMethods` module above is to allow users
+of this class to choose whether they want to inherit the class or
+include it as a mixin. This technique will be used again, and it's
+usefulness will be demonstrated later.
 
 #### Extending the store
 
 We need some more auxilary functionality from the event store, so the
-store we actually use are decorated like shown below. I have chosen
-the decorator pattern for augmenting the event store. This gives
-ability to configure at runtime.
+store we actually use are augmented. I have chosen the decorator
+pattern for the augmentation. This gives the ability to configure what
+augmentations we add at runtime. The following figures show the
+decorators and their runtime configuration.
 
 <figure>
   <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
   <figcaption>Event store decorators</figcaption>
 </figure>
-
-The following diagram shows the runtime configuration of the
-decorators.
 
 <figure>
   <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" alt="Event store decorators object diagram"/>
@@ -210,11 +208,11 @@ decorators.
 
 ##### Concurrency
 
-To prevent concurrent access to an event stream to result in a corrupt
-strem, we use optimistic locking: All changes must be done through a
-UnitOfWork which keep track of the expected version of the event
+To prevent the corruption of an event stream from concurrent writes,
+we use optimistic locking. That is: All changes must be done through a
+*Unit of work* which keep track of the expected version of the event
 stream. The expected version is compared to the actual version before
-any changes are done to the event stream.
+any changes are done.
 
 ``` ruby
 class EventStoreOptimisticLockDecorator < DelegateClass(EventStore)
@@ -306,20 +304,22 @@ end
 
 ### CQRS: Command side
 
-The public interface for all changes to the system is through Commands
-and Command Handlers.
+The public interface for all changes to the system is through
+*commands*, that are given to *command handlers*, who do work on an
+aggregate.
 
 <figure>
   <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
   <figcaption>Class diagram for Commands, Command Handlers, and related classes</figcaption>
 </figure>
 
-A Command can be either accepted or rejected by the system. On
-acceptance nothing is returned. On rejection an error is raised.
+The handling of a command can result in one of two things: *Acceptance*
+or *rejection*. On acceptance, nothing is returned. On rejection, an error
+is raised.
 
 Since nothing is returned from an accepted command, the client needs
-to include an ID even in create requests. This can be accomplished by
-using [GUIDs][guid] for IDs.
+to include an ID even for commands that creates an aggregate. This is
+done by the client creating [GUIDs][guid] for the IDs.
 
 Here we define the base Command Handler.
 
@@ -343,8 +343,10 @@ class CommandHandler < BaseObject
 end
 ```
 
-The purpose of the `#handle`/`#process` split is to ensure that void
-is always returned as the result of the command handling.
+The purpose of the handle/process split above, is to ensure that
+nothing is ever by accident returned as the result of the command
+handling. The actual handing is delegated to methods defined in
+command handler subclasses.
 
 Next is a class that adds logging to `CommandHandlers` by
 decoration. Logging of commands is most likely an important aspect of
@@ -367,7 +369,14 @@ class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
 end
 ```
 
-The `Command` objects are a good place to validate data comming in to
+*Command* objects encodes mutation requests to the system, and have
+the following characteristics:
+
+- They should be named by the request they represent (a verb) and the
+  aggregate it is to be applied to.
+- They are plain data objects that carry the request data.
+
+Command objects are also a good place to validate data comming in to
 the system. I have added some rudimentary validation rules to
 illustrate this.
 
@@ -412,11 +421,9 @@ class Command < ValueObject
 end
 ```
 
-I am not adding any coercion of values given to the command, I believe
-this responsibility belongs to the creator of the `Command` objects.
-
-Beyond validation, command objects are simple Data Transfer Objects
-(DTOs).
+I am not adding any *coercions* of the data given to the command. I
+believe this responsibility are more appropriately done by the command
+creator.
 
 
 ### CQRS: Read side
@@ -432,19 +439,21 @@ event streams.
 
 We have two options:
 
-- (a) For really simple cases where we don't need high performance or
-  querying (beyond find by ID), we can use the event store
-  repositories directly. I call these for *fake projections*.
-- (b) In other cases we can maintain read optimized projections, by
-  subscribing to events published from the event store.
+- (a) For really simple cases, where we don't need high performance,
+  or querying (beyond *find by ID*), we can use the event store
+  repositories directly. I will call these for *fake projections*.
+- (b) In all other cases we maintain read optimized projections. These
+  are maintained by subscribing to events published from the event
+  store.
 
 When the first option is good enough, I suggest that you do not use
 the repositories directly but sets up read side versions that forwards
 to the event store repositories. In this way you can enforce the read
-only nature and you make it easier to change to a projection at a
-later stage if deemed necessary. To further hide this fact as an
-implementation detail, I suggest also calling these classes for
-projections.
+only nature and you make it easier to change to a real projection at a
+later stage. To further hide this fact as an implementation detail, I
+also suggest naming these as projections.
+
+Here is a base class for fake projections.
 
 ``` ruby
 class RepositoryProjection < BaseObject
@@ -469,6 +478,8 @@ end
 
 ```
 
+And a base class for real projections.
+
 ``` ruby
 class SubscriberProjection < BaseObject
 
@@ -492,16 +503,21 @@ releases of recorded music (a.k.a. albums).
 
 <figure>
   <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
+  <figcaption>Conceptual class diagram for our simple domain of recorded music and the releases they appear on.</figcaption>
 </figure>
+
+Note that the class diagram above is a conceptual diagram. The actual
+implementation uses CQRS and aggregates, and thus diverges quite a bit.
 
 ### Domain model
 
 #### Commands
 
 Lets start with the commands. In this domain we only have commands for
-creating and updating the releases and the recordings. Since updates
-are required to include all attributes, validations for updates and
-creates are the same. First are commands for Releases:
+*creating* and *updating* the aggregates. Also note that we follow
+here a convention where updates are required to include all attributes
+(more on this later), and validations for updates and creates are
+therefore the same. First the commands for releases:
 
 ``` ruby
 RELEASE_ATTRIBUTES = %I(id title tracks)
@@ -525,7 +541,7 @@ class UpdateRelease < ReleaseCommand
 end
 ```
 
-And then for Recordings:
+And then for recordings:
 
 ``` ruby
 RECORDING_ATTRIBUTES = %I(id title artist duration)
@@ -554,25 +570,25 @@ end
 #### Command handling
 
 Before I show how to handle these commands, I need to take a detour to
-discuss CRUD.
+discuss [CRUD][crud].
 
 Even in a richely modeled domain, the need for simple entities that
-only needs [CRUD][crud] operations might arise. By using the principle
+only needs CRUD operations might arise. By using the principle
 of *convention over configuration*, this can be handled with a very
-small amount of code. The code below encodes a "convention" for CRUD
+small amount of code. The code below encodes a convention for CRUD
 aggregates. In short the convention is:
 
 - The names of the commands are 'Create' or 'Update' followed by the
   aggregate name.
 - Handling the commands will create one event named after the
   aggregate name followed by 'Created' or 'Updated'
-- Update commands and events contains all aggregate fields, not just
-  the ones that are changed.
+- Update commands and events contains values for all the aggregate
+  fields, not just the ones that are to be changed. [^complete-updates]
 - Aggregates will be validated before creating any events.
 
-Here is a CRUD Command Handler that are capable of handling
-create and update commands for any aggregate that follows these
-conventions. [^delete]
+Here follows a *CRUD command handler* base class that are capable of
+handling create and update commands for any aggregate that follows
+these conventions. [^delete]
 
 ``` ruby
 class CrudCommandHandler < CommandHandler
@@ -619,7 +635,8 @@ class CrudCommandHandler < CommandHandler
 end
 ```
 
-Lets use this and implement the rest of the domain for the Recording aggregate.
+Lets use this and implement the rest of the domain for the Recording
+aggregate.
 
 ``` ruby
 class Recording < Entity
@@ -680,18 +697,22 @@ class RecordingCommandHandler < CrudCommandHandler
 end
 ```
 
+A note on validations: I suggest that:
+
+- all type checks and constraints on values are validated on the
+command
+- all validations that need to consider a business rule governing
+multiple fields, are done on the aggregate.
+
 #### Taking it even further
 
-We are now ready define a module that can be included that roles all
-stuff into one.
+In the implementation of recordings, we have made separate classes for
+all the different concerns. This gives great flexibility. But for
+trivial CRUD aggregates, we can take it a bit further. What I will
+show here is a way to role all the different concerns into one class,
+just by including a module.
 
-
-Shows an example where all the different responsibilities are handled
-by separate objects.
-
-Shows an example of using CrudAggregate. All stuff rolled into one
-class. Useful for the simplest aggregates that only needs CRUD
-operations.
+First the module definition.
 
 ``` ruby
 module CrudAggregate
@@ -734,7 +755,10 @@ module CrudAggregate
 end
 ```
 
-Lets use this to implement the rest of the domain for Release aggregates.
+Finally the `InstanceMethods` pattern pays off :-)
+
+Lets us now use this to implement the rest of the domain for release
+aggregates.
 
 ``` ruby
 class Release < Entity
@@ -756,10 +780,6 @@ class ReleaseUpdated < Event
 end
 ```
 
-A note on validations. Single attribute (type and constraints on that
-type): Command. Comparing several attributes: Aggregate (or Aggregate
-Validator)
-
 #### The query side
 
 ##### The simplest case
@@ -780,17 +800,13 @@ end
 
 ##### A real projection
 
-Here I show how to maintain the current state for Releases using a
-real projection. This is done as I have described earlier by
-subscribing to domain events published by the event store.
+For releases, I have chosen to maintain the current state using a real
+projection. This is done as I have described earlier by subscribing to
+domain events published by the event store.
 
-In this projection we also handle Recording events so that we can
+In this projection we also handle *recording events* so that we can
 include all recordings associated with a given release. We also use
-them to derive an *artist* for the whole release.
-
-Note: Again I have made an in-memory-only database. And again I hope
-that it will be easy for you to see how this could be changed to use
-something like a relational database or a search engine.
+them to derive an *artist* for the whole release.[^in-memory-projection]
 
 ``` ruby
 
@@ -851,7 +867,7 @@ end
 
 This strategy allows for all sorts of read optimized projections to be
 maintained. Here is an example projection that keeps track of the
-total number of Releases and Recordings stored by the system.
+*total number* of releases and recordings stored by the system.
 
 ``` ruby
 class TotalsProjection < SubscriberProjection
@@ -880,7 +896,7 @@ class TotalsProjection < SubscriberProjection
 end
 ```
 
-The projections are made available to the system via these constants.
+The projections are available to the system via these constants.
 
 ``` ruby
 TheRecordingProjection = RecordingProjection.new
@@ -983,3 +999,24 @@ end
     express object oriented code most cleanly in. And I hope that
     Rubys clean and friendly syntax will make it easy to see how these
     ideas could be implemented in another programming language.
+
+[^refinements]:  I would use [refinements][refinements] for this in a real project.
+
+[^in-memory-event-store]:
+    Note that the event store I have implemented here holds the
+    streams purely in memory, but I hope that it is easy to imagine
+    how it can be turned into a store that uses files or a proper
+    database as a backend.
+
+[^in-memory-projection]:
+    Again, I ask you to note that I have made an in-memory-only
+    database. And again I hope that it will be easy for you to see how
+    this could be changed to use something like a relational database
+    or a search engine.
+
+[^complete-updates]:
+    The reason we insist on the rule that updates must carry data for
+    the complete aggregate, is that it simplifies the implementation a
+    lot. I feel that supporting patch updates would only add clutter
+    to the code, and only distract from helping you understand the
+    overall picture.
