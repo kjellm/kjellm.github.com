@@ -31,7 +31,7 @@ further refinements before being suitable for real world usage. I hope
 that you find this article to be a nice companion to other, more in
 depth, sources.
 
-This article is divided into two parts. The first part sets up the
+This text is divided into two parts. The first part sets up the
 infrastructure, the building blocks. In the second part I will
 illustrate how this infrastructure can be used to make a tiny example
 application for a tiny example domain.
@@ -43,8 +43,7 @@ You can download the entire source code from [this gist][1].
 ### Prerequisites
 
 Before we can begin for real, we need to do define some basic classes
-and methods, that the rest of the code shown in this article depends
-on:
+and methods, which the rest of the code in this text depends on:
 
 - Some monkeypatching of String and Hash.[^refinements]
 - A [UUID][uuid] module
@@ -57,10 +56,10 @@ on:
 - Exception classes.
 - Base classes for *entities* and *value objects*.
 
-You will find the implementation [here][2]. But I will encurage you to
-*not* look at it now, but rather read on and come back for it later. I
-will postulate that it is not necessary to have knowledge of this code
-to understand the rest of this article.
+You will find the implementation [here][2]. But I will encourage you
+*not* to look at it now, but rather read on and come back for it
+later. It is not necessary to know this code to understand the rest of
+this article.
 
 
 ### Event Sourcing
@@ -72,9 +71,9 @@ to understand the rest of this article.
 
 #### The basics
 
-At the root of event sourcing are the *event store*. The event store
+At the root of event sourcing is the *event store*. The event store
 holds *event streams*: One event stream per persisted *aggregate*. The
-store have no knowledge of the aggregates themselves apart from their
+store has no knowledge of the aggregates themselves apart from their
 IDs.[^in-memory-event-store]
 
 ``` ruby
@@ -185,7 +184,7 @@ end
 
 The purpose with the `InstanceMethods` module above is to allow users
 of this class to choose whether they want to inherit the class or
-include it as a mixin. This technique will be used again, and it's
+include it as a mixin. This technique will be used again, and its
 usefulness will be demonstrated later.
 
 #### Extending the store
@@ -318,7 +317,7 @@ or *rejection*. On acceptance, nothing is returned. On rejection, an error
 is raised.
 
 Since nothing is returned from an accepted command, the client needs
-to include an ID even for commands that creates an aggregate. This is
+    to include an ID even for commands that create an aggregate. This is
 done by the client creating [GUIDs][guid] for the IDs.
 
 Here we define the base Command Handler.
@@ -345,12 +344,12 @@ end
 
 The purpose of the handle/process split above, is to ensure that
 nothing is ever by accident returned as the result of the command
-handling. The actual handing is delegated to methods defined in
+handling. The actual handling is delegated to methods defined in
 command handler subclasses.
 
 Next is a class that adds logging to `CommandHandlers` by
 decoration. Logging of commands is most likely an important aspect of
-a system, but the event store should not used for this.
+a system, but the event store should not be used for this.
 
 ``` ruby
 class CommandHandlerLoggDecorator < DelegateClass(CommandHandler)
@@ -373,10 +372,10 @@ end
 the following characteristics:
 
 - They should be named by the request they represent (a verb) and the
-  aggregate it is to be applied to.
+  aggregate they are to be applied to.
 - They are plain data objects that carry the request data.
 
-Command objects are also a good place to validate data comming in to
+Command objects are also good places to validate data comming into
 the system. I have added some rudimentary validation rules to
 illustrate this.
 
@@ -422,7 +421,7 @@ end
 ```
 
 I am not adding any *coercions* of the data given to the command. I
-believe this responsibility are more appropriately done by the command
+believe this responsibility belongs more appropriately to the command
 creator.
 
 
@@ -441,17 +440,17 @@ We have two options:
 
 - (a) For really simple cases, where we don't need high performance,
   or querying (beyond *find by ID*), we can use the event store
-  repositories directly. I will call these for *fake projections*.
+  repositories directly. I will call these *fake projections*.
 - (b) In all other cases we maintain read optimized projections. These
   are maintained by subscribing to events published from the event
   store.
 
 When the first option is good enough, I suggest that you do not use
-the repositories directly but sets up read side versions that forwards
+the repositories directly but set up read side versions that forward
 to the event store repositories. In this way you can enforce the read
 only nature and you make it easier to change to a real projection at a
 later stage. To further hide this fact as an implementation detail, I
-also suggest naming these as projections.
+also suggest naming these in the same manner as the real projections.
 
 Here is a base class for fake projections.
 
@@ -503,7 +502,7 @@ releases of recorded music (a.k.a. albums).
 
 <figure>
   <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
-  <figcaption>Conceptual class diagram for our simple domain of recorded music and the releases they appear on.</figcaption>
+  <figcaption>Conceptual class diagram for our simple domain of recorded music and the releases it appears on.</figcaption>
 </figure>
 
 Note that the class diagram above is a conceptual diagram. The actual
@@ -513,8 +512,8 @@ implementation uses CQRS and aggregates, and thus diverges quite a bit.
 
 #### Commands
 
-Lets start with the commands. In this domain we only have commands for
-*creating* and *updating* the aggregates. Also note that we follow
+Let us start with the commands. In this domain we only have commands
+for *creating* and *updating* the aggregates. Also note that we follow
 here a convention where updates are required to include all attributes
 (more on this later), and validations for updates and creates are
 therefore the same. First the commands for releases:
@@ -582,11 +581,11 @@ aggregates. In short the convention is:
   aggregate name.
 - Handling the commands will create one event named after the
   aggregate name followed by 'Created' or 'Updated'
-- Update commands and events contains values for all the aggregate
+- Update commands and events contain values for all the aggregate
   fields, not just the ones that are to be changed. [^complete-updates]
 - Aggregates will be validated before creating any events.
 
-Here follows a *CRUD command handler* base class that are capable of
+Here follows a *CRUD command handler* base class that is capable of
 handling create and update commands for any aggregate that follows
 these conventions. [^delete]
 
@@ -635,7 +634,7 @@ class CrudCommandHandler < CommandHandler
 end
 ```
 
-Lets use this and implement the rest of the domain for the Recording
+Let us use this and implement the rest of the domain for the recording
 aggregate.
 
 ``` ruby
@@ -757,7 +756,7 @@ end
 
 Finally the `InstanceMethods` pattern pays off :-)
 
-Lets us now use this to implement the rest of the domain for release
+Let us now use this to implement the rest of the domain for release
 aggregates.
 
 ``` ruby
@@ -786,7 +785,7 @@ end
 
 Remember that I suggested that for the simplest cases we could use the
 event store repositories as backends for fake projections. I have
-choosen to show this strategy using Recordings.
+chosen to show this strategy using Recordings.
 
 ``` ruby
 class RecordingProjection < RepositoryProjection
@@ -997,7 +996,7 @@ end
 [^ruby]:
     I have chosen Ruby here since it is the language I feel I can
     express object oriented code most cleanly in. And I hope that
-    Rubys clean and friendly syntax will make it easy to see how these
+    Ruby's clean and friendly syntax will make it easy to see how these
     ideas could be implemented in another programming language.
 
 [^refinements]:  I would use [refinements][refinements] for this in a real project.
