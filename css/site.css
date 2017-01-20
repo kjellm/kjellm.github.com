@@ -269,7 +269,7 @@ strong {
     font-weight: bold;
 }
 
-h2 {
+h2.title {
   float: left;
   width: 100%;
 }

@@ -1,17 +1,8 @@
 ---
-layout: bliki
-title: Event Sourcing - a practical example implemented in Ruby
+title:      Event Sourcing - a practical example using Ruby
+date:       2008-09-10 20:22:42.00000 +02:00
+layout:     bliki
 ---
-
-[1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
-[2]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1#file-base-rb
-[ddd]: https://en.wikipedia.org/wiki/Domain-driven_design
-[cqrs]: http://martinfowler.com/bliki/CQRS.html
-[pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
-[crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
-[refinements]: https://ruby-doc.org/core-2.4.0/doc/syntax/refinements_rdoc.html
-[uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier
-[guid]: https://en.wikipedia.org/wiki/Globally_unique_identifier
 
 Event sourcing is the idea that, rather than saving the current state
 of a system, you save events. The state of the system at any point in
@@ -1019,3 +1010,13 @@ end
     lot. I feel that supporting patch updates would only add clutter
     to the code, and only distract from helping you understand the
     overall picture.
+
+[1]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1
+[2]: https://gist.github.com/kjellm/ec8fbaac65a28d67f17d941cc454f0f1#file-base-rb
+[ddd]: https://en.wikipedia.org/wiki/Domain-driven_design
+[cqrs]: http://martinfowler.com/bliki/CQRS.html
+[pubsub]: https://en.wikipedia.org/wiki/Publish–subscribe_pattern
+[crud]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
+[refinements]: https://ruby-doc.org/core-2.4.0/doc/syntax/refinements_rdoc.html
+[uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier
+[guid]: https://en.wikipedia.org/wiki/Globally_unique_identifier
