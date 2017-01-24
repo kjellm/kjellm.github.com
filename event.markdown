@@ -1,6 +1,6 @@
 ---
 title:      Event Sourcing - a practical example using Ruby
-date:       2008-09-10 20:22:42.00000 +02:00
+date:       2017-01-24 17:59:17.00000 +01:00
 layout:     bliki
 ---
 
