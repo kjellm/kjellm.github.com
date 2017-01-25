@@ -14,6 +14,7 @@ ideas:
 - [Command Query Responsibility Segregation][cqrs] (CQRS)
 - [Publish/subscribe][pubsub] (Pub/sub)
 
+
 My intention is not to explain all these concepts in detail, but
 rather to show, with code written in Ruby[^ruby], one way that all can
 come together. I hope to be able to do this in a concise and readable
