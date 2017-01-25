@@ -57,7 +57,7 @@ this article.
 ### Event Sourcing
 
 <figure>
-  <img src="images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
+  <img src="/images/event-sourceing/store.svg" style="width: 80%" alt="Event store class diagram"/>
   <figcaption>Class diagram of the event store and related classes</figcaption>
 </figure>
 
