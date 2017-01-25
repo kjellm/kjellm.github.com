@@ -188,12 +188,12 @@ augmentations we add at runtime. The following figures show the
 decorators and their runtime configuration.
 
 <figure>
-  <img src="images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
+  <img src="/images/event-sourceing/store-decorators.svg" style="width: 80%" alt="Event store decorators class diagram"/>
   <figcaption>Event store decorators</figcaption>
 </figure>
 
 <figure>
-  <img src="images/event-sourceing/store-decorators-object.svg" style="width: 80%" alt="Event store decorators object diagram"/>
+  <img src="/images/event-sourceing/store-decorators-object.svg" style="width: 80%" alt="Event store decorators object diagram"/>
   <figcaption>Runtime configuration of event store decorators</figcaption>
 </figure>
 
@@ -300,7 +300,7 @@ The public interface for all changes to the system is through
 aggregate.
 
 <figure>
-  <img src="images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
+  <img src="/images/event-sourceing/cqrs-command.svg" style="width: 80%" alt="CQRS Command class diagram"/>
   <figcaption>Class diagram for Commands, Command Handlers, and related classes</figcaption>
 </figure>
 
@@ -424,7 +424,7 @@ here is to set up projections that derive the current state from the
 event streams.
 
 <figure>
-  <img src="images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
+  <img src="/images/event-sourceing/cqrs-read.svg" style="width: 80%" alt="CQRS read side class diagram"/>
   <figcaption>Class diagram for (a) fake projections, and (b) real projections</figcaption>
 </figure>
 
@@ -493,7 +493,7 @@ The domain model in this article is the super simple domain of
 releases of recorded music (a.k.a. albums).
 
 <figure>
-  <img src="images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
+  <img src="/images/event-sourceing/domain.svg" style="width: 80%" alt="Domain model class diagram"/>
   <figcaption>Conceptual class diagram for our simple domain of recorded music and the releases it appears on.</figcaption>
 </figure>
 
