@@ -59,16 +59,22 @@ there is no better option.
 <ul class="bibliography">
   <li>
     Celcko, J. (2005), <em>SQL For Smarties</em>, San Francisco: Morgan Kaufman, Chapter 6
+  </li>
   <li>
     Celcko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan Kaufman, Chapter 5.3.3
+  </li>
   <li>
     Garcia-Molina, H., Ullman, J., &amp; Widom, J. (2002), <em>Database systems: The complete book</em>, New Jersey: Prentice Hall, Chapter 6.1.5
+  </li>
   <li>
     <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29">Null (SQL)</a></em>, Wikipedia
+  </li>
   <li>
     <em><a href="http://en.wikipedia.org/wiki/Null_%28SQL%29#Controversy">Null (SQL) :: Controversy</a></em>, Wikipedia
+  </li>
   <li>
     de Haan, L., Gennick, J. (2005), <em><a href="http://www.oracle.com/technetwork/issue-archive/2005/05-jul/o45sql-097727.html">Nulls: Nothing to Worry About</a></em>, Oracle Magazine
+  </li>
 </ul>
 
 [1]: http://en.wikipedia.org/wiki/Join_(SQL)#Outer_join
