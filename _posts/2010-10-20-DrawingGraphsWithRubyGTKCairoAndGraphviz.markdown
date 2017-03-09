@@ -22,7 +22,7 @@ First we need a simple example graph to work with. Let us define a
 graph as an array of edges. Each edge is an array with two vertices,
 represented by symbols.
 
-{% highlight ruby %}
+``` ruby
 #!/usr/bin/env ruby -w
 
 edges = [[:a, :b],
@@ -33,58 +33,58 @@ edges = [[:a, :b],
          [:d, :f],
          [:e, :f],
         ]
-{% endhighlight %}
+```
 
 The next thing is to calculate a layout of the vertices. To do this I
 use the neato command from [Graphviz][2]. Neato is a program for
 drawing undirected graphs. Graphviz expects its input to be in the
 [dot language][3].
 
-{% highlight ruby %}
+``` ruby
 dot = "graph Test {\n"
 edges.each do |edge|
   dot << "    #{edge[0].to_s} -- #{edge[1].to_s};\n"
 end
 dot << "}\n"
 EOT
-{% endhighlight %}
+```
 
 Interaction with neato is done using a pipe, and giving it the
 argument <code>-Tplain</code> produces a graph to stdout with layout
 information. The output format is described [here][4].
 
-{% highlight ruby %}
+``` ruby
 layout = IO.popen('neato -Tplain', 'r+') do |pipe|
   pipe.write(dot)
   pipe.close_write
   pipe.read
 end
-{% endhighlight %}
+```
 
 Before we proceed, we need to define some variables. Their use should
 be fairly obvious later on.
 
-{% highlight ruby %}
+``` ruby
 vertex_coordinates = {}
 padding            = 20
 scale              = 100
-{% endhighlight %}
+```
 
 Now we can parse the layout information.
 
-{% highlight ruby %}
+``` ruby
 layout.each do |line|
   if line =~ /^node (\w+)  ([\d.]+) ([\d.]+)/
     vertex_coordinates[$1.to_sym] = [$2.to_f * scale + padding,
                                      $3.to_f * scale + padding]
   end
 end
-{% endhighlight %}
+```
 
 Then we create a window to put the drawing inside, using the [gtk2][5]
 library.
 
-{% highlight ruby %}
+``` ruby
 require 'gtk2'
 
 window = Gtk::Window.new('Graph')
@@ -93,12 +93,12 @@ window.set_default_size(400, 400)
 window.signal_connect('destroy') do
   Gtk.main_quit
 end
-{% endhighlight %}
+```
 
 And here is the code which draws the graph. The code uses the
 [Cairo][6] vector drawing library in a GTK::DrawingArea.
 
-{% highlight ruby %}
+``` ruby
 area = Gtk::DrawingArea.new
 area.signal_connect('expose_event') do
   context = area.window.create_cairo_context
@@ -128,16 +128,16 @@ area.signal_connect('expose_event') do
     context.stroke
   end
 end
-{% endhighlight %}
+```
 
 Finally we add the drawing to the window and start the application.
 
-{% highlight ruby %}
+``` ruby
 window.add(area)
 window.show_all
 
 Gtk.main
-{% endhighlight %}
+```
 
 THE END
 

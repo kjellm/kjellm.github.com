@@ -22,7 +22,7 @@ One possible solution to this is to implement `INET_ATON6()` and
 
 ### INET_ATON6
 
-{% highlight sql %}
+``` sql
 DELIMITER //
 CREATE FUNCTION INET_ATON6(n CHAR(39))
 RETURNS DECIMAL(39) UNSIGNED
@@ -47,11 +47,11 @@ BEGIN
 END;
 //
 DELIMITER ;
-{% endhighlight %}
+```
 
 <h3>INET_NTOA6</h3>
 
-{% highlight sql %}
+``` sql
 DELIMITER //
 CREATE FUNCTION INET_NTOA6(n DECIMAL(39) UNSIGNED)
 RETURNS CHAR(39)
@@ -80,7 +80,7 @@ BEGIN
 END;
 //
 DELIMITER ;
-{% endhighlight %}
+```
 
 <p>The code is to be regarded as a proof of concept as it needs sanity
 checks and handling of simplified address notations before production

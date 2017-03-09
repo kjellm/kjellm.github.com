@@ -43,14 +43,17 @@ might get out of sync without you noticing it.
   <li>
     Celko, J. (2005), <em>SQL Programming Style</em>, San Francisco: Morgan
     Kaufmann, Chapter 3.13
+  </li>
   <li>
     Ambler S. W., <em><a href="http://www.agiledata.org/essays/keys.html">
     Choosing a Primary Key: Natural or Surrogate?</a></em>, Agile Data
+  </li>
   <li>
     Richardson L. (2007), <em><a
     href="http://rapidapplicationdevelopment.blogspot.com/2007/08/in-case-youre-new-to-series-ive.html">Surrogate
     vs Natural Primary Keys – Data Modeling Mistake 2 of 10</a></em>, Rapid
     Application Development Blog
+  </li>
 </ul>
 
 [1]: http://en.wikipedia.org/wiki/Natural_key

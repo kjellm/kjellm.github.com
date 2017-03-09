@@ -224,9 +224,8 @@ class EventStoreOptimisticLockDecorator < DelegateClass(EventStore)
   end
 
   def create(id)
-    super
     @locks[id] = Mutex.new
-    nil
+    super
   end
 
   def append(id, expected_version, *events)
