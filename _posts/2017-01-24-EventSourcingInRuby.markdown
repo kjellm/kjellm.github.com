@@ -86,25 +86,21 @@ class EventStore < BaseObject
   end
 
   def create(id)
-    raise EventStoreError, "Stream exists for #{id}" if streams.key? id
-    streams[id] = EventStream.new
+    raise EventStoreError, "Stream exists for #{id}" if @streams.key? id
+    @streams[id] = EventStream.new
   end
 
-  def append(id, expected_version, *events)
-    streams.fetch(id).append(*events)
+  def append(id, *events)
+    @streams.fetch(id).append(*events)
   end
 
   def event_stream_for(id)
-    streams[id]&.clone
+    @streams[id]&.clone
   end
 
   def event_stream_version_for(id)
-    streams[id]&.version || 0
+    @streams[id]&.version || 0
   end
-
-  private
-
-  attr_reader :streams
 
 end
 ```
@@ -114,8 +110,7 @@ Event streams are append only data structures, holding *events*.
 ``` ruby
 class EventStream < BaseObject
 
-  def initialize(**args)
-    super
+  def initialize
     @event_sequence = []
   end
 
@@ -124,16 +119,13 @@ class EventStream < BaseObject
   end
 
   def append(*events)
-    event_sequence.push(*events)
+    @event_sequence.push(*events)
   end
 
   def to_a
     @event_sequence.clone
   end
 
-  private
-
-  attr_reader :event_sequence
 end
 ```
 
@@ -249,16 +241,12 @@ class UnitOfWork < BaseObject
   end
 
   def create
-    event_store.create id
+    @event_store.create @id
   end
 
   def append(*events)
-    event_store.append id, expected_version, *events
+    @event_store.append @id, @expected_version, *events
   end
-
-  private
-
-  attr_reader :id, :event_store, :expected_version
 
 end
 ```
@@ -277,22 +265,18 @@ class EventStorePubSubDecorator < DelegateClass(EventStore)
     @subscribers = []
   end
 
-  def subscribe(subscriber)
-    subscribers << subscriber
+  def add_subscriber(subscriber)
+    @subscribers << subscriber
   end
 
-  def append(id, expected_version, *events)
+  def append(id, *events)
     super
     publish(*events)
   end
 
-  private
-
-  attr_reader :subscribers
-
   def publish(*events)
-    subscribers.each do |sub|
-      events.each do |e|
+    events.each do |e|
+      @subscribers.each do |sub|
         sub.apply e
       end
     end
@@ -306,7 +290,7 @@ end
 ``` ruby
 class EventStoreLoggDecorator < DelegateClass(EventStore)
 
-  def append(id, expected_version, *events)
+  def append(id, *events)
     super
     logg "New events: #{events}"
   end
@@ -393,7 +377,6 @@ the system. I have added some rudimentary validation rules to
 illustrate this.
 
 ``` ruby
-
 module Validations
 
   def required(*values)
@@ -423,8 +406,6 @@ class Command < ValueObject
     super
     validate
   end
-
-  private
 
   def validate
     raise "Implement in subclass! #{self.class.name}"
@@ -475,19 +456,18 @@ class RepositoryProjection < BaseObject
   end
 
   def find(id)
-    repository.find(id).to_h
+    @repository.find(id).to_h
   end
 
-  private
+  def apply(*_args); end
 
-  attr_reader :repository
+  private
 
   def type
     raise "Implement in subclass! #{self.class.name}"
   end
 
 end
-
 ```
 
 And a base class for real projections.
@@ -496,14 +476,18 @@ And a base class for real projections.
 class SubscriberProjection < BaseObject
 
   def initialize
-    registry.event_store.subscribe(self)
+    @store = {}
+    registry.event_store.add_subscriber(self)
+  end
+
+  def find(id)
+    @store[id]&.clone
   end
 
   def apply(event)
     handler_name = "when_#{event.class.name.snake_case}".to_sym
     send handler_name, event if respond_to?(handler_name)
   end
-
 end
 ```
 
@@ -640,6 +624,7 @@ class CrudCommandHandler < CommandHandler
         uow.append event
       end
     end
+
   end
 
   include InstanceMethods
@@ -824,23 +809,19 @@ them to derive an *artist* for the whole release.[^in-memory-projection]
 
 class ReleaseProjection < SubscriberProjection
 
-  def initialize
-    registry.event_store.subscribe(self)
-    @releases = {}
-  end
-
-  def find(id)
-    @releases[id].clone
+  def initialize(recordings)
+    super()
+    @recordings = recordings
   end
 
   def when_release_created(event)
     release = build_release_from_event_data event
-    @releases[event.id] = release
+    @store[event.id] = release
   end
 
   def when_release_updated(event)
     release = build_release_from_event_data event
-    @releases[event.id].merge! release
+    @store[event.id].merge! release
   end
 
   def when_recording_updated(_event)
@@ -851,19 +832,19 @@ class ReleaseProjection < SubscriberProjection
 
   def build_release_from_event_data(event)
     release = event.to_h
-    track_id_to_data release.fetch(:tracks)
+    release[:tracks] = track_id_to_data release.fetch(:tracks)
     derive_artist_from_tracks(release)
     release
   end
 
   def track_id_to_data(track_ids)
-    track_ids.map! { |id| TheRecordingProjection.find(id).to_h }
+    track_ids.map { |id| @recordings.find(id).to_h }
   end
 
   def refresh_all_tracks
-    @releases.values.each do |r|
+    @store.values.each do |r|
       r.fetch(:tracks).map! {|track| track.fetch(:id)}
-      track_id_to_data r.fetch(:tracks)
+      r[:tracks] = track_id_to_data r.fetch(:tracks)
     end
   end
 
@@ -885,7 +866,7 @@ maintained. Here is an example projection that keeps track of the
 class TotalsProjection < SubscriberProjection
 
   def initialize
-    registry.event_store.subscribe(self)
+    super
     @totals = Hash.new(0)
   end
 
@@ -907,15 +888,6 @@ class TotalsProjection < SubscriberProjection
 
 end
 ```
-
-The projections are available to the system via these constants.
-
-``` ruby
-TheRecordingProjection = RecordingProjection.new
-TheReleaseProjection = ReleaseProjection.new
-TheTotalsProjection = TotalsProjection.new
-```
-
 ### A simple test application/client
 
 Tying it all together
@@ -923,21 +895,57 @@ Tying it all together
 ``` ruby
 class Application < BaseObject
 
+  def initialize
+    @recording_id = UUID.generate
+    @release_id = UUID.generate
+    initialize_projections
+  end
+
   def main
     puts "LOGG ---------------------------------------------------------"
-    recording_id = UUID.generate
-    recording_data = {id: recording_id, title: "Sledge Hammer",
+    run_commands
+
+    puts
+    puts "EVENT STORE ------------------------------------------------"
+    pp registry.event_store
+
+    puts
+    puts "PROJECTIONS ------------------------------------------------"
+    peek_at_projections
+  end
+
+  private
+
+  def initialize_projections
+    @the_recording_projection = RecordingProjection.new
+    @the_release_projection = ReleaseProjection.new(@the_recording_projection)
+    @the_totals_projection = TotalsProjection.new
+
+    @projections = [
+      @the_release_projection,
+      @the_recording_projection,
+      @the_totals_projection,
+    ]
+  end
+
+  def peek_at_projections
+    p @the_release_projection.find @release_id
+    p @the_recording_projection.find @recording_id
+    p @the_totals_projection.totals
+  end
+
+  def run_commands
+    recording_data = {id: @recording_id, title: "Sledge Hammer",
                       artist: "Peter Gabriel", duration: 313}
     run(recording_data, CreateRecording, Recording)
 
-    release_id = UUID.generate
-    run({id: release_id, title: "So", tracks: []},
+    run({id: @release_id, title: "So", tracks: []},
         CreateRelease, Release)
     run({id: UUID.generate, title: "Shaking The Tree",
-         tracks: [recording_id]},
+         tracks: [@recording_id]},
         CreateRelease, Release)
 
-    run({id: release_id, title: "So", tracks: [recording_id]},
+    run({id: @release_id, title: "So", tracks: [@recording_id]},
         UpdateRelease, Release)
 
     run(recording_data.merge({ title:  "Sledgehammer" }),
@@ -946,19 +954,7 @@ class Application < BaseObject
     # Some failing commands, look in log for verification of failure
     run({id: "Non-existing ID", title: "Foobar"},
         UpdateRecording, Recording)
-
-    puts
-    puts "EVENT STORE ------------------------------------------------"
-    pp registry.event_store
-
-    puts
-    puts "PROJECTIONS ------------------------------------------------"
-    p TheReleaseProjection.find release_id
-    p TheRecordingProjection.find recording_id
-    p TheTotalsProjection.totals
   end
-
-  private
 
   def run(request_data, command_class, aggregate)
     logg "Incoming request with data: #{request_data.inspect}"
