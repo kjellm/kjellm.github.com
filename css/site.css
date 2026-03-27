@@ -381,6 +381,32 @@ ul.posts > li {
   margin-bottom: 2em;
 }
 
+ul.some-feed {
+  list-style-type: none;
+  margin-left: 0;
+}
+
+.some-post {
+  border-left: 3px solid #6a9fb5;
+  padding: 0.5em 1.2em;
+  margin-bottom: 2em;
+}
+
+.some-date {
+  display: block;
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 0.6em;
+}
+
+.some-permalink {
+  display: inline-block;
+  margin-top: 0.5em;
+  font-size: 0.85em;
+  color: #6a9fb5;
+  text-decoration: none;
+}
+
 .footnotes {
     font-size: smaller;
 }

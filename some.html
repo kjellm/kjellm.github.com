@@ -11,13 +11,13 @@ title: Some
 
 <p><em>Som fagansvarlig i Skalar, der vi bygger digitale løsninger, har jeg én fot i lederverden og én i teknologien. Spennet mellom møter i ledergruppa og å utvikle løsninger for kundene våre er stort og krevende. Men som systemtenker gir denne dobbeltrollen meg en forståelse som holder i praksis.</em></p>
 
-<ul class="posts">
+<ul class="some-feed">
   {% assign some_docs = site.some | sort: "date" | reverse %}
   {% for doc in some_docs %}
-  <li>
-    <h3 class="title">{{ doc.date | date: "%d %b %Y" }}</h3>
-    {{ doc.excerpt }}
-    <a href="{{ doc.url }}">Permalink</a>
+  <li class="some-post">
+    <span class="some-date">{{ doc.date | date: "%d %b %Y" }}</span>
+    {{ doc.content }}
+    <a class="some-permalink" href="{{ doc.url }}">Permalink</a>
   </li>
   {% endfor %}
 </ul>
