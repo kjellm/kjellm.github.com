@@ -10,7 +10,7 @@ and has sadly lost its original meaning.
 
 For those who feel a bit lost, I suggest taking a step back and
 looking at what Agile really means: to "embrace change." This leads me
-to Extreme Programming (XP).
+to [Extreme Programming][about-xp] (XP).
 
 
 <div class="illustration"><img width="150px" src="/images/xp-book.jpg" alt="Book cover: Extreme Programming Explained - Embrace Change"></div>
@@ -31,20 +31,23 @@ changed. Over the last few years, I have explored what a modern
 interpretation of XP could be and will share some of what I have
 learned in a series of posts.
 
-Perhaps most important to me is that I believe that the
-highest-performing teams we have today are much more diverse than they
-were back then, both in the backgrounds of people and in the skills
-needed. FIXME My impression is that there is a lot of naivety about what
-the potential is and what it takes to get there. For me, DevOps, Lean
-UX, and research on psychological safety and team performance are some
-of the main ideas that show the way.
+Perhaps most important to me is that I believe that the teams that
+produce the highest value today are much more diverse than they were
+back then, both in the backgrounds of people and in the skills
+needed. FIXME But I'm not sure many are seeing what the real potential
+is or what it takes to get there. For me, DevOps, [Lean
+UX][about-lean-ux], and research on psychological safety and team
+performance are some of the main ideas that show the way.
 
 I see having a culture that enables teams to flourish as a key
 competitive advantage in product development. XP is based on the
-values of simplicity, communication, feedback, courage, and
-respect—values that are also central to psychological safety in teams
-(except simplicity, which is important too but for different reasons).
+values of communication, feedback, courage, and respect -- values that
+are also central to psychological safety in teams (XP also values
+simplicity, which is important too but for different reasons).
 
 By the way, building a digital product involves much more than
 programming, so perhaps XP needs a new name. Maybe it can keep its
 abbreviation: Extreme Product Development?
+
+[about-xp]: https://en.wikipedia.org/wiki/Extreme_programming
+[about-lean-ux]: https://leanuxbook.com
