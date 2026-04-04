@@ -1,3 +1,8 @@
 <nav id="menu">
-  <span style="float:left;">[ {% if page.url == "/" or page.url == "/index.html" %}<em>Home</em>{% else %}<a href="/">Home</a>{% endif %} ] [ {% if page.url == "/about.html" %}<em>About</em>{% else %}<a href="/about.html">About</a>{% endif %} ] [ {% if page.url == "/some.html" %}<em>Some</em>{% else %}<a href="/some.html">Some</a>{% endif %} ] </span><span style="float: right;">[ <a href="/bliki/feed.atom">Feed</a> ]</span>
+  <span style="float:left;">
+    [ {% if page.url == "/" or page.url == "/index" %}<em>Home</em>{% else %}<a href="/">Home</a>{% endif %} ]
+    [ {% if page.url == "/about" %}<em>About</em>{% else %}<a href="/about.html">About</a>{% endif %} ]
+    [ {% if page.url == "/some" %}<em>Some</em>{% else %}<a href="/some.html">Some</a>{% endif %} ]
+  </span>
+  <span style="float: right;">[ <a href="/bliki/feed.atom">Feed</a> ]</span>
 </nav>

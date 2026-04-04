@@ -289,6 +289,23 @@ h2 .title a {
     text-decoration: none;
 }
 
+div {
+    margin-bottom: 1em;
+}
+
+figure {
+    text-align: center;
+}
+
+figcaption {
+    color: #666;
+    font-style: italic;
+}
+
+/***********************************************************************
+ *                           C U S T O M
+ */
+
 .sponsor {
     margin-top: 4em;
     font-size: small;
@@ -327,10 +344,6 @@ h2 .title a {
     font-style: italic;
 }
 
-div {
-    margin-bottom: 1em;
-}
-
 /* Legacy, use <figure> */
 .illustration {
     text-align: center;
@@ -338,15 +351,6 @@ div {
 
 span.credit {
     font-size: 0.5em;
-}
-
-figure {
-    text-align: center;
-}
-
-figcaption {
-    color: #666;
-    font-style: italic;
 }
 
 #back-catalogue {
