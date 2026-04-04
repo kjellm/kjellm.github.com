@@ -336,6 +336,11 @@ figcaption {
     padding: 0.3em 1em;
 }
 
+#menu em {
+    font-style: normal;
+    font-weight: bold;
+}
+
 #interests ul {
     list-style-type: none;
 }
