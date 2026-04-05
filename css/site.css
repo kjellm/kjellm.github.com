@@ -333,7 +333,7 @@ figcaption {
     border-bottom: 0.08em solid black;
     margin-bottom: 1em;
     margin-right: 4em;
-    padding: 0.3em 1em;
+    padding: 0.3em 0.1em;
 }
 
 #menu em {
